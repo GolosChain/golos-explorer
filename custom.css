@@ -279,3 +279,7 @@ footer {
     opacity: 0;
   }
 }
+
+#about-block {
+	display: none;
+}

@@ -27,18 +27,15 @@
 		<header>
 			<nav class="navbar navbar-expand-lg navbar-light bg-light">
 				<div class="container">
-					<a class="navbar-brand">GolosExplorer</a>
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				  </button>
-					<div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-						<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-							<li class="nav-item">
-								<button class="btn btn-success my-2 my-sm-0" id="get-block"><span class="icon-link"></span> Get block info</button>
-							</li>
-						</ul>
-						<div class="form-inline my-2 my-lg-0" id="rigth">
-						</div>
+					<a class="navbar-brand" href="#">GolosExplorer</a>
+					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<form class="form-inline my-2 my-lg-0" id="search-block">
+							<input class="form-control mr-sm-2" name="block-number" type="search" placeholder="Block number" aria-label="Block number" required="">
+							<button class="btn btn-success my-2 my-sm-0" id="get-block" type="submit"><span class="icon-link"></span> Get block info</button>
+						</form>
 					</div>
 				</div>
 			</nav>
@@ -76,6 +73,19 @@
 							<tbody>
 							</tbody>
 						</table>
+						<table class="table table-bordered table-hover table-sm" id="about-block">
+							<thead>
+								<tr class="table-active">
+									<th scope="col">Height</th>
+									<th scope="col">Time</th>
+									<th scope="col">Witness</th>
+									<th scope="col">Transactions</th>
+									<th scope="col">Operations</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
 					</div>
 				</div>
 				<br>
@@ -86,9 +96,9 @@
 				<span class="text-muted">GolosExplorer @ 2018</span>
 			</div>
 		</footer>
-		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.13.1/dist/sweetalert2.all.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/golos-js@0.6.1/dist/golos.min.js"></script>
 		<script src="https://thednp.github.io/bootstrap.native/dist/bootstrap-native-v4.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.13.1/dist/sweetalert2.all.min.js"></script>
 		<script src="app.js"></script>
 	</body>
 </html>
