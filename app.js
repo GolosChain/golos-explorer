@@ -24,13 +24,20 @@ var getLastBlock = function(callback) {
 
 var blocksIds = {};
 
+var $headBlockNumber = document.getElementById('head-block-number');
+var $reverseBlocksCount = document.getElementById('revers-blocks-count');
+var $recentBlocksTable = document.getElementById('recent-blocks').getElementsByTagName('tbody')[0];
+
 var getLastBlockInterval = setInterval(function() {
 	
 	getLastBlock(function(properties, block) {
 		//console.log(properties);
 		//console.log(block);
-		console.log('Current Height', properties.head_block_number);
-		console.log('Reversable blocks awaiting concensus', properties.head_block_number - properties.last_irreversible_block_num,);
+		let reverseBlockCount = properties.head_block_number - properties.last_irreversible_block_num;
+		console.debug('Current Height', properties.head_block_number);
+		console.debug('Reversable blocks awaiting concensus', reverseBlockCount);
+		$headBlockNumber.innerHTML = properties.head_block_number;
+		$reverseBlocksCount.innerHTML = reverseBlockCount;
 		if ( ! blocksIds[properties.last_irreversible_block_num]) {
 			blocksIds[properties.last_irreversible_block_num] = true;
 			let operations = {};
@@ -44,9 +51,23 @@ var getLastBlockInterval = setInterval(function() {
 			});
 			let operationsStr = '';
 			for (var key in operations) {
-				operationsStr += key + ':' + operations[key] + '; '; 
+				operationsStr += `<a class="btn btn-outline-secondary btn-sm">${key} <span class="badge badge-secondary">${operations[key]}</span></a> `; 
 			}
-			console.log(properties.last_irreversible_block_num, block.timestamp, operationsCount, operationsStr);
+			console.debug(properties.last_irreversible_block_num, block.timestamp, block.witness, block.transactions.length, operationsCount, operationsStr);
+			
+			let $newRow = $recentBlocksTable.insertRow(0);
+			$newRow.innerHTML = `<tr>
+									<td><a href="#">${properties.last_irreversible_block_num}</a></td>
+									<td>${block.timestamp}</td>
+									<td><a href="#">${block.witness}</a></td>
+									<td>${block.transactions.length}</td>
+									<td>${operationsCount}</td>
+								</tr>`;
+			
+			$newRow = $recentBlocksTable.insertRow(1);
+			$newRow.innerHTML = `<tr>
+									<td colspan="5"><span class="badge badge-secondary">Operations:</span> ${operationsStr}</td>
+								</tr>`;
 		}
 	});
 
