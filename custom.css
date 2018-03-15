@@ -32,41 +32,17 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-download:before {
-  content: "\e960";
+.icon-barcode:before {
+  content: "\e937";
 }
-.icon-upload:before {
-  content: "\e961";
+.icon-keyboard:before {
+  content: "\e955";
 }
-.icon-sphere:before {
-  content: "\e9c9";
-}
-.icon-earth:before {
-  content: "\e9ca";
-}
-.icon-link:before {
-  content: "\e9cb";
-}
-.icon-info:before {
-  content: "\ea0c";
-}
-.icon-cancel-circle:before {
-  content: "\ea0d";
+.icon-user:before {
+  content: "\e971";
 }
 .icon-cross:before {
   content: "\ea0f";
-}
-.icon-checkmark:before {
-  content: "\ea10";
-}
-.icon-checkbox-checked:before {
-  content: "\ea52";
-}
-.icon-new-tab:before {
-  content: "\ea7e";
-}
-.icon-github:before {
-  content: "\eab0";
 }
 
 footer {
@@ -174,6 +150,6 @@ footer {
     }
 }
 
-#about-block, #reset-block, #about-account, #reset-account {
+#about-block, #reset-block, #about-account, #reset-account, #reset-hex {
 	display: none;
 }
