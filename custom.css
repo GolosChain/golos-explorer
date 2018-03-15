@@ -83,203 +83,97 @@ footer {
   margin: 0 20px;
 }
 
-#loaderDiv {
-  z-index:1;
-  background: white;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  display: none;
-  top: 0;
-  opacity: 0.8;
-}
-#loaderBar {
-  position: fixed;
-  left: 50%;
-  top: 25%;
-  z-index: 1;
+.lding {
+    background: black;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: none;
+    opacity: 0.5;
+    z-index: 1;
 }
 
-.cssload-thecube {
-  width: 131px;
-  height: 131px;
-  margin: 0 auto;
-  margin-top: 88px;
-  position: relative;
-  transform: rotateZ(45deg);
-    -o-transform: rotateZ(45deg);
-    -ms-transform: rotateZ(45deg);
-    -webkit-transform: rotateZ(45deg);
-    -moz-transform: rotateZ(45deg);
-}
-.cssload-thecube .cssload-cube {
-  position: relative;
-  transform: rotateZ(45deg);
-    -o-transform: rotateZ(45deg);
-    -ms-transform: rotateZ(45deg);
-    -webkit-transform: rotateZ(45deg);
-    -moz-transform: rotateZ(45deg);
-}
-.cssload-thecube .cssload-cube {
-  float: left;
-  width: 50%;
-  height: 50%;
-  position: relative;
-  transform: scale(1.1);
-    -o-transform: scale(1.1);
-    -ms-transform: scale(1.1);
-    -webkit-transform: scale(1.1);
-    -moz-transform: scale(1.1);
-}
-.cssload-thecube .cssload-cube:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(43,160,199);
-  animation: cssload-fold-thecube 2.76s infinite linear both;
-    -o-animation: cssload-fold-thecube 2.76s infinite linear both;
-    -ms-animation: cssload-fold-thecube 2.76s infinite linear both;
-    -webkit-animation: cssload-fold-thecube 2.76s infinite linear both;
-    -moz-animation: cssload-fold-thecube 2.76s infinite linear both;
-  transform-origin: 100% 100%;
-    -o-transform-origin: 100% 100%;
-    -ms-transform-origin: 100% 100%;
-    -webkit-transform-origin: 100% 100%;
-    -moz-transform-origin: 100% 100%;
-}
-.cssload-thecube .cssload-c2 {
-  transform: scale(1.1) rotateZ(90deg);
-    -o-transform: scale(1.1) rotateZ(90deg);
-    -ms-transform: scale(1.1) rotateZ(90deg);
-    -webkit-transform: scale(1.1) rotateZ(90deg);
-    -moz-transform: scale(1.1) rotateZ(90deg);
-}
-.cssload-thecube .cssload-c3 {
-  transform: scale(1.1) rotateZ(180deg);
-    -o-transform: scale(1.1) rotateZ(180deg);
-    -ms-transform: scale(1.1) rotateZ(180deg);
-    -webkit-transform: scale(1.1) rotateZ(180deg);
-    -moz-transform: scale(1.1) rotateZ(180deg);
-}
-.cssload-thecube .cssload-c4 {
-  transform: scale(1.1) rotateZ(270deg);
-    -o-transform: scale(1.1) rotateZ(270deg);
-    -ms-transform: scale(1.1) rotateZ(270deg);
-    -webkit-transform: scale(1.1) rotateZ(270deg);
-    -moz-transform: scale(1.1) rotateZ(270deg);
-}
-.cssload-thecube .cssload-c2:before {
-  animation-delay: 0.35s;
-    -o-animation-delay: 0.35s;
-    -ms-animation-delay: 0.35s;
-    -webkit-animation-delay: 0.35s;
-    -moz-animation-delay: 0.35s;
-}
-.cssload-thecube .cssload-c3:before {
-  animation-delay: 0.69s;
-    -o-animation-delay: 0.69s;
-    -ms-animation-delay: 0.69s;
-    -webkit-animation-delay: 0.69s;
-    -moz-animation-delay: 0.69s;
-}
-.cssload-thecube .cssload-c4:before {
-  animation-delay: 1.04s;
-    -o-animation-delay: 1.04s;
-    -ms-animation-delay: 1.04s;
-    -webkit-animation-delay: 1.04s;
-    -moz-animation-delay: 1.04s;
+.lds-css {
+    height: 200px;
+    width: 200px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-left: -100px;
+    margin-top: -100px;
+    z-index: 1;
 }
 
-
-
-@keyframes cssload-fold-thecube {
-  0%, 10% {
-    transform: perspective(245px) rotateX(-180deg);
-    opacity: 0;
-  }
-  25%,
-        75% {
-    transform: perspective(245px) rotateX(0deg);
-    opacity: 1;
-  }
-  90%,
-        100% {
-    transform: perspective(245px) rotateY(180deg);
-    opacity: 0;
-  }
+.lds-cube {
+    position: relative;
 }
 
-@-o-keyframes cssload-fold-thecube {
-  0%, 10% {
-    -o-transform: perspective(245px) rotateX(-180deg);
-    opacity: 0;
-  }
-  25%,
-        75% {
-    -o-transform: perspective(245px) rotateX(0deg);
-    opacity: 1;
-  }
-  90%,
-        100% {
-    -o-transform: perspective(245px) rotateY(180deg);
-    opacity: 0;
-  }
+.lds-cube div {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    top: 10px;
+    left: 10px;
+    background: #ec0000;
+    -webkit-animation: lds-cube 1s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+    animation: lds-cube 1s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+    -webkit-animation-delay: -0.3s;
+    animation-delay: -0.3s;
 }
 
-@-ms-keyframes cssload-fold-thecube {
-  0%, 10% {
-    -ms-transform: perspective(245px) rotateX(-180deg);
-    opacity: 0;
-  }
-  25%,
-        75% {
-    -ms-transform: perspective(245px) rotateX(0deg);
-    opacity: 1;
-  }
-  90%,
-        100% {
-    -ms-transform: perspective(245px) rotateY(180deg);
-    opacity: 0;
-  }
+.lds-cube div:nth-child(2) {
+    top: 10px;
+    left: 110px;
+    background: #e1e1e1;
+    -webkit-animation-delay: -0.2s;
+    animation-delay: -0.2s;
 }
 
-@-webkit-keyframes cssload-fold-thecube {
-  0%, 10% {
-    -webkit-transform: perspective(245px) rotateX(-180deg);
-    opacity: 0;
-  }
-  25%,
-        75% {
-    -webkit-transform: perspective(245px) rotateX(0deg);
-    opacity: 1;
-  }
-  90%,
-        100% {
-    -webkit-transform: perspective(245px) rotateY(180deg);
-    opacity: 0;
-  }
+.lds-cube div:nth-child(3) {
+    top: 110px;
+    left: 110px;
+    background: #0057ff;
+    -webkit-animation-delay: 0s;
+    animation-delay: 0s;
 }
 
-@-moz-keyframes cssload-fold-thecube {
-  0%, 10% {
-    -moz-transform: perspective(245px) rotateX(-180deg);
-    opacity: 0;
-  }
-  25%,
-        75% {
-    -moz-transform: perspective(245px) rotateX(0deg);
-    opacity: 1;
-  }
-  90%,
-        100% {
-    -moz-transform: perspective(245px) rotateY(180deg);
-    opacity: 0;
-  }
+.lds-cube div:nth-child(4) {
+    top: 110px;
+    left: 10px;
+    background: #a5a5a5;
+    -webkit-animation-delay: -0.1s;
+    animation-delay: -0.1s;
 }
 
-#about-block {
+.lds-cube {
+    width: 200px !important;
+    height: 200px !important;
+    -webkit-transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
+    transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
+}
+
+@keyframes lds-cube {
+    0% {
+        -webkit-transform: scale(1.5);
+        transform: scale(1.5);
+    }
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+@-webkit-keyframes lds-cube {
+    0% {
+        -webkit-transform: scale(1.5);
+        transform: scale(1.5);
+    }
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+#about-block, #reset-block, #about-account, #reset-account {
 	display: none;
 }

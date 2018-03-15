@@ -8,19 +8,13 @@
 		<link rel="stylesheet" href="custom.css" />
 	</head>
 	<body>
-		<div id="loaderDiv">
-			<div id="loaderBar">
-				<div class="cssload-thecube" id="loader" style="display:none">
-					<div class="cssload-cube cssload-c1"></div>
-					<div class="cssload-cube cssload-c2"></div>
-					<div class="cssload-cube cssload-c4"></div>
-					<div class="cssload-cube cssload-c3"></div>
-				</div>
-				<br>
-				<br>
-				<br>
-				<br>
-				<div id="progressBar">
+		<div class="lding">
+			<div class="lds-css ng-scope">
+				<div class="lds-cube">
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
 				</div>
 			</div>
 		</div>
@@ -35,6 +29,12 @@
 						<form class="form-inline my-2 my-lg-0" id="search-block">
 							<input class="form-control mr-sm-2" name="block-number" type="search" placeholder="Block number" aria-label="Block number" required="">
 							<button class="btn btn-success my-2 my-sm-0" id="get-block" type="submit"><span class="icon-link"></span> Get block info</button>
+							&nbsp;<button class="btn btn-danger my-2 my-sm-0" id="reset-block" type="button"><span class="icon-cross"></span> Reset info</button>
+						</form>
+						<form class="form-inline my-2 my-lg-0 ml-auto" id="search-account">
+							<input class="form-control mr-sm-2" name="account-username" type="search" placeholder="Account username" aria-label="Block number" required="">
+							<button class="btn btn-success my-2 my-sm-0" id="get-account" type="submit"><span class="icon-link"></span> Get account info</button>
+							&nbsp;<button class="btn btn-danger my-2 my-sm-0" id="reset-account" type="button"><span class="icon-cross"></span> Reset info</button>
 						</form>
 					</div>
 				</div>
@@ -44,18 +44,20 @@
 		<article>
 			<main role="main" class="container">
 				<br>
-				<div class="row">
-					<div class="col">
-						<h4>Recent Blockchain Activity</h4>
-						<p>Displaying most recent irreversible blocks.</p>
+				<div id="recent-blocks-info">
+					<div class="row">
+						<div class="col">
+							<h4>Recent Blockchain Activity</h4>
+							<p>Displaying most recent irreversible blocks.</p>
+						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="col">
-						<h4>Current Height <span class="badge badge-primary" id="head-block-number">...</span></h4>
-					</div>
-					<div class="col">
-						<h4>Reversable blocks awaiting concensus <span class="badge badge-warning" id="revers-blocks-count">...</span></h4>
+					<div class="row">
+						<div class="col">
+							<h4>Current Height <span class="badge badge-primary" id="head-block-number">...</span></h4>
+						</div>
+						<div class="col">
+							<h4>Reversable blocks awaiting concensus <span class="badge badge-warning" id="revers-blocks-count">...</span></h4>
+						</div>
 					</div>
 				</div>
 				<div class="row">
@@ -81,6 +83,19 @@
 									<th scope="col">Witness</th>
 									<th scope="col">Transactions</th>
 									<th scope="col">Operations</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+						<table class="table table-bordered table-hover table-sm table-responsive" id="about-account">
+							<thead>
+								<tr class="table-active">
+									<th scope="col">Time</th>
+									<th scope="col">From</th>
+									<th scope="col">To</th>
+									<th scope="col">Amount</th>
+									<th scope="col">Memo</th>
 								</tr>
 							</thead>
 							<tbody>
