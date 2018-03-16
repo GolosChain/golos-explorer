@@ -65,9 +65,9 @@ let getLastBlockInterval = setInterval(function() {
 			
 			let $newRow = $recentBlocksTableTbody.insertRow(0);
 			$newRow.innerHTML = `<tr>
-									<td><a href="#">${properties.last_irreversible_block_num}</a></td>
+									<td><a href="#block/${properties.last_irreversible_block_num}">${properties.last_irreversible_block_num}</a></td>
 									<td>${block.timestamp}</td>
-									<td><a href="#">${block.witness}</a></td>
+									<td><a href="#account/${block.witness}">${block.witness}</a></td>
 									<td>${block.transactions.length}</td>
 									<td>${operationsCount}</td>
 								</tr>`;
@@ -111,9 +111,9 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 
 			let $newRow = $aboutBlockTableTbody.insertRow(0);
 			$newRow.innerHTML = `<tr>
-									<td><a href="#">${blockNumberVal}</a></td>
+									<td>${blockNumberVal}</td>
 									<td>${block.timestamp}</td>
-									<td><a href="#">${block.witness}</a></td>
+									<td><a href="#account/${block.witness}">${block.witness}</a></td>
 									<td>${block.transactions.length}</td>
 									<td>${operationsCount}</td>
 								</tr>`;
@@ -137,6 +137,7 @@ $resetBlockBtn.addEventListener('click', function() {
 	$aboutAccountTable.style.display = 'none';
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'block';
+	window.location.hash = '';
 });
 
 document.getElementById('search-account').addEventListener('submit', function(e) {
@@ -187,6 +188,7 @@ $resetAccountBtn.addEventListener('click', function() {
 	$aboutAccountTable.style.display = 'none';
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'block';
+	window.location.hash = '';
 });
 
 document.getElementById('search-hex').addEventListener('submit', function(e) {
@@ -252,23 +254,25 @@ $resetHexBtn.addEventListener('click', function() {
 	$aboutAccountTable.style.display = 'none';
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'block';
+	window.location.hash = '';
 });
 
-let getTransaction = function() {
-	
-	let trx = {
-		ref_block_num: 49191,
-		ref_block_prefix: 2024493436
-	};
-
-	golos.api.getTransactionHex(trx, function(err, transaction) {
-
-		console.log(err, 'getTransactionHex: ' + transaction);
-
-		let transaction_id = 'e3aa587c665c222061694ece21deb1910c35f75b';
-		golos.api.getTransaction(transaction_id, function(err, result) {
-			console.log(err, 'getTransaction: ', result);
-		});
-
-	});
-};
+window.addEventListener('hashchange', function() {
+	var hash = window.location.hash.substring(1);
+	if (hash) {
+		if (hash.split('/')[1]) {
+			let paramVal = hash.split('/')[1];
+			if (hash.search('block') != -1) {
+				console.debug('block', paramVal);
+				document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = paramVal;
+				document.getElementById('search-block').dispatchEvent(new CustomEvent('submit'));
+			}
+			else if (hash.search('account') != -1) {
+				console.debug('account', paramVal);
+				document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = paramVal;
+				document.getElementById('search-account').dispatchEvent(new CustomEvent('submit'));
+			}
+		}
+	}
+});
+window.dispatchEvent(new CustomEvent('hashchange'));
