@@ -44,9 +44,12 @@ html {
 .icon-user:before {
   content: "\e971";
 }
+.icon-spinner11:before {
+  content: "\e984";
+}
 .icon-cross:before {
   content: "\ea0f";
-} 
+}
 
 footer {
 	position: absolute;

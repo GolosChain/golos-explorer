@@ -35,6 +35,7 @@ let $aboutAccountTableTbody = $aboutAccountTable.getElementsByTagName('tbody')[0
 let $loader = document.getElementsByClassName('lding')[0];
 let $recentBlocksInfo = document.getElementById('recent-blocks-info');
 let $resetHexBtn = document.getElementById('reset-hex');
+let $resetNodeAddress = document.getElementById('reset-node-address');
 
 let getLastBlockInterval = setInterval(function() {
 	
@@ -207,7 +208,7 @@ document.getElementById('search-hex').addEventListener('submit', function(e) {
 	golos.api.getTransaction(hexNumberVal, function(err, result) {
 		console.debug(err, 'getTransaction: ', result);
 		if ( ! err) {
-			let blockNumberVal = transaction.block_num;
+			let blockNumberVal = result.block_num;
 			golos.api.getBlock(blockNumberVal, function(err, block) {
 				console.log(err, 'getBlock: ', block);
 				if ( ! err) {
@@ -258,6 +259,20 @@ $resetHexBtn.addEventListener('click', function() {
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'block';
 	window.location.hash = '';
+});
+
+document.getElementById('node-address').addEventListener('submit', function(e) {
+	e.preventDefault();
+	$resetNodeAddress.style.display = 'block';
+	let nodeAddress = this.querySelector('.form-control[name="node-address"]').value;
+	golos.api.setWebSocket(nodeAddress);
+	return false;
+});
+
+$resetNodeAddress.addEventListener('click', function() {
+	document.getElementById('node-address').querySelector('.form-control[name="node-address"]').value = 'wss://ws.golos.io';
+	document.getElementById('node-address').dispatchEvent(new CustomEvent('submit'));
+	$resetNodeAddress.style.display = 'none';
 });
 
 window.addEventListener('hashchange', function() {
