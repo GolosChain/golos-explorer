@@ -94,7 +94,7 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'none';
 	golos.api.getBlock(blockNumberVal, function(err, block) {
-		console.log(err, 'getBlock: ', block);
+		console.debug(err, 'getBlock: ', block);
 		if ( ! err) {
 			let operations = {};
 			let operationsCount = 0;
@@ -171,7 +171,7 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 									<td>${transaction[1].op[1].from}</td>
 									<td>${transaction[1].op[1].to}</td>
 									<td>${transaction[1].op[1].amount}</td>
-									<td>${transaction[1].trx_id}</td>
+									<td><a href="#tx/${transaction[1].trx_id}">${transaction[1].trx_id}</a></td>
 									<td>${transaction[1].op[1].memo}</td>
 								</tr>`;
 				}
@@ -210,7 +210,7 @@ document.getElementById('search-hex').addEventListener('submit', function(e) {
 		if ( ! err) {
 			let blockNumberVal = result.block_num;
 			golos.api.getBlock(blockNumberVal, function(err, block) {
-				console.log(err, 'getBlock: ', block);
+				console.debug(err, 'getBlock: ', block);
 				if ( ! err) {
 					let operations = {};
 					let operationsCount = 0;
@@ -263,11 +263,21 @@ $resetHexBtn.addEventListener('click', function() {
 
 document.getElementById('node-address').addEventListener('submit', function(e) {
 	e.preventDefault();
+	document.getElementById('blockchain-version').innerHTML = '...';
 	$resetNodeAddress.style.display = 'block';
 	let nodeAddress = this.querySelector('.form-control[name="node-address"]').value;
 	golos.api.setWebSocket(nodeAddress);
+	getBlockchainVersion();
 	return false;
 });
+
+let getBlockchainVersion = function() {
+	golos.api.getConfig(function(err, result) {
+		if ( ! err) document.getElementById('blockchain-version').innerHTML = result.STEEMIT_BLOCKCHAIN_VERSION;
+	});
+};
+
+getBlockchainVersion();
 
 $resetNodeAddress.addEventListener('click', function() {
 	document.getElementById('node-address').querySelector('.form-control[name="node-address"]').value = 'wss://ws.golos.io';
@@ -289,6 +299,11 @@ window.addEventListener('hashchange', function() {
 				console.debug('account', paramVal);
 				document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = paramVal;
 				document.getElementById('search-account').dispatchEvent(new CustomEvent('submit'));
+			}
+			else if (hash.search('tx') != -1) {
+				console.debug('tx', paramVal);
+				document.getElementById('search-hex').querySelector('.form-control[name="hex-number"]').value = paramVal;
+				document.getElementById('search-hex').dispatchEvent(new CustomEvent('submit'));
 			}
 		}
 	}
