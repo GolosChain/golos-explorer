@@ -24,8 +24,8 @@ let blocksIds = {};
 
 let $headBlockNumber = document.getElementById('head-block-number');
 let $reverseBlocksCount = document.getElementById('revers-blocks-count');
-let $recentBlocksTable = document.getElementById('recent-blocks');
-let $recentBlocksTableTbody = $recentBlocksTable.getElementsByTagName('tbody')[0];
+let $mainPage = document.getElementById('main-page');
+let $recentBlocksTableTbody = document.getElementById('recent-blocks').getElementsByTagName('tbody')[0];
 let $aboutBlockTable = document.getElementById('about-block');
 let $aboutBlockTableTbody = $aboutBlockTable.getElementsByTagName('tbody')[0];
 let $resetBlockBtn = document.getElementById('reset-block');
@@ -36,12 +36,17 @@ let $loader = document.getElementsByClassName('lding')[0];
 let $recentBlocksInfo = document.getElementById('recent-blocks-info');
 let $resetHexBtn = document.getElementById('reset-hex');
 let $resetNodeAddress = document.getElementById('reset-node-address');
+let $globalPropertiesTableTbody = document.getElementById('global-properties').getElementsByTagName('tbody')[0];
 
 let getLastBlockInterval = setInterval(function() {
 	
 	getLastBlock(function(properties, block) {
 		//console.log(properties);
 		//console.log(block);
+		for (let key in properties) {
+			let prop = $globalPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
+			if (prop) prop.innerHTML = properties[key];
+		}
 		let reverseBlockCount = properties.head_block_number - properties.last_irreversible_block_num;
 		console.debug('Current Height', properties.head_block_number);
 		console.debug('Reversable blocks awaiting concensus', reverseBlockCount);
@@ -84,7 +89,7 @@ let getLastBlockInterval = setInterval(function() {
 
 document.getElementById('search-block').addEventListener('submit', function(e) {
 	e.preventDefault();
-	$recentBlocksTable.style.display = 'none';
+	$mainPage.style.display = 'none';
 	$aboutBlockTable.style.display = 'table';
 	$resetBlockBtn.style.display = 'block';
 	let blockNumberVal = this.querySelector('.form-control[name="block-number"]').value;
@@ -133,7 +138,7 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 $resetBlockBtn.addEventListener('click', function() {
 	document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = '';
 	$resetBlockBtn.style.display = 'none';
-	$recentBlocksTable.style.display = 'table';
+	$mainPage.style.display = 'flex';
 	$aboutBlockTable.style.display = 'none';
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
 	$aboutAccountTable.style.display = 'none';
@@ -145,7 +150,7 @@ $resetBlockBtn.addEventListener('click', function() {
 document.getElementById('search-account').addEventListener('submit', function(e) {
 	e.preventDefault();
 	$loader.style.display = 'block';
-	$recentBlocksTable.style.display = 'none';
+	$mainPage.style.display = 'none';
 	$aboutAccountTable.style.display = 'block';
 	$resetAccountBtn.style.display = 'block';
 	let usernameVal = this.querySelector('.form-control[name="account-username"]').value;
@@ -186,7 +191,7 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 $resetAccountBtn.addEventListener('click', function() {
 	document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = '';
 	$resetBlockBtn.style.display = 'none';
-	$recentBlocksTable.style.display = 'table';
+	$mainPage.style.display = 'flex';
 	$aboutBlockTable.style.display = 'none';
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
 	$aboutAccountTable.style.display = 'none';
@@ -197,7 +202,7 @@ $resetAccountBtn.addEventListener('click', function() {
 
 document.getElementById('search-hex').addEventListener('submit', function(e) {
 	e.preventDefault();
-	$recentBlocksTable.style.display = 'none';
+	$mainPage.style.display = 'none';
 	$aboutBlockTable.style.display = 'table';
 	$resetHexBtn.style.display = 'block';
 	let hexNumberVal = this.querySelector('.form-control[name="hex-number"]').value;
@@ -252,7 +257,7 @@ document.getElementById('search-hex').addEventListener('submit', function(e) {
 $resetHexBtn.addEventListener('click', function() {
 	document.getElementById('search-hex').querySelector('.form-control[name="hex-number"]').value = '';
 	$resetHexBtn.style.display = 'none';
-	$recentBlocksTable.style.display = 'table';
+	$mainPage.style.display = 'flex';
 	$aboutBlockTable.style.display = 'none';
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
 	$aboutAccountTable.style.display = 'none';
@@ -286,7 +291,7 @@ $resetNodeAddress.addEventListener('click', function() {
 });
 
 window.addEventListener('hashchange', function() {
-	var hash = window.location.hash.substring(1);
+	let hash = window.location.hash.substring(1);
 	if (hash) {
 		if (hash.split('/')[1]) {
 			let paramVal = hash.split('/')[1];
