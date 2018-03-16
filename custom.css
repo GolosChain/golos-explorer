@@ -38,12 +38,15 @@ html {
 .icon-keyboard:before {
   content: "\e955";
 }
+.icon-database:before {
+  content: "\e964";
+}
 .icon-user:before {
   content: "\e971";
 }
 .icon-cross:before {
   content: "\ea0f";
-}
+} 
 
 footer {
 	position: absolute;
@@ -150,6 +153,6 @@ footer {
     }
 }
 
-#about-block, #reset-block, #about-account, #reset-account, #reset-hex {
+#about-block, #reset-block, #about-account, #reset-account, #reset-hex, #reset-node-address {
 	display: none;
 }

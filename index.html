@@ -15,30 +15,39 @@
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<form class="form-inline my-2 my-lg-0" id="search-block">
+					<form class="form-inline my-2 my-lg-0 col-sm-3" id="search-block">
 						<div class="input-group">
 							<input class="form-control form-control-sm" name="block-number" type="search" placeholder="Block number" aria-label="Block number" required="">
 							<div class="input-group-append">
 								<button class="btn btn-danger btn-sm" id="reset-block" type="button"><span class="icon-cross"></span></button>
-								<button class="btn btn-dark btn-sm" id="get-block" type="submit"><span class="icon-keyboard"></span> Get Block</button>
+								<button class="btn btn-dark btn-sm" type="submit"><span class="icon-keyboard"></span> Get Block</button>
 							</div>
 						</div>
 					</form>
-					<form class="form-inline my-2 my-lg-0 offset-lg-2" id="search-hex">
+					<form class="form-inline my-2 my-lg-0 col-sm-3" id="search-hex">
 						<div class="input-group">
 							<input class="form-control form-control-sm" name="hex-number" type="search" placeholder="HEX number" aria-label="HEX number" required="">
 							<div class="input-group-append">
 								<button class="btn btn-danger btn-sm" id="reset-hex" type="button"><span class="icon-cross"></span></button>
-								<button class="btn btn-dark btn-sm" id="get-hex" type="submit"><span class="icon-barcode"></span> Get HEX</button>
+								<button class="btn btn-dark btn-sm" type="submit"><span class="icon-barcode"></span> Get HEX</button>
 							</div>
 						</div>
 					</form>
-					<form class="form-inline my-2 my-lg-0 ml-auto" id="search-account">
+					<form class="form-inline my-2 my-lg-0 col-sm-3" id="search-account">
 						<div class="input-group">
-							<input class="form-control form-control-sm" name="account-username" type="search" placeholder="Account username" aria-label="Block number" required="">
+							<input class="form-control form-control-sm" name="account-username" type="search" placeholder="Account username" aria-label="Account username" required="">
 							<div class="input-group-append">
 								<button class="btn btn-danger btn-sm" id="reset-account" type="button"><span class="icon-cross"></span></button>
-								<button class="btn btn-dark btn-sm" id="get-account" type="submit"><span class="icon-user"></span> Get Account</button>
+								<button class="btn btn-dark btn-sm" type="submit"><span class="icon-user"></span> Get Account</button>
+							</div>
+						</div>
+					</form>
+					<form class="form-inline my-2 my-lg-0 ml-auto" id="node-address">
+						<div class="input-group">
+							<input class="form-control form-control-sm" name="node-address" type="search" placeholder="wss://ws.golos.io" aria-label="wss://ws.golos.io" value="wss://ws.golos.io" required="">
+							<div class="input-group-append">
+								<button class="btn btn-danger btn-sm" id="reset-node-address" type="button"><span class="icon-cross"></span></button>
+								<button class="btn btn-dark btn-sm" type="submit"><span class="icon-database"></span> Change</button>
 							</div>
 						</div>
 					</form>
@@ -99,6 +108,7 @@
 									<th scope="col">From</th>
 									<th scope="col">To</th>
 									<th scope="col">Amount</th>
+									<th scope="col">Transaction ID</th>
 									<th scope="col">Memo</th>
 								</tr>
 							</thead>

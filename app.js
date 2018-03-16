@@ -87,6 +87,7 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 	$aboutBlockTable.style.display = 'table';
 	$resetBlockBtn.style.display = 'block';
 	let blockNumberVal = this.querySelector('.form-control[name="block-number"]').value;
+	//window.location.hash = 'block/' + blockNumberVal;
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
 	$aboutAccountTable.style.display = 'none';
 	$resetAccountBtn.style.display = 'none';
@@ -147,6 +148,7 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 	$aboutAccountTable.style.display = 'block';
 	$resetAccountBtn.style.display = 'block';
 	let usernameVal = this.querySelector('.form-control[name="account-username"]').value;
+	//window.location.hash = 'account/' + usernameVal;
 	document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = '';
 	$resetBlockBtn.style.display = 'none';
 	$aboutBlockTable.style.display = 'none';
@@ -157,17 +159,18 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 		//console.log(err, 'getAccountHistory: ', transactions);
 		$loader.style.display = 'none';
 		if ( ! err) {
-			transactions.reverse();
+			//transactions.reverse();
 			transactions.forEach(function(transaction) {
 				if (transaction[1].op[0] == 'transfer') {
 					transfersCount++;
-					console.debug(transaction[1].timestamp, transaction[1].op[1]);
+					console.debug(transaction[1].timestamp, transaction[1].op[1], transaction[1].trx_id);
 					let $newRow = $aboutAccountTableTbody.insertRow(0);
 					$newRow.innerHTML = `<tr>
 									<td>${transaction[1].timestamp}</td>
 									<td>${transaction[1].op[1].from}</td>
 									<td>${transaction[1].op[1].to}</td>
 									<td>${transaction[1].op[1].amount}</td>
+									<td>${transaction[1].trx_id}</td>
 									<td>${transaction[1].op[1].memo}</td>
 								</tr>`;
 				}
