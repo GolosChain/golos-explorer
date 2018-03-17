@@ -37,6 +37,20 @@ let $recentBlocksInfo = document.getElementById('recent-blocks-info');
 let $resetHexBtn = document.getElementById('reset-hex');
 let $resetNodeAddress = document.getElementById('reset-node-address');
 let $globalPropertiesTableTbody = document.getElementById('global-properties').getElementsByTagName('tbody')[0];
+let $chainPropertiesTableTbody = document.getElementById('chain-properties').getElementsByTagName('tbody')[0];
+
+let getChainProperties = function() {
+	golos.api.getChainProperties(function(err, properties) {
+		console.debug(err, properties);
+		if ( ! err) {
+			for (let key in properties) {
+				let prop = $chainPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
+				if (prop) prop.innerHTML = properties[key];
+			}
+		}
+	});
+}
+getChainProperties();
 
 let getLastBlockInterval = setInterval(function() {
 	
@@ -273,6 +287,7 @@ document.getElementById('node-address').addEventListener('submit', function(e) {
 	let nodeAddress = this.querySelector('.form-control[name="node-address"]').value;
 	golos.api.setWebSocket(nodeAddress);
 	getBlockchainVersion();
+	getChainProperties();
 	return false;
 });
 
