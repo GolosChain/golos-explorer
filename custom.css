@@ -159,3 +159,7 @@ footer {
 #about-block-page, #reset-block, #about-account, #reset-account, #reset-hex, #reset-node-address {
 	display: none;
 }
+
+#about-block-witness a {
+	color: inherit;
+}

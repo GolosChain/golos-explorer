@@ -9,10 +9,8 @@ swal.setDefaults({
 let getLastBlock = function(callback) {
 	
 	golos.api.getDynamicGlobalProperties(function(err, properties) {
-		//console.log(err, 'getDynamicGlobalProperties: ', properties);
 
 		golos.api.getBlock(properties.last_irreversible_block_num, function(err, block) {
-			//console.log(err, 'getBlock: ', block)
 			callback(properties, block);
 		});
 
@@ -30,6 +28,7 @@ let $aboutBlockPage = document.getElementById('about-block-page');
 let $aboutBlockCode = document.getElementById('about-block-code');
 let $aboutBlockTableTbody = document.getElementById('about-block').getElementsByTagName('tbody')[0];
 let $aboutBlockOperationsTableTbody = document.getElementById('about-block-operations-table').getElementsByTagName('tbody')[0];
+let $aboutBlockTransactionsTableTbody = document.getElementById('about-block-transactions-table').getElementsByTagName('tbody')[0];
 let $resetBlockBtn = document.getElementById('reset-block');
 let $resetAccountBtn = document.getElementById('reset-account');
 let $aboutAccountTable = document.getElementById('about-account');
@@ -48,7 +47,6 @@ let $chainPropertiesTableTbody = document.getElementById('chain-properties').get
 
 let getChainProperties = function() {
 	golos.api.getChainProperties(function(err, properties) {
-		console.debug(err, properties);
 		if ( ! err) {
 			for (let key in properties) {
 				let prop = $chainPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
@@ -62,15 +60,11 @@ getChainProperties();
 let getLastBlockInterval = setInterval(function() {
 	
 	getLastBlock(function(properties, block) {
-		//console.log(properties);
-		//console.log(block);
 		for (let key in properties) {
 			let prop = $globalPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
 			if (prop) prop.innerHTML = properties[key];
 		}
 		let reverseBlockCount = properties.head_block_number - properties.last_irreversible_block_num;
-		console.debug('Current Height', properties.head_block_number);
-		console.debug('Reversable blocks awaiting concensus', reverseBlockCount);
 		$headBlockNumber.innerHTML = properties.head_block_number;
 		$reverseBlocksCount.innerHTML = reverseBlockCount;
 		if ( ! blocksIds[properties.last_irreversible_block_num]) {
@@ -88,7 +82,6 @@ let getLastBlockInterval = setInterval(function() {
 			for (let key in operations) {
 				operationsStr += `<a class="btn btn-outline-info btn-sm">${key} <span class="badge badge-info">${operations[key]}</span></a> `; 
 			}
-			console.debug(properties.last_irreversible_block_num, block.timestamp, block.witness, block.transactions.length, operationsCount, operationsStr);
 			
 			let $newRow = $recentBlocksTableTbody.insertRow(0);
 			$newRow.innerHTML = `<tr>
@@ -111,7 +104,7 @@ let getLastBlockInterval = setInterval(function() {
 let editor;
 
 let $aboutBlockTabs = document.querySelectorAll('a[data-toggle="tab"]');
-for (var i = 0; i < $aboutBlockTabs.length; i++) {
+for (let i = 0; i < $aboutBlockTabs.length; i++) {
 	$aboutBlockTabs[i].addEventListener('shown.bs.tab', function(e) {
 		if (e.target.getAttribute('aria-controls') == 'json') {
 			editor.setCursor(0);
@@ -131,7 +124,6 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'none';
 	golos.api.getBlock(blockNumberVal, function(err, block) {
-		console.debug(err, 'getBlock: ', block);
 		let blockStr = JSON.stringify(block);
 		editor = CodeMirror($aboutBlockCode, {
 			mode: 'application/json',
@@ -154,7 +146,6 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 			for (let key in operations) {
 				operationsStr += `<a class="btn btn-outline-secondary btn-sm">${key} <span class="badge badge-secondary">${operations[key]}</span></a> `; 
 			}
-			console.debug(blockNumberVal, block.timestamp, block.witness, block.transactions.length, operationsCount, operationsStr);
 
 			$aboutBlockHeight.innerHTML = blockNumberVal;
 			$aboutBlockTime.innerHTML = block.timestamp;
@@ -181,6 +172,18 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 											</tr>`;
 					}
 				});
+				//
+				for (let keyTr in transaction) {
+					if (keyTr == 'operations') transaction[keyTr] = JSON.stringify(transaction[keyTr]);
+					$newRow = $aboutBlockTransactionsTableTbody.insertRow();
+					$newRow.innerHTML = `<tr>
+											<td><b>${keyTr}</b></td>
+											<td>${transaction[keyTr]}</td>
+										</tr>`;
+				}
+				$newRow = $aboutBlockTransactionsTableTbody.insertRow();
+				$newRow.className = 'table-active';
+				$newRow.innerHTML = `<tr><td colspan="2">&nbsp;</td></tr>`;
 			});
 		}
 		else swal({title: 'Error', type: 'error', text: err});
@@ -215,15 +218,12 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 	$aboutAccountTableTbody.innerHTML = '';
 	$recentBlocksInfo.style.display = 'none';
 	golos.api.getAccountHistory(usernameVal, -1, 100, function(err, transactions) {
-		//console.log(err, 'getAccountHistory: ', transactions);
 		$loader.style.display = 'none';
 		if ( ! err) {
 			//transactions.reverse();
-			console.debug(transactions);
 			transactions.forEach(function(transaction) {
 				if (transaction[1].op[0] == 'transfer') {
 					transfersCount++;
-					console.debug(transaction[1].timestamp, transaction[1].op[1], transaction[1].trx_id);
 					let $newRow = $aboutAccountTableTbody.insertRow(0);
 					$newRow.innerHTML = `<tr>
 									<td>${transaction[1].timestamp}</td>
@@ -265,11 +265,9 @@ document.getElementById('search-hex').addEventListener('submit', function(e) {
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'none';
 	golos.api.getTransaction(hexNumberVal, function(err, result) {
-		console.debug(err, 'getTransaction: ', result);
 		if ( ! err) {
 			let blockNumberVal = result.block_num;
 			golos.api.getBlock(blockNumberVal, function(err, block) {
-				console.debug(err, 'getBlock: ', block);
 				if ( ! err) {
 					let operations = {};
 					let operationsCount = 0;
@@ -284,7 +282,6 @@ document.getElementById('search-hex').addEventListener('submit', function(e) {
 					for (let key in operations) {
 						operationsStr += `<a class="btn btn-outline-secondary btn-sm">${key} <span class="badge badge-secondary">${operations[key]}</span></a> `; 
 					}
-					console.debug(blockNumberVal, block.timestamp, block.witness, block.transactions.length, operationsCount, operationsStr);
 
 					let $newRow = $aboutBlockTableTbody.insertRow(0);
 					$newRow.innerHTML = `<tr>
@@ -351,17 +348,14 @@ window.addEventListener('hashchange', function() {
 		if (hash.split('/')[1]) {
 			let paramVal = hash.split('/')[1];
 			if (hash.search('block') != -1) {
-				console.debug('block', paramVal);
 				document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = paramVal;
 				document.getElementById('search-block').dispatchEvent(new CustomEvent('submit'));
 			}
 			else if (hash.search('account') != -1) {
-				console.debug('account', paramVal);
 				document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = paramVal;
 				document.getElementById('search-account').dispatchEvent(new CustomEvent('submit'));
 			}
 			else if (hash.search('tx') != -1) {
-				console.debug('tx', paramVal);
 				document.getElementById('search-hex').querySelector('.form-control[name="hex-number"]').value = paramVal;
 				document.getElementById('search-hex').dispatchEvent(new CustomEvent('submit'));
 			}
