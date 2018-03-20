@@ -26,8 +26,10 @@ let $headBlockNumber = document.getElementById('head-block-number');
 let $reverseBlocksCount = document.getElementById('revers-blocks-count');
 let $mainPage = document.getElementById('main-page');
 let $recentBlocksTableTbody = document.getElementById('recent-blocks').getElementsByTagName('tbody')[0];
-let $aboutBlockTable = document.getElementById('about-block');
-let $aboutBlockTableTbody = $aboutBlockTable.getElementsByTagName('tbody')[0];
+let $aboutBlockPage = document.getElementById('about-block-page');
+let $aboutBlockCode = document.getElementById('about-block-code');
+let $aboutBlockTableTbody = document.getElementById('about-block').getElementsByTagName('tbody')[0];
+let $aboutBlockOperationsTableTbody = document.getElementById('about-block-operations-table').getElementsByTagName('tbody')[0];
 let $resetBlockBtn = document.getElementById('reset-block');
 let $resetAccountBtn = document.getElementById('reset-account');
 let $aboutAccountTable = document.getElementById('about-account');
@@ -104,7 +106,7 @@ let getLastBlockInterval = setInterval(function() {
 document.getElementById('search-block').addEventListener('submit', function(e) {
 	e.preventDefault();
 	$mainPage.style.display = 'none';
-	$aboutBlockTable.style.display = 'table';
+	$aboutBlockPage.style.display = 'block';
 	$resetBlockBtn.style.display = 'block';
 	let blockNumberVal = this.querySelector('.form-control[name="block-number"]').value;
 	//window.location.hash = 'block/' + blockNumberVal;
@@ -114,6 +116,14 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 	$recentBlocksInfo.style.display = 'none';
 	golos.api.getBlock(blockNumberVal, function(err, block) {
 		console.debug(err, 'getBlock: ', block);
+		let blockStr = JSON.stringify(block);
+		var editor = CodeMirror($aboutBlockCode, {
+			mode: 'application/json',
+			lineWrapping: true,
+			readOnly: true,
+			value: blockStr
+		});
+		editor.autoFormatRange({ch: 0, line: 0}, {ch: blockStr.length, line: 0});
 		if ( ! err) {
 			let operations = {};
 			let operationsCount = 0;
@@ -130,19 +140,32 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 			}
 			console.debug(blockNumberVal, block.timestamp, block.witness, block.transactions.length, operationsCount, operationsStr);
 
-			let $newRow = $aboutBlockTableTbody.insertRow(0);
+			document.getElementById('about-block-height').innerHTML = blockNumberVal;
+			document.getElementById('about-block-time').innerHTML = block.timestamp;
+			document.getElementById('about-block-witness').innerHTML = `<a href="#account/${block.witness}">${block.witness}</a>`;
+			document.getElementById('about-block-transactions').innerHTML = block.transactions.length;
+			document.getElementById('about-block-operations').innerHTML = operationsCount;
+
+			$newRow = $aboutBlockTableTbody.insertRow();
 			$newRow.innerHTML = `<tr>
-									<td>${blockNumberVal}</td>
-									<td>${block.timestamp}</td>
-									<td><a href="#account/${block.witness}">${block.witness}</a></td>
-									<td>${block.transactions.length}</td>
-									<td>${operationsCount}</td>
+									<td colspan="5"><span class="badge badge-secondary"></span> ${operationsStr}</td>
 								</tr>`;
 
-			$newRow = $aboutBlockTableTbody.insertRow(1);
-			$newRow.innerHTML = `<tr>
-									<td colspan="5"><span class="badge badge-secondary">Operations:</span> ${operationsStr}</td>
-								</tr>`;
+			block.transactions.forEach(function(transaction) {
+				transaction.operations.forEach(function(operation) {
+					$newRow = $aboutBlockOperationsTableTbody.insertRow();
+					$newRow.innerHTML = `<tr>
+											<td rowspan="${Object.keys(operation[1]).length + 1}">${operation[0]}</td>
+										</tr>`;
+					for (let keyOp in operation[1]) {
+						$newRow = $aboutBlockOperationsTableTbody.insertRow();
+						$newRow.innerHTML = `<tr>
+												<td>${keyOp}</td>
+												<td>${operation[1][keyOp]}</td>
+											</tr>`;
+					}
+				});
+			});
 		}
 		else swal({title: 'Error', type: 'error', text: err});
 	});
@@ -153,7 +176,7 @@ $resetBlockBtn.addEventListener('click', function() {
 	document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = '';
 	$resetBlockBtn.style.display = 'none';
 	$mainPage.style.display = 'flex';
-	$aboutBlockTable.style.display = 'none';
+	$aboutBlockPage.style.display = 'none';
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
 	$aboutAccountTable.style.display = 'none';
 	$resetAccountBtn.style.display = 'none';
@@ -171,7 +194,7 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 	//window.location.hash = 'account/' + usernameVal;
 	document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = '';
 	$resetBlockBtn.style.display = 'none';
-	$aboutBlockTable.style.display = 'none';
+	$aboutBlockPage.style.display = 'none';
 	let transfersCount = 0;
 	$aboutAccountTableTbody.innerHTML = '';
 	$recentBlocksInfo.style.display = 'none';
@@ -180,6 +203,7 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 		$loader.style.display = 'none';
 		if ( ! err) {
 			//transactions.reverse();
+			console.debug(transactions);
 			transactions.forEach(function(transaction) {
 				if (transaction[1].op[0] == 'transfer') {
 					transfersCount++;
@@ -206,7 +230,7 @@ $resetAccountBtn.addEventListener('click', function() {
 	document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = '';
 	$resetBlockBtn.style.display = 'none';
 	$mainPage.style.display = 'flex';
-	$aboutBlockTable.style.display = 'none';
+	$aboutBlockPage.style.display = 'none';
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
 	$aboutAccountTable.style.display = 'none';
 	$resetAccountBtn.style.display = 'none';
@@ -217,7 +241,7 @@ $resetAccountBtn.addEventListener('click', function() {
 document.getElementById('search-hex').addEventListener('submit', function(e) {
 	e.preventDefault();
 	$mainPage.style.display = 'none';
-	$aboutBlockTable.style.display = 'table';
+	$aboutBlockPage.style.display = 'block';
 	$resetHexBtn.style.display = 'block';
 	let hexNumberVal = this.querySelector('.form-control[name="hex-number"]').value;
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
@@ -272,7 +296,7 @@ $resetHexBtn.addEventListener('click', function() {
 	document.getElementById('search-hex').querySelector('.form-control[name="hex-number"]').value = '';
 	$resetHexBtn.style.display = 'none';
 	$mainPage.style.display = 'flex';
-	$aboutBlockTable.style.display = 'none';
+	$aboutBlockPage.style.display = 'none';
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
 	$aboutAccountTable.style.display = 'none';
 	$resetAccountBtn.style.display = 'none';

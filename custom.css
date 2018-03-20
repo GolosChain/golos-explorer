@@ -156,6 +156,6 @@ footer {
     }
 }
 
-#about-block, #reset-block, #about-account, #reset-account, #reset-hex, #reset-node-address {
+#about-block-page, #reset-block, #about-account, #reset-account, #reset-hex, #reset-node-address {
 	display: none;
 }
