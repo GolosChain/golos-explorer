@@ -5,8 +5,8 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" crossorigin="anonymous">
-		<link rel="stylesheet" href="https://codemirror.net/2/lib/codemirror.css">
-		<link rel="stylesheet" href="custom.css?4" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.35.0/lib/codemirror.min.css">
+		<link rel="stylesheet" href="custom.css" />
 	</head>
 	<body>
 		<header>
@@ -149,14 +149,6 @@
 				<div class="row">
 					<div class="col">
 						<div id="about-block-page">
-							<ul class="nav nav-tabs">
-								<li class="nav-item">
-									<a class="nav-link active" href="#">Operations</a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" href="#">JSON</a>
-								</li>
-							</ul>
 							<h5>Height <span class="badge badge-info" id="about-block-height">...</span></h5>
 							<h5>Time <span class="badge badge-info" id="about-block-time">...</span></h5>
 							<h5>Witness <span class="badge badge-info" id="about-block-witness">...</span></h5>
@@ -166,11 +158,25 @@
 								<tbody>
 								</tbody>
 							</table>
-							<table class="table table-bordered table-hover table-sm" id="about-block-operations-table">
-								<tbody>
-								</tbody>
-							</table>
-							<div id="about-block-code"></div>
+							<ul class="nav nav-tabs" id="myTab" role="tablist">
+								<li class="nav-item">
+									<a class="nav-link active" id="operations-tab" data-toggle="tab" href="#operations" role="tab" aria-controls="operations" aria-selected="true">Operations</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="json-tab" data-toggle="tab" href="#json" href="#json" role="tab" aria-controls="json" aria-selected="false">JSON</a>
+								</li>
+							</ul>
+							<div class="tab-content" id="myTabContent">
+								<div class="tab-pane fade show active" id="operations" role="tabpanel" aria-labelledby="operations-tab">
+									<table class="table table-bordered table-hover table-sm" id="about-block-operations-table">
+										<tbody>
+										</tbody>
+									</table>
+								</div>
+								<div class="tab-pane fade" id="json" role="tabpanel" aria-labelledby="json-tab">
+									<div id="about-block-code"></div>
+								</div>
+							</div>
 						</div>
 						<table class="table table-bordered table-hover table-sm" id="about-account">
 							<thead>
@@ -209,9 +215,8 @@
 		<script src="https://cdn.jsdelivr.net/npm/golos-js@0.6.1/dist/golos.min.js"></script>
 		<script src="https://thednp.github.io/bootstrap.native/dist/bootstrap-native-v4.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.13.1/dist/sweetalert2.all.min.js"></script>
-		<script src="https://codemirror.net/2/lib/codemirror.js"></script>
-		<script src="https://codemirror.net/2/lib/util/formatting.js"></script>
-		<script src="https://codemirror.net/2/mode/javascript/javascript.js"></script>
-		<script src="app.js?4"></script>
+		<script src="https://cdn.jsdelivr.net/npm/codemirror@5.35.0/lib/codemirror.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/codemirror@5.35.0/mode/javascript/javascript.min.js"></script>
+		<script src="app.js"></script>
 	</body>
 </html>

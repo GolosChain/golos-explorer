@@ -34,6 +34,11 @@ let $resetBlockBtn = document.getElementById('reset-block');
 let $resetAccountBtn = document.getElementById('reset-account');
 let $aboutAccountTable = document.getElementById('about-account');
 let $aboutAccountTableTbody = $aboutAccountTable.getElementsByTagName('tbody')[0];
+let $aboutBlockHeight = document.getElementById('about-block-height');
+let $aboutBlockTime = document.getElementById('about-block-time');
+let $aboutBlockWitness = document.getElementById('about-block-witness');
+let $aboutBlockTransactions = document.getElementById('about-block-transactions');
+let $aboutBlockOperations = document.getElementById('about-block-operations');
 let $loader = document.getElementsByClassName('lding')[0];
 let $recentBlocksInfo = document.getElementById('recent-blocks-info');
 let $resetHexBtn = document.getElementById('reset-hex');
@@ -103,6 +108,17 @@ let getLastBlockInterval = setInterval(function() {
 
 }, 1000);
 
+let editor;
+
+let $aboutBlockTabs = document.querySelectorAll('a[data-toggle="tab"]');
+for (var i = 0; i < $aboutBlockTabs.length; i++) {
+	$aboutBlockTabs[i].addEventListener('shown.bs.tab', function(e) {
+		if (e.target.getAttribute('aria-controls') == 'json') {
+			editor.setCursor(0);
+		}
+	});
+}
+
 document.getElementById('search-block').addEventListener('submit', function(e) {
 	e.preventDefault();
 	$mainPage.style.display = 'none';
@@ -117,7 +133,7 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 	golos.api.getBlock(blockNumberVal, function(err, block) {
 		console.debug(err, 'getBlock: ', block);
 		let blockStr = JSON.stringify(block);
-		var editor = CodeMirror($aboutBlockCode, {
+		editor = CodeMirror($aboutBlockCode, {
 			mode: 'application/json',
 			lineWrapping: true,
 			readOnly: true,
@@ -140,11 +156,11 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 			}
 			console.debug(blockNumberVal, block.timestamp, block.witness, block.transactions.length, operationsCount, operationsStr);
 
-			document.getElementById('about-block-height').innerHTML = blockNumberVal;
-			document.getElementById('about-block-time').innerHTML = block.timestamp;
-			document.getElementById('about-block-witness').innerHTML = `<a href="#account/${block.witness}">${block.witness}</a>`;
-			document.getElementById('about-block-transactions').innerHTML = block.transactions.length;
-			document.getElementById('about-block-operations').innerHTML = operationsCount;
+			$aboutBlockHeight.innerHTML = blockNumberVal;
+			$aboutBlockTime.innerHTML = block.timestamp;
+			$aboutBlockWitness.innerHTML = `<a href="#account/${block.witness}">${block.witness}</a>`;
+			$aboutBlockTransactions.innerHTML = block.transactions.length;
+			$aboutBlockOperations.innerHTML = operationsCount;
 
 			$newRow = $aboutBlockTableTbody.insertRow();
 			$newRow.innerHTML = `<tr>
@@ -155,7 +171,7 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 				transaction.operations.forEach(function(operation) {
 					$newRow = $aboutBlockOperationsTableTbody.insertRow();
 					$newRow.innerHTML = `<tr>
-											<td rowspan="${Object.keys(operation[1]).length + 1}">${operation[0]}</td>
+											<td rowspan="${Object.keys(operation[1]).length + 1}"><b>${operation[0]}</b></td>
 										</tr>`;
 					for (let keyOp in operation[1]) {
 						$newRow = $aboutBlockOperationsTableTbody.insertRow();
@@ -353,3 +369,62 @@ window.addEventListener('hashchange', function() {
 	}
 });
 window.dispatchEvent(new CustomEvent('hashchange'));
+
+// CodeMirror beautifier
+(function() {
+
+  CodeMirror.extendMode("javascript", {
+    commentStart: "/*",
+    commentEnd: "*/",
+    // FIXME semicolons inside of for
+    newlineAfterToken: function(type, content, textAfter, state) {
+      if (this.jsonMode) {
+        return /^[\[,{]$/.test(content) || /^}/.test(textAfter);
+      } else {
+        if (content == ";" && state.lexical && state.lexical.type == ")") return false;
+        return /^[;{}]$/.test(content) && !/^;/.test(textAfter);
+      }
+    }
+  });
+
+  // Applies automatic formatting to the specified range
+  CodeMirror.defineExtension("autoFormatRange", function (from, to) {
+    var cm = this;
+    var outer = cm.getMode(), text = cm.getRange(from, to).split("\n");
+    var state = CodeMirror.copyState(outer, cm.getTokenAt(from).state);
+    var tabSize = cm.getOption("tabSize");
+
+    var out = "", lines = 0, atSol = from.ch == 0;
+    function newline() {
+      out += "\n";
+      atSol = true;
+      ++lines;
+    }
+
+    for (var i = 0; i < text.length; ++i) {
+      var stream = new CodeMirror.StringStream(text[i], tabSize);
+      while (!stream.eol()) {
+        var inner = CodeMirror.innerMode(outer, state);
+        var style = outer.token(stream, state), cur = stream.current();
+        stream.start = stream.pos;
+        if (!atSol || /\S/.test(cur)) {
+          out += cur;
+          atSol = false;
+        }
+        if (!atSol && inner.mode.newlineAfterToken &&
+            inner.mode.newlineAfterToken(style, cur, stream.string.slice(stream.pos) || text[i+1] || "", inner.state))
+          newline();
+      }
+      if (!stream.pos && outer.blankLine) outer.blankLine(state);
+      if (!atSol) newline();
+    }
+
+    cm.operation(function () {
+      cm.replaceRange(out, from, to);
+      for (var cur = from.line + 1, end = from.line + lines; cur <= end; ++cur)
+        cm.indentLine(cur, "smart");
+      cm.setSelection(from, cm.getCursor(false));
+    });
+  });
+
+})();
