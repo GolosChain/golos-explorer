@@ -104,6 +104,10 @@ for (let i = 0; i < $aboutBlockTabs.length; i++) {
 }
 
 let getBlockFullInfo = function(blockNumberVal) {
+	$aboutBlockTableTbody.innerHTML = '';
+	$aboutBlockOperationsTableTbody.innerHTML = '';
+	$aboutBlockTransactionsTableTbody.innerHTML = '';
+	if (document.querySelector('.CodeMirror')) document.querySelector('.CodeMirror').remove();
 	golos.api.getBlock(blockNumberVal, function(err, block) {
 		if ( ! err) {
 			let blockStr = JSON.stringify(block);
