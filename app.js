@@ -103,17 +103,7 @@ for (let i = 0; i < $aboutBlockTabs.length; i++) {
 	});
 }
 
-document.getElementById('search-block').addEventListener('submit', function(e) {
-	e.preventDefault();
-	$mainPage.style.display = 'none';
-	$aboutBlockPage.style.display = 'block';
-	$resetBlockBtn.style.display = 'block';
-	let blockNumberVal = this.querySelector('.form-control[name="block-number"]').value;
-	//window.location.hash = 'block/' + blockNumberVal;
-	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
-	$aboutAccountTable.style.display = 'none';
-	$resetAccountBtn.style.display = 'none';
-	$recentBlocksInfo.style.display = 'none';
+let getBlockFullInfo = function(blockNumberVal) {
 	golos.api.getBlock(blockNumberVal, function(err, block) {
 		if ( ! err) {
 			let blockStr = JSON.stringify(block);
@@ -181,12 +171,57 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 			else swal({title: 'Error', type: 'error', text: err});
 		}
 	});
+}
+
+document.getElementById('search-block').addEventListener('submit', function(e) {
+	e.preventDefault();
+	$mainPage.style.display = 'none';
+	$aboutBlockPage.style.display = 'block';
+	$resetBlockBtn.style.display = 'block';
+	let blockNumberVal = this.querySelector('.form-control[name="block-number"]').value;
+	//window.location.hash = 'block/' + blockNumberVal;
+	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
+	$aboutAccountTable.style.display = 'none';
+	$resetAccountBtn.style.display = 'none';
+	$recentBlocksInfo.style.display = 'none';
+	getBlockFullInfo(blockNumberVal);
 	return false;
 });
 
 $resetBlockBtn.addEventListener('click', function() {
 	document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = '';
 	$resetBlockBtn.style.display = 'none';
+	$mainPage.style.display = 'flex';
+	$aboutBlockPage.style.display = 'none';
+	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
+	$aboutAccountTable.style.display = 'none';
+	$resetAccountBtn.style.display = 'none';
+	$recentBlocksInfo.style.display = 'block';
+	window.location.hash = '';
+});
+
+document.getElementById('search-hex').addEventListener('submit', function(e) {
+	e.preventDefault();
+	$mainPage.style.display = 'none';
+	$aboutBlockPage.style.display = 'block';
+	$resetHexBtn.style.display = 'block';
+	let hexNumberVal = this.querySelector('.form-control[name="hex-number"]').value;
+	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
+	$aboutAccountTable.style.display = 'none';
+	$resetAccountBtn.style.display = 'none';
+	$recentBlocksInfo.style.display = 'none';
+	golos.api.getTransaction(hexNumberVal, function(err, result) {
+		if ( ! err) {
+			getBlockFullInfo(result.block_num);
+		}
+		else swal({title: 'Error', type: 'error', text: err});
+	});
+	return false;
+});
+
+$resetHexBtn.addEventListener('click', function() {
+	document.getElementById('search-hex').querySelector('.form-control[name="hex-number"]').value = '';
+	$resetHexBtn.style.display = 'none';
 	$mainPage.style.display = 'flex';
 	$aboutBlockPage.style.display = 'none';
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
@@ -238,69 +273,6 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 $resetAccountBtn.addEventListener('click', function() {
 	document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = '';
 	$resetBlockBtn.style.display = 'none';
-	$mainPage.style.display = 'flex';
-	$aboutBlockPage.style.display = 'none';
-	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
-	$aboutAccountTable.style.display = 'none';
-	$resetAccountBtn.style.display = 'none';
-	$recentBlocksInfo.style.display = 'block';
-	window.location.hash = '';
-});
-
-document.getElementById('search-hex').addEventListener('submit', function(e) {
-	e.preventDefault();
-	$mainPage.style.display = 'none';
-	$aboutBlockPage.style.display = 'block';
-	$resetHexBtn.style.display = 'block';
-	let hexNumberVal = this.querySelector('.form-control[name="hex-number"]').value;
-	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
-	$aboutAccountTable.style.display = 'none';
-	$resetAccountBtn.style.display = 'none';
-	$recentBlocksInfo.style.display = 'none';
-	golos.api.getTransaction(hexNumberVal, function(err, result) {
-		if ( ! err) {
-			let blockNumberVal = result.block_num;
-			golos.api.getBlock(blockNumberVal, function(err, block) {
-				if ( ! err) {
-					let operations = {};
-					let operationsCount = 0;
-					block.transactions.forEach(function(transaction) {
-						transaction.operations.forEach(function(operation) {
-							if ( ! operations[operation[0]]) operations[operation[0]] = 0;
-							operations[operation[0]]++;
-							operationsCount++;
-						});
-					});
-					let operationsStr = '';
-					for (let key in operations) {
-						operationsStr += `<a class="btn btn-outline-secondary btn-sm">${key} <span class="badge badge-secondary">${operations[key]}</span></a> `; 
-					}
-
-					let $newRow = $aboutBlockTableTbody.insertRow(0);
-					$newRow.innerHTML = `<tr>
-											<td><a href="#">${blockNumberVal}</a></td>
-											<td>${block.timestamp}</td>
-											<td><a href="#">${block.witness}</a></td>
-											<td>${block.transactions.length}</td>
-											<td>${operationsCount}</td>
-										</tr>`;
-
-					$newRow = $aboutBlockTableTbody.insertRow(1);
-					$newRow.innerHTML = `<tr>
-											<td colspan="5"><span class="badge badge-secondary">Operations:</span> ${operationsStr}</td>
-										</tr>`;
-				}
-				else swal({title: 'Error', type: 'error', text: err});
-			});
-		}
-		else swal({title: 'Error', type: 'error', text: err});
-	});
-	return false;
-});
-
-$resetHexBtn.addEventListener('click', function() {
-	document.getElementById('search-hex').querySelector('.form-control[name="hex-number"]').value = '';
-	$resetHexBtn.style.display = 'none';
 	$mainPage.style.display = 'flex';
 	$aboutBlockPage.style.display = 'none';
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
