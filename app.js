@@ -43,51 +43,53 @@ let getChainProperties = function() {
 }
 getChainProperties();
 
-let lastBlock;
-golos.api.streamBlockNumber(function(err, block) {
-	lastBlock = block;
+golos.api.streamBlockNumber(function(err, lastBlock) {
+	if ( ! err) {
+		golos.api.getBlock(lastBlock, function(err, block) {
+			if ( ! err) {
+				let operations = {};
+				let operationsCount = 0;
+				block.transactions.forEach(function(transaction) {
+					transaction.operations.forEach(function(operation) {
+						if ( ! operations[operation[0]]) operations[operation[0]] = 0;
+						operations[operation[0]]++;
+						operationsCount++;
+					});
+				});
+				let operationsStr = '';
+				for (let key in operations) {
+					operationsStr += `<a class="btn btn-outline-info btn-sm">${key} <span class="badge badge-info">${operations[key]}</span></a> `; 
+				}
+
+				let $newRow = $recentBlocksTableTbody.insertRow(0);
+				$newRow.innerHTML = `<tr>
+										<td><a href="#block/${lastBlock}">${lastBlock}</a></td>
+										<td>${block.timestamp}</td>
+										<td><a href="#account/${block.witness}">${block.witness}</a></td>
+										<td>${block.transactions.length}</td>
+										<td>${operationsCount}</td>
+									</tr>`;
+
+				$newRow = $recentBlocksTableTbody.insertRow(1);
+				if (operationsStr) $newRow.innerHTML = `<tr>
+										<td colspan="5">${operationsStr}</td>
+									</tr>`;
+			}
+		});
+	}
 	
 	golos.api.getDynamicGlobalProperties(function(err, properties) {
-		for (let key in properties) {
-			let prop = $globalPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
-			if (prop) prop.innerHTML = properties[key];
+		if ( ! err) {
+			for (let key in properties) {
+				let prop = $globalPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
+				if (prop) prop.innerHTML = properties[key];
+			}
+			let reverseBlockCount = properties.head_block_number - properties.last_irreversible_block_num;
+			$headBlockNumber.innerHTML = properties.head_block_number;
+			$reverseBlocksCount.innerHTML = reverseBlockCount;
 		}
-		let reverseBlockCount = properties.head_block_number - properties.last_irreversible_block_num;
-		$headBlockNumber.innerHTML = properties.head_block_number;
-		$reverseBlocksCount.innerHTML = reverseBlockCount;
 	});
-});
-
-golos.api.streamBlock(function(err, block) {
 	
-	let operations = {};
-	let operationsCount = 0;
-	block.transactions.forEach(function(transaction) {
-		transaction.operations.forEach(function(operation) {
-			if ( ! operations[operation[0]]) operations[operation[0]] = 0;
-			operations[operation[0]]++;
-			operationsCount++;
-		});
-	});
-	let operationsStr = '';
-	for (let key in operations) {
-		operationsStr += `<a class="btn btn-outline-info btn-sm">${key} <span class="badge badge-info">${operations[key]}</span></a> `; 
-	}
-
-	let $newRow = $recentBlocksTableTbody.insertRow(0);
-	$newRow.innerHTML = `<tr>
-							<td><a href="#block/${lastBlock}">${lastBlock}</a></td>
-							<td>${block.timestamp}</td>
-							<td><a href="#account/${block.witness}">${block.witness}</a></td>
-							<td>${block.transactions.length}</td>
-							<td>${operationsCount}</td>
-						</tr>`;
-
-	$newRow = $recentBlocksTableTbody.insertRow(1);
-	if (operationsStr) $newRow.innerHTML = `<tr>
-							<td colspan="5">${operationsStr}</td>
-						</tr>`;
-
 });
 
 let editor;
@@ -113,69 +115,71 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'none';
 	golos.api.getBlock(blockNumberVal, function(err, block) {
-		let blockStr = JSON.stringify(block);
-		editor = CodeMirror($aboutBlockCode, {
-			mode: 'application/json',
-			lineWrapping: true,
-			readOnly: true,
-			value: blockStr
-		});
-		editor.autoFormatRange({ch: 0, line: 0}, {ch: blockStr.length, line: 0});
 		if ( ! err) {
-			let operations = {};
-			let operationsCount = 0;
-			block.transactions.forEach(function(transaction) {
-				transaction.operations.forEach(function(operation) {
-					if ( ! operations[operation[0]]) operations[operation[0]] = 0;
-					operations[operation[0]]++;
-					operationsCount++;
-				});
+			let blockStr = JSON.stringify(block);
+			editor = CodeMirror($aboutBlockCode, {
+				mode: 'application/json',
+				lineWrapping: true,
+				readOnly: true,
+				value: blockStr
 			});
-			let operationsStr = '';
-			for (let key in operations) {
-				operationsStr += `<a class="btn btn-outline-secondary btn-sm">${key} <span class="badge badge-secondary">${operations[key]}</span></a> `; 
-			}
+			editor.autoFormatRange({ch: 0, line: 0}, {ch: blockStr.length, line: 0});
+			if ( ! err) {
+				let operations = {};
+				let operationsCount = 0;
+				block.transactions.forEach(function(transaction) {
+					transaction.operations.forEach(function(operation) {
+						if ( ! operations[operation[0]]) operations[operation[0]] = 0;
+						operations[operation[0]]++;
+						operationsCount++;
+					});
+				});
+				let operationsStr = '';
+				for (let key in operations) {
+					operationsStr += `<a class="btn btn-outline-secondary btn-sm">${key} <span class="badge badge-secondary">${operations[key]}</span></a> `; 
+				}
 
-			$aboutBlockHeight.innerHTML = blockNumberVal;
-			$aboutBlockTime.innerHTML = block.timestamp;
-			$aboutBlockWitness.innerHTML = `<a href="#account/${block.witness}">${block.witness}</a>`;
-			$aboutBlockTransactions.innerHTML = block.transactions.length;
-			$aboutBlockOperations.innerHTML = operationsCount;
+				$aboutBlockHeight.innerHTML = blockNumberVal;
+				$aboutBlockTime.innerHTML = block.timestamp;
+				$aboutBlockWitness.innerHTML = `<a href="#account/${block.witness}">${block.witness}</a>`;
+				$aboutBlockTransactions.innerHTML = block.transactions.length;
+				$aboutBlockOperations.innerHTML = operationsCount;
 
-			$newRow = $aboutBlockTableTbody.insertRow();
-			$newRow.innerHTML = `<tr>
-									<td colspan="5"><span class="badge badge-secondary"></span> ${operationsStr}</td>
-								</tr>`;
+				$newRow = $aboutBlockTableTbody.insertRow();
+				$newRow.innerHTML = `<tr>
+										<td colspan="5"><span class="badge badge-secondary"></span> ${operationsStr}</td>
+									</tr>`;
 
-			block.transactions.forEach(function(transaction) {
-				transaction.operations.forEach(function(operation) {
-					$newRow = $aboutBlockOperationsTableTbody.insertRow();
-					$newRow.innerHTML = `<tr>
-											<td rowspan="${Object.keys(operation[1]).length + 1}"><b>${operation[0]}</b></td>
-										</tr>`;
-					for (let keyOp in operation[1]) {
+				block.transactions.forEach(function(transaction) {
+					transaction.operations.forEach(function(operation) {
 						$newRow = $aboutBlockOperationsTableTbody.insertRow();
 						$newRow.innerHTML = `<tr>
-												<td>${keyOp}</td>
-												<td>${operation[1][keyOp]}</td>
+												<td rowspan="${Object.keys(operation[1]).length + 1}"><b>${operation[0]}</b></td>
+											</tr>`;
+						for (let keyOp in operation[1]) {
+							$newRow = $aboutBlockOperationsTableTbody.insertRow();
+							$newRow.innerHTML = `<tr>
+													<td>${keyOp}</td>
+													<td>${operation[1][keyOp]}</td>
+												</tr>`;
+						}
+					});
+					//
+					for (let keyTr in transaction) {
+						if (keyTr == 'operations') transaction[keyTr] = JSON.stringify(transaction[keyTr]);
+						$newRow = $aboutBlockTransactionsTableTbody.insertRow();
+						$newRow.innerHTML = `<tr>
+												<td><b>${keyTr}</b></td>
+												<td>${transaction[keyTr]}</td>
 											</tr>`;
 					}
-				});
-				//
-				for (let keyTr in transaction) {
-					if (keyTr == 'operations') transaction[keyTr] = JSON.stringify(transaction[keyTr]);
 					$newRow = $aboutBlockTransactionsTableTbody.insertRow();
-					$newRow.innerHTML = `<tr>
-											<td><b>${keyTr}</b></td>
-											<td>${transaction[keyTr]}</td>
-										</tr>`;
-				}
-				$newRow = $aboutBlockTransactionsTableTbody.insertRow();
-				$newRow.className = 'table-active';
-				$newRow.innerHTML = `<tr><td colspan="2">&nbsp;</td></tr>`;
-			});
+					$newRow.className = 'table-active';
+					$newRow.innerHTML = `<tr><td colspan="2">&nbsp;</td></tr>`;
+				});
+			}
+			else swal({title: 'Error', type: 'error', text: err});
 		}
-		else swal({title: 'Error', type: 'error', text: err});
 	});
 	return false;
 });
