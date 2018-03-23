@@ -17,8 +17,8 @@ let $aboutBlockOperationsTableTbody = document.getElementById('about-block-opera
 let $aboutBlockTransactionsTableTbody = document.getElementById('about-block-transactions-table').getElementsByTagName('tbody')[0];
 let $resetBlockBtn = document.getElementById('reset-block');
 let $resetAccountBtn = document.getElementById('reset-account');
-let $aboutAccountTable = document.getElementById('about-account');
-let $aboutAccountTableTbody = $aboutAccountTable.getElementsByTagName('tbody')[0];
+let $aboutAccountPage = document.getElementById('about-account-page');
+let $aboutAccountTableTbody = document.getElementById('about-account').getElementsByTagName('tbody')[0];
 let $aboutBlockHeight = document.getElementById('about-block-height');
 let $aboutBlockTime = document.getElementById('about-block-time');
 let $aboutBlockWitness = document.getElementById('about-block-witness');
@@ -30,6 +30,9 @@ let $resetHexBtn = document.getElementById('reset-hex');
 let $resetNodeAddress = document.getElementById('reset-node-address');
 let $globalPropertiesTableTbody = document.getElementById('global-properties').getElementsByTagName('tbody')[0];
 let $chainPropertiesTableTbody = document.getElementById('chain-properties').getElementsByTagName('tbody')[0];
+let $aboutAccountAllCount = document.getElementById('about-account-all-count');
+let $aboutAccountCount = document.getElementById('about-account-count');
+let $aboutAccountFilteredCount = document.getElementById('about-account-filtered-count');
 
 let getChainProperties = function() {
 	golos.api.getChainProperties(function(err, properties) {
@@ -185,7 +188,7 @@ document.getElementById('search-block').addEventListener('submit', function(e) {
 	let blockNumberVal = this.querySelector('.form-control[name="block-number"]').value;
 	//window.location.hash = 'block/' + blockNumberVal;
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
-	$aboutAccountTable.style.display = 'none';
+	$aboutAccountPage.style.display = 'none';
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'none';
 	getBlockFullInfo(blockNumberVal);
@@ -198,7 +201,7 @@ $resetBlockBtn.addEventListener('click', function() {
 	$mainPage.style.display = 'flex';
 	$aboutBlockPage.style.display = 'none';
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
-	$aboutAccountTable.style.display = 'none';
+	$aboutAccountPage.style.display = 'none';
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'block';
 	window.location.hash = '';
@@ -211,7 +214,7 @@ document.getElementById('search-hex').addEventListener('submit', function(e) {
 	$resetHexBtn.style.display = 'block';
 	let hexNumberVal = this.querySelector('.form-control[name="hex-number"]').value;
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
-	$aboutAccountTable.style.display = 'none';
+	$aboutAccountPage.style.display = 'none';
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'none';
 	golos.api.getTransaction(hexNumberVal, function(err, result) {
@@ -229,7 +232,7 @@ $resetHexBtn.addEventListener('click', function() {
 	$mainPage.style.display = 'flex';
 	$aboutBlockPage.style.display = 'none';
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
-	$aboutAccountTable.style.display = 'none';
+	$aboutAccountPage.style.display = 'none';
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'block';
 	window.location.hash = '';
@@ -239,7 +242,7 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 	e.preventDefault();
 	$loader.style.display = 'block';
 	$mainPage.style.display = 'none';
-	$aboutAccountTable.style.display = 'block';
+	$aboutAccountPage.style.display = 'block';
 	$resetAccountBtn.style.display = 'block';
 	let usernameVal = this.querySelector('.form-control[name="account-username"]').value;
 	//window.location.hash = 'account/' + usernameVal;
@@ -249,7 +252,7 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 	let transfersCount = 0;
 	$aboutAccountTableTbody.innerHTML = '';
 	$recentBlocksInfo.style.display = 'none';
-	golos.api.getAccountHistory(usernameVal, -1, 100, function(err, transactions) {
+	golos.api.getAccountHistory(usernameVal, -1, 99, function(err, transactions) {
 		$loader.style.display = 'none';
 		if ( ! err) {
 			//transactions.reverse();
@@ -267,7 +270,17 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 								</tr>`;
 				}
 			});
-			if (transfersCount == 0) swal({title: 'Error', type: 'error', text: 'This account did not make any translations!'});
+			if (transactions) {
+				let transactionsCount = transactions.length;
+				let transactionsAllCount = transactions[transactionsCount - 1][0];
+				$aboutAccountAllCount.innerHTML = transactionsAllCount;
+				$aboutAccountCount.innerHTML = transactionsCount;
+				$aboutAccountFilteredCount.innerHTML = transfersCount;
+				if (transactionsAllCount > transactionsCount) {
+					// pagination
+				}
+			}
+			if (transfersCount == 0) swal({title: 'Error', type: 'error', text: 'This account did not make any transfers!'});
 		}
 		else swal({title: 'Error', type: 'error', text: err});
 	});
@@ -280,7 +293,7 @@ $resetAccountBtn.addEventListener('click', function() {
 	$mainPage.style.display = 'flex';
 	$aboutBlockPage.style.display = 'none';
 	document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = '';
-	$aboutAccountTable.style.display = 'none';
+	$aboutAccountPage.style.display = 'none';
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'block';
 	window.location.hash = '';
