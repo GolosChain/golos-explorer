@@ -50,6 +50,12 @@ html {
 .icon-cross:before {
   content: "\ea0f";
 }
+.icon-play3:before {
+  content: "\ea1c";
+}
+.icon-pause2:before {
+  content: "\ea1d";
+}
 
 footer {
 	position: absolute;

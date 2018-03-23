@@ -34,6 +34,20 @@ let $aboutAccountAllCount = document.getElementById('about-account-all-count');
 let $aboutAccountCount = document.getElementById('about-account-count');
 let $aboutAccountFilteredCount = document.getElementById('about-account-filtered-count');
 
+let workRealTime = true;
+document.getElementById('change-work-real-time').addEventListener('click', function() {
+	if (workRealTime) {
+		workRealTime = false;
+		this.innerHTML = '<span class="icon-play3"></span> Start monitoring';
+		this.className = 'btn btn-success btn-sm float-right';
+	}
+	else {
+		workRealTime = true;
+		this.innerHTML = '<span class="icon-pause2"></span> Pause monitoring';
+		this.className = 'btn btn-secondary btn-sm float-right';
+	}
+});
+
 let getChainProperties = function() {
 	golos.api.getChainProperties(function(err, properties) {
 		if ( ! err) {
@@ -49,7 +63,7 @@ getChainProperties();
 golos.api.streamBlockNumber(function(err, lastBlock) {
 	if ( ! err) {
 		golos.api.getBlock(lastBlock, function(err, block) {
-			if ( ! err) {
+			if ( ! err && workRealTime) {
 				let operations = {};
 				let operationsCount = 0;
 				block.transactions.forEach(function(transaction) {
