@@ -109,32 +109,16 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 	
 });
 
-let editor;
-
-let $aboutBlockTabs = document.querySelectorAll('a[data-toggle="tab"]');
-for (let i = 0; i < $aboutBlockTabs.length; i++) {
-	$aboutBlockTabs[i].addEventListener('shown.bs.tab', function(e) {
-		if (e.target.getAttribute('aria-controls') == 'json') {
-			editor.setCursor(0);
-		}
-	});
-}
-
 let getBlockFullInfo = function(blockNumberVal) {
 	$aboutBlockTableTbody.innerHTML = '';
 	$aboutBlockOperationsTableTbody.innerHTML = '';
 	$aboutBlockTransactionsTableTbody.innerHTML = '';
-	if (document.querySelector('.CodeMirror')) document.querySelector('.CodeMirror').remove();
 	golos.api.getBlock(blockNumberVal, function(err, block) {
 		if ( ! err) {
 			let blockStr = JSON.stringify(block);
-			editor = CodeMirror($aboutBlockCode, {
-				mode: 'application/json',
-				lineWrapping: true,
-				readOnly: true,
-				value: blockStr
-			});
-			editor.autoFormatRange({ch: 0, line: 0}, {ch: blockStr.length, line: 0});
+			blockStr = js_beautify(blockStr);
+			$aboutBlockCode.innerHTML = blockStr;
+			hljs.highlightBlock($aboutBlockCode);
 			if ( ! err) {
 				let operations = {};
 				let operationsCount = 0;
@@ -359,62 +343,3 @@ window.addEventListener('hashchange', function() {
 	}
 });
 window.dispatchEvent(new CustomEvent('hashchange'));
-
-// CodeMirror beautifier
-(function() {
-
-  CodeMirror.extendMode("javascript", {
-    commentStart: "/*",
-    commentEnd: "*/",
-    // FIXME semicolons inside of for
-    newlineAfterToken: function(type, content, textAfter, state) {
-      if (this.jsonMode) {
-        return /^[\[,{]$/.test(content) || /^}/.test(textAfter);
-      } else {
-        if (content == ";" && state.lexical && state.lexical.type == ")") return false;
-        return /^[;{}]$/.test(content) && !/^;/.test(textAfter);
-      }
-    }
-  });
-
-  // Applies automatic formatting to the specified range
-  CodeMirror.defineExtension("autoFormatRange", function (from, to) {
-    var cm = this;
-    var outer = cm.getMode(), text = cm.getRange(from, to).split("\n");
-    var state = CodeMirror.copyState(outer, cm.getTokenAt(from).state);
-    var tabSize = cm.getOption("tabSize");
-
-    var out = "", lines = 0, atSol = from.ch == 0;
-    function newline() {
-      out += "\n";
-      atSol = true;
-      ++lines;
-    }
-
-    for (var i = 0; i < text.length; ++i) {
-      var stream = new CodeMirror.StringStream(text[i], tabSize);
-      while (!stream.eol()) {
-        var inner = CodeMirror.innerMode(outer, state);
-        var style = outer.token(stream, state), cur = stream.current();
-        stream.start = stream.pos;
-        if (!atSol || /\S/.test(cur)) {
-          out += cur;
-          atSol = false;
-        }
-        if (!atSol && inner.mode.newlineAfterToken &&
-            inner.mode.newlineAfterToken(style, cur, stream.string.slice(stream.pos) || text[i+1] || "", inner.state))
-          newline();
-      }
-      if (!stream.pos && outer.blankLine) outer.blankLine(state);
-      if (!atSol) newline();
-    }
-
-    cm.operation(function () {
-      cm.replaceRange(out, from, to);
-      for (var cur = from.line + 1, end = from.line + lines; cur <= end; ++cur)
-        cm.indentLine(cur, "smart");
-      cm.setSelection(from, cm.getCursor(false));
-    });
-  });
-
-})();
