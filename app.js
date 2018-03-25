@@ -84,6 +84,7 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 					operationsStr += `<a class="btn btn-outline-info btn-sm">${key} <span class="badge badge-info">${operations[key]}</span></a> `; 
 				}
 				let $newRow = $recentBlocksTableTbody.insertRow(0);
+				$newRow.className = 'table-secondary';
 				$newRow.innerHTML = `<tr>
 										<td><a href="#block/${lastBlock}">${lastBlock}</a></td>
 										<td>${block.timestamp}</td>
@@ -133,7 +134,7 @@ let getBlockFullInfo = function(blockNumberVal) {
 	$aboutBlockOperationsTableTbody.innerHTML = '';
 	$aboutBlockTransactionsTableTbody.innerHTML = '';
 	golos.api.getBlock(blockNumberVal, function(err, block) {
-		if ( ! err) {
+		if (block) {
 			let blockStr = JSON.stringify(block);
 			blockStr = js_beautify(blockStr);
 			$aboutBlockCode.innerHTML = blockStr;
@@ -193,6 +194,10 @@ let getBlockFullInfo = function(blockNumberVal) {
 				});
 			}
 			else swal({title: 'Error', type: 'error', text: err});
+		}
+		else {
+			if ( ! err) err = 'Block not found!';
+			swal({title: 'Error', type: 'error', text: err});
 		}
 	});
 }
@@ -271,7 +276,7 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 	$recentBlocksInfo.style.display = 'none';
 	golos.api.getAccountHistory(usernameVal, -1, 99, function(err, transactions) {
 		$loader.style.display = 'none';
-		if ( ! err) {
+		if (transactions.length > 0) {
 			//transactions.reverse();
 			transactions.forEach(function(transaction) {
 				if (transaction[1].op[0] == 'transfer') {
@@ -300,7 +305,10 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 			}
 			if (transfersCount == 0) swal({title: 'Error', type: 'error', text: 'This account did not make any transfers!'});
 		}
-		else swal({title: 'Error', type: 'error', text: err});
+		else {
+			if ( ! err) err = 'Account not found!';
+			swal({title: 'Error', type: 'error', text: err});
+		}
 	});
 	return false;
 });
