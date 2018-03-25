@@ -134,6 +134,7 @@ let getBlockFullInfo = function(blockNumberVal) {
 	$aboutBlockOperationsTableTbody.innerHTML = '';
 	$aboutBlockTransactionsTableTbody.innerHTML = '';
 	golos.api.getBlock(blockNumberVal, function(err, block) {
+		loadingHide();
 		if (block) {
 			let blockStr = JSON.stringify(block);
 			blockStr = js_beautify(blockStr);
@@ -204,6 +205,7 @@ let getBlockFullInfo = function(blockNumberVal) {
 
 document.getElementById('search-block').addEventListener('submit', function(e) {
 	e.preventDefault();
+	loadingShow();
 	$mainPage.style.display = 'none';
 	$aboutBlockPage.style.display = 'block';
 	$resetBlockBtn.style.display = 'block';
@@ -231,6 +233,7 @@ $resetBlockBtn.addEventListener('click', function() {
 
 document.getElementById('search-hex').addEventListener('submit', function(e) {
 	e.preventDefault();
+	loadingShow();
 	$mainPage.style.display = 'none';
 	$aboutBlockPage.style.display = 'block';
 	$resetHexBtn.style.display = 'block';
@@ -240,6 +243,7 @@ document.getElementById('search-hex').addEventListener('submit', function(e) {
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'none';
 	golos.api.getTransaction(hexNumberVal, function(err, result) {
+		loadingHide();
 		if ( ! err) {
 			getBlockFullInfo(result.block_num);
 		}
@@ -260,9 +264,16 @@ $resetHexBtn.addEventListener('click', function() {
 	window.location.hash = '';
 });
 
+let loadingShow = function() {
+	$loader.style.display = 'block';
+};
+let loadingHide = function() {
+	$loader.style.display = 'none';
+};
+
 document.getElementById('search-account').addEventListener('submit', function(e) {
 	e.preventDefault();
-	$loader.style.display = 'block';
+	loadingShow();
 	$mainPage.style.display = 'none';
 	$aboutAccountPage.style.display = 'block';
 	$resetAccountBtn.style.display = 'block';
@@ -275,7 +286,7 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 	$aboutAccountTableTbody.innerHTML = '';
 	$recentBlocksInfo.style.display = 'none';
 	golos.api.getAccountHistory(usernameVal, -1, 99, function(err, transactions) {
-		$loader.style.display = 'none';
+		loadingHide();
 		if (transactions.length > 0) {
 			//transactions.reverse();
 			transactions.forEach(function(transaction) {
