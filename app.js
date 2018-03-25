@@ -377,19 +377,21 @@ $resetNodeAddress.addEventListener('click', function() {
 window.addEventListener('hashchange', function() {
 	let hash = window.location.hash.substring(1);
 	if (hash) {
-		if (hash.split('/')[1]) {
-			let paramVal = hash.split('/')[1];
-			if (hash.search('block') != -1) {
-				document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = paramVal;
-				document.getElementById('search-block').dispatchEvent(new CustomEvent('submit'));
-			}
-			else if (hash.search('account') != -1) {
-				document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = paramVal;
-				document.getElementById('search-account').dispatchEvent(new CustomEvent('submit'));
-			}
-			else if (hash.search('tx') != -1) {
-				document.getElementById('search-hex').querySelector('.form-control[name="hex-number"]').value = paramVal;
-				document.getElementById('search-hex').dispatchEvent(new CustomEvent('submit'));
+		let params = hash.split('/');
+		if (params[1]) {
+			switch (params[0]) {
+				case 'block': {
+					document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = params[1];
+					document.getElementById('search-block').dispatchEvent(new CustomEvent('submit'));
+				}; break;
+				case 'account': {
+					document.getElementById('search-account').querySelector('.form-control[name="account-username"]').value = params[1];
+					document.getElementById('search-account').dispatchEvent(new CustomEvent('submit'));
+				}; break;
+				case 'tx': {
+					document.getElementById('search-hex').querySelector('.form-control[name="hex-number"]').value = params[1];
+					document.getElementById('search-hex').dispatchEvent(new CustomEvent('submit'));
+				}; break;
 			}
 		}
 	}
