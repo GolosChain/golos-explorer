@@ -176,3 +176,13 @@ footer {
 #auto-clear {
 	margin-top: 0.2rem;
 }
+
+#recent-blocks tbody tr.table-new {
+	visibility: hidden;
+	opacity: 0;
+}
+#recent-blocks tbody tr {
+	visibility: visible;
+	opacity: 1;
+	transition: visibility 0s, opacity 0.5s linear;
+}

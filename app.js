@@ -84,7 +84,7 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 					operationsStr += `<a class="btn btn-outline-info btn-sm">${key} <span class="badge badge-info">${operations[key]}</span></a> `; 
 				}
 				let $newRow = $recentBlocksTableTbody.insertRow(0);
-				$newRow.className = 'table-secondary';
+				$newRow.className = 'table-new';
 				$newRow.innerHTML = `<tr>
 										<td><a href="#block/${lastBlock}">${lastBlock}</a></td>
 										<td>${block.timestamp}</td>
@@ -92,8 +92,21 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 										<td>${block.transactions.length}</td>
 										<td>${operationsCount}</td>
 									</tr>`;
-				$newRow = $recentBlocksTableTbody.insertRow(1);
-				$newRow.innerHTML = `<tr>${operationsStr ? `<td colspan="5">${operationsStr}</td>` : ``}</tr>`;
+				setTimeout(function() {
+					$newRow.className = 'table-success';
+				}, 500);
+				setTimeout(function() {
+					$newRow.className = 'table-secondary';
+				}, 3000);
+				let $newSubRow = $recentBlocksTableTbody.insertRow(1);
+				$newSubRow.className = 'table-new';
+				$newSubRow.innerHTML = `<tr>${operationsStr ? `<td colspan="5">${operationsStr}</td>` : ``}</tr>`;
+				setTimeout(function() {
+					$newSubRow.className = 'table-success';
+				}, 500);
+				setTimeout(function() {
+					$newSubRow.className = '';
+				}, 3000);
 				autoClearRealTime();
 			}
 		});
