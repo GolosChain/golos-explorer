@@ -66,8 +66,22 @@
 						<div id="recent-blocks-info">
 							<div class="row">
 								<div class="col">
-									<h5>Recent Blockchain Activity <button class="btn btn-secondary btn-sm float-right" id="change-work-real-time" type="button"><span class="icon-pause2"></span> Pause monitoring</button></h5>
-									<p>Displaying most recent irreversible blocks.</p>
+									<h5>Recent Blockchain Activity</h5>
+								</div>
+								<div class="col">
+									<button class="btn btn-secondary btn-sm float-right" id="change-work-real-time" type="button"><span class="icon-pause2"></span> Pause monitoring</button>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									Displaying most recent irreversible blocks.
+								</div>
+								<div class="col" id="auto-clear">
+									<button class="btn btn-light btn-sm float-right" id="clear-real-time" type="button"><span class="icon-bin"></span> Clear table</button>
+									<div class="col-sm-3 float-right">
+										<input type="number" class="form-control form-control-sm" id="auto-clear-real-time-after" value="50" min="1">
+									</div>
+									<label for="auto-clear-real-time-after" class="float-right">Auto-clear old blocks after:</label>
 								</div>
 							</div>
 							<div class="row">
@@ -75,7 +89,7 @@
 									<h5>Current Height <span class="badge badge-primary" id="head-block-number">...</span></h5>
 								</div>
 								<div class="col">
-									<h5>Reversable blocks awaiting concensus <span class="badge badge-warning" id="revers-blocks-count">...</span></h5>
+									<h5 class="float-right">Reversable blocks awaiting concensus <span class="badge badge-warning" id="revers-blocks-count">...</span></h5>
 								</div>
 							</div>
 						</div>

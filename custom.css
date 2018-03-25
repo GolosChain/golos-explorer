@@ -47,6 +47,9 @@ html {
 .icon-spinner11:before {
   content: "\e984";
 }
+.icon-bin:before {
+  content: "\e9ac";
+}
 .icon-cross:before {
   content: "\ea0f";
 }
@@ -168,4 +171,8 @@ footer {
 
 #about-block-witness a {
 	color: inherit;
+}
+
+#auto-clear {
+	margin-top: 0.2rem;
 }

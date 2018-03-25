@@ -33,6 +33,7 @@ let $chainPropertiesTableTbody = document.getElementById('chain-properties').get
 let $aboutAccountAllCount = document.getElementById('about-account-all-count');
 let $aboutAccountCount = document.getElementById('about-account-count');
 let $aboutAccountFilteredCount = document.getElementById('about-account-filtered-count');
+let $autoClearRealTimeAfter = document.getElementById('auto-clear-real-time-after');
 
 let workRealTime = true;
 document.getElementById('change-work-real-time').addEventListener('click', function() {
@@ -46,6 +47,11 @@ document.getElementById('change-work-real-time').addEventListener('click', funct
 		this.innerHTML = '<span class="icon-pause2"></span> Pause monitoring';
 		this.className = 'btn btn-secondary btn-sm float-right';
 	}
+});
+
+document.getElementById('clear-real-time').addEventListener('click', function() {
+	$recentBlocksTableTbody.innerHTML = '';
+	swal({title: 'Table real-time blocks cleared!', type: 'success', showConfirmButton: false, position: 'top-right', toast: true, timer: 3000});
 });
 
 let getChainProperties = function() {
@@ -77,7 +83,6 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 				for (let key in operations) {
 					operationsStr += `<a class="btn btn-outline-info btn-sm">${key} <span class="badge badge-info">${operations[key]}</span></a> `; 
 				}
-
 				let $newRow = $recentBlocksTableTbody.insertRow(0);
 				$newRow.innerHTML = `<tr>
 										<td><a href="#block/${lastBlock}">${lastBlock}</a></td>
@@ -86,11 +91,9 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 										<td>${block.transactions.length}</td>
 										<td>${operationsCount}</td>
 									</tr>`;
-
 				$newRow = $recentBlocksTableTbody.insertRow(1);
-				if (operationsStr) $newRow.innerHTML = `<tr>
-										<td colspan="5">${operationsStr}</td>
-									</tr>`;
+				$newRow.innerHTML = `<tr>${operationsStr ? `<td colspan="5">${operationsStr}</td>` : ``}</tr>`;
+				autoClearRealTime();
 			}
 		});
 	}
@@ -108,6 +111,22 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 	});
 	
 });
+
+let autoClearRealTime = function() {
+	let clearAfterBlocksVal = parseInt($autoClearRealTimeAfter.value),
+		$trs = $recentBlocksTableTbody.getElementsByTagName('tr'),
+		trsCount = $trs.length;
+	if (trsCount >= clearAfterBlocksVal * 2) {
+		let removeCount = trsCount / 2 - clearAfterBlocksVal;
+		for (let i = 0; i < removeCount; i++) {
+			$recentBlocksTableTbody.removeChild($trs[trsCount - 1]);
+			$recentBlocksTableTbody.removeChild($trs[trsCount - 2]);
+			trsCount -= 2;
+		}
+	}
+}
+
+$autoClearRealTimeAfter.addEventListener('change', autoClearRealTime);
 
 let getBlockFullInfo = function(blockNumberVal) {
 	$aboutBlockTableTbody.innerHTML = '';
@@ -276,6 +295,7 @@ document.getElementById('search-account').addEventListener('submit', function(e)
 				$aboutAccountFilteredCount.innerHTML = transfersCount;
 				if (transactionsAllCount > transactionsCount) {
 					// pagination
+					let $newPage = `<li class="page-item"><a class="page-link" href="#">2</a></li>`;
 				}
 			}
 			if (transfersCount == 0) swal({title: 'Error', type: 'error', text: 'This account did not make any transfers!'});
