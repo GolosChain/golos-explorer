@@ -202,15 +202,35 @@
 							</div>
 						</div>
 						<div id="about-account-page">
-							<h5>Total <span class="badge badge-info" id="about-account-all-count">...</span> transactions, showing <span class="badge badge-info" id="about-account-filtered-count">...</span> transactions, filtered from <span class="badge badge-info" id="about-account-count">...</span> transactions</h5>
+							<form class="form-inline">
+								<h5>
+									Total <span class="badge badge-info" id="about-account-all-count">...</span> transactions, showing <span class="badge badge-info" id="about-account-filtered-count">...</span> transactions,
+									<select class="form-control form-control-sm" id="about-account-filter">
+										<option value="">none</option>
+										<option value="account_create">account_create</option>
+										<option value="account_update">account_update</option>
+										<option value="account_witness_vote">account_witness_vote</option>
+										<option value="author_reward">author_reward</option>
+										<option value="comment">comment</option>
+										<option value="custom_json">custom_json</option>
+										<option value="feed_publish">feed_publish</option>
+										<option value="limit_order_create">limit_order_create</option>
+										<option value="pow2">pow2</option>
+										<option value="transfer" selected="">transfer</option>
+										<option value="transfer_to_vesting">transfer_to_vesting</option>
+										<option value="vote">vote</option>
+									</select>
+									filtered from <span class="badge badge-info" id="about-account-count">...</span> transactions
+								</h5>
+							</form>
 							<table class="table table-bordered table-hover table-sm" id="about-account">
 								<thead>
 									<tr class="table-primary">
 										<th scope="col">Time</th>
+										<th scope="col">Transaction ID</th>
 										<th scope="col">From</th>
 										<th scope="col">To</th>
 										<th scope="col">Amount</th>
-										<th scope="col">Transaction ID</th>
 										<th scope="col">Memo</th>
 									</tr>
 								</thead>
