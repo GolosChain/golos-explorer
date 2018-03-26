@@ -403,5 +403,17 @@ window.addEventListener('hashchange', function() {
 			}
 		}
 	}
+	else {
+		document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = '';
+		document.getElementById('search-hex').querySelector('.form-control[name="hex-number"]').value = '';
+		$resetBlockBtn.style.display = 'none';
+		$resetHexBtn.style.display = 'none';
+		$mainPage.style.display = 'flex';
+		$aboutBlockPage.style.display = 'none';
+		$searchAccount.querySelector('.form-control[name="account-username"]').value = '';
+		$aboutAccountPage.style.display = 'none';
+		$resetAccountBtn.style.display = 'none';
+		$recentBlocksInfo.style.display = 'block';
+	}
 });
 window.dispatchEvent(new CustomEvent('hashchange'));
