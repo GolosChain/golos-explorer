@@ -36,6 +36,11 @@ let $aboutAccountFilteredCount = document.getElementById('about-account-filtered
 let $autoClearRealTimeAfter = document.getElementById('auto-clear-real-time-after');
 let $aboutAccountFilter = document.getElementById('about-account-filter');
 let $searchAccount = document.getElementById('search-account');
+let $modalAboutBlock = new Modal(document.getElementById('modal-about-block'));
+let $modalAboutBlockModalTitle = document.getElementById('modal-about-block').querySelector('.modal-title');
+let $modalAboutBlockOperationsTableTbody = document.getElementById('modal-about-block-operations-table').getElementsByTagName('tbody')[0];
+let $modalAboutBlockTransactionsTableTbody = document.getElementById('modal-about-block-transactions-table').getElementsByTagName('tbody')[0];
+let $modalAboutBlockCode = document.getElementById('modal-about-block-code');
 
 let workRealTime = true;
 document.getElementById('change-work-real-time').addEventListener('click', function() {
@@ -83,7 +88,7 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 				});
 				let operationsStr = '';
 				for (let key in operations) {
-					operationsStr += `<a class="btn btn-outline-info btn-sm">${key} <span class="badge badge-info">${operations[key]}</span></a> `; 
+					operationsStr += `<a class="btn btn-outline-info btn-sm" href="#operations/${lastBlock}/${key}">${key} <span class="badge badge-info">${operations[key]}</span></a> `;
 				}
 				let $newRow = $recentBlocksTableTbody.insertRow(0);
 				$newRow.className = 'table-new';
@@ -145,71 +150,70 @@ let autoClearRealTime = function() {
 $autoClearRealTimeAfter.addEventListener('change', autoClearRealTime);
 
 let getBlockFullInfo = function(blockNumberVal) {
-	$aboutBlockTableTbody.innerHTML = '';
 	$aboutBlockOperationsTableTbody.innerHTML = '';
 	$aboutBlockTransactionsTableTbody.innerHTML = '';
+	$aboutBlockCode.innerHTML = '';
 	golos.api.getBlock(blockNumberVal, function(err, block) {
 		loadingHide();
 		if (block) {
+			
+			let operations = {};
+			let operationsCount = 0;
+			block.transactions.forEach(function(transaction) {
+				transaction.operations.forEach(function(operation) {
+					if ( ! operations[operation[0]]) operations[operation[0]] = 0;
+					operations[operation[0]]++;
+					operationsCount++;
+				});
+			});
+			let operationsStr = '';
+			for (let key in operations) {
+				operationsStr += `<a class="btn btn-outline-secondary btn-sm">${key} <span class="badge badge-secondary">${operations[key]}</span></a> `; 
+			}
+
+			$aboutBlockHeight.innerHTML = blockNumberVal;
+			$aboutBlockTime.innerHTML = block.timestamp;
+			$aboutBlockWitness.innerHTML = `<a href="#account/${block.witness}">${block.witness}</a>`;
+			$aboutBlockTransactions.innerHTML = block.transactions.length;
+			$aboutBlockOperations.innerHTML = operationsCount;
+
+			$newRow = $aboutBlockTableTbody.insertRow();
+			$newRow.innerHTML = `<tr>
+									<td colspan="5"><span class="badge badge-secondary"></span> ${operationsStr}</td>
+								</tr>`;
+
+			block.transactions.forEach(function(transaction) {
+				transaction.operations.forEach(function(operation) {
+					$newRow = $aboutBlockOperationsTableTbody.insertRow();
+					$newRow.innerHTML = `<tr>
+											<td rowspan="${Object.keys(operation[1]).length + 1}"><b>${operation[0]}</b></td>
+										</tr>`;
+					for (let keyOp in operation[1]) {
+						$newRow = $aboutBlockOperationsTableTbody.insertRow();
+						$newRow.innerHTML = `<tr>
+												<td>${keyOp}</td>
+												<td>${operation[1][keyOp]}</td>
+											</tr>`;
+					}
+				});
+				//
+				for (let keyTr in transaction) {
+					if (keyTr == 'operations') transaction[keyTr] = JSON.stringify(transaction[keyTr]);
+					$newRow = $aboutBlockTransactionsTableTbody.insertRow();
+					$newRow.innerHTML = `<tr>
+											<td><b>${keyTr}</b></td>
+											<td>${transaction[keyTr]}</td>
+										</tr>`;
+				}
+				$newRow = $aboutBlockTransactionsTableTbody.insertRow();
+				$newRow.className = 'table-active';
+				$newRow.innerHTML = `<tr><td colspan="2">&nbsp;</td></tr>`;
+			});
+			
 			let blockStr = JSON.stringify(block);
 			blockStr = js_beautify(blockStr);
 			$aboutBlockCode.innerHTML = blockStr;
 			hljs.highlightBlock($aboutBlockCode);
-			if ( ! err) {
-				let operations = {};
-				let operationsCount = 0;
-				block.transactions.forEach(function(transaction) {
-					transaction.operations.forEach(function(operation) {
-						if ( ! operations[operation[0]]) operations[operation[0]] = 0;
-						operations[operation[0]]++;
-						operationsCount++;
-					});
-				});
-				let operationsStr = '';
-				for (let key in operations) {
-					operationsStr += `<a class="btn btn-outline-secondary btn-sm">${key} <span class="badge badge-secondary">${operations[key]}</span></a> `; 
-				}
-
-				$aboutBlockHeight.innerHTML = blockNumberVal;
-				$aboutBlockTime.innerHTML = block.timestamp;
-				$aboutBlockWitness.innerHTML = `<a href="#account/${block.witness}">${block.witness}</a>`;
-				$aboutBlockTransactions.innerHTML = block.transactions.length;
-				$aboutBlockOperations.innerHTML = operationsCount;
-
-				$newRow = $aboutBlockTableTbody.insertRow();
-				$newRow.innerHTML = `<tr>
-										<td colspan="5"><span class="badge badge-secondary"></span> ${operationsStr}</td>
-									</tr>`;
-
-				block.transactions.forEach(function(transaction) {
-					transaction.operations.forEach(function(operation) {
-						$newRow = $aboutBlockOperationsTableTbody.insertRow();
-						$newRow.innerHTML = `<tr>
-												<td rowspan="${Object.keys(operation[1]).length + 1}"><b>${operation[0]}</b></td>
-											</tr>`;
-						for (let keyOp in operation[1]) {
-							$newRow = $aboutBlockOperationsTableTbody.insertRow();
-							$newRow.innerHTML = `<tr>
-													<td>${keyOp}</td>
-													<td>${operation[1][keyOp]}</td>
-												</tr>`;
-						}
-					});
-					//
-					for (let keyTr in transaction) {
-						if (keyTr == 'operations') transaction[keyTr] = JSON.stringify(transaction[keyTr]);
-						$newRow = $aboutBlockTransactionsTableTbody.insertRow();
-						$newRow.innerHTML = `<tr>
-												<td><b>${keyTr}</b></td>
-												<td>${transaction[keyTr]}</td>
-											</tr>`;
-					}
-					$newRow = $aboutBlockTransactionsTableTbody.insertRow();
-					$newRow.className = 'table-active';
-					$newRow.innerHTML = `<tr><td colspan="2">&nbsp;</td></tr>`;
-				});
-			}
-			else swal({title: 'Error', type: 'error', text: err});
 		}
 		else {
 			if ( ! err) err = 'Block not found!';
@@ -382,6 +386,64 @@ $resetNodeAddress.addEventListener('click', function() {
 	$resetNodeAddress.style.display = 'none';
 });
 
+let getBlockInfo = function(blockNumberVal, operationName, callback) {
+	loadingShow();
+	$modalAboutBlockOperationsTableTbody.innerHTML = '';
+	$modalAboutBlockTransactionsTableTbody.innerHTML = '';
+	$modalAboutBlockCode.innerHTML = '';
+	$modalAboutBlockModalTitle.innerHTML = `About block #${blockNumberVal}, filtered ${operationName}`;
+	golos.api.getBlock(blockNumberVal, function(err, block) {
+		loadingHide();
+		if (block) {
+			let blockTransactionsArr = [];
+
+			block.transactions.forEach(function(transaction) {
+				transaction.operations.forEach(function(operation) {
+					if (operation[0] == operationName) {
+						//console.log(transaction.operations);
+						blockTransactionsArr.push(transaction);
+						$newRow = $modalAboutBlockOperationsTableTbody.insertRow();
+						$newRow.innerHTML = `<tr>
+												<td rowspan="${Object.keys(operation[1]).length + 1}"><b>${operation[0]}</b></td>
+											</tr>`;
+						for (let keyOp in operation[1]) {
+							$newRow = $modalAboutBlockOperationsTableTbody.insertRow();
+							$newRow.innerHTML = `<tr>
+													<td>${keyOp}</td>
+													<td>${operation[1][keyOp]}</td>
+												</tr>`;
+						}
+
+						for (let keyTr in transaction) {
+							if (keyTr == 'operations') transaction[keyTr] = JSON.stringify(transaction[keyTr]);
+							$newRow = $modalAboutBlockTransactionsTableTbody.insertRow();
+							$newRow.innerHTML = `<tr>
+													<td><b>${keyTr}</b></td>
+													<td>${transaction[keyTr]}</td>
+												</tr>`;
+						}
+						$newRow = $modalAboutBlockTransactionsTableTbody.insertRow();
+						$newRow.className = 'table-active';
+						$newRow.innerHTML = `<tr><td colspan="2">&nbsp;</td></tr>`;
+					}
+				});
+			});
+			
+			block.transactions = blockTransactionsArr;
+			let blockStr = JSON.stringify(block);
+			blockStr = js_beautify(blockStr);
+			$modalAboutBlockCode.innerHTML = blockStr;
+			hljs.highlightBlock($modalAboutBlockCode);
+
+			callback();
+		}
+		else {
+			if ( ! err) err = 'Block not found!';
+			swal({title: 'Error', type: 'error', text: err});
+		}
+	});
+}
+
 window.addEventListener('hashchange', function() {
 	let hash = window.location.hash.substring(1);
 	if (hash) {
@@ -399,6 +461,11 @@ window.addEventListener('hashchange', function() {
 				case 'tx': {
 					document.getElementById('search-hex').querySelector('.form-control[name="hex-number"]').value = params[1];
 					document.getElementById('search-hex').dispatchEvent(new CustomEvent('submit'));
+				}; break;
+				case 'operations': {
+					getBlockInfo(params[1], params[2], function() {
+						$modalAboutBlock.show();
+					});
 				}; break;
 			}
 		}

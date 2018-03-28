@@ -301,6 +301,51 @@
 				<span class="text-muted">GolosExplorer @ 2018</span>
 			</div>
 		</footer>
+		<div class="modal" id="modal-about-block" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-full" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">About block</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<ul class="nav nav-tabs" id="modal-myTab" role="tablist">
+							<li class="nav-item">
+								<a class="nav-link active" id="modal-operations-tab" data-toggle="tab" href="#modal-operations" role="tab" aria-controls="modal-operations" aria-selected="true">Operations</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" id="modal-transactions-tab" data-toggle="tab" href="#modal-transactions" role="tab" aria-controls="modal-transactions" aria-selected="true">Transactions</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" id="modal-json-tab" data-toggle="tab" href="#modal-json" href="#modal-json" role="tab" aria-controls="modal-json" aria-selected="false">JSON</a>
+							</li>
+						</ul>
+						<div class="tab-content" id="modal-myTabContent">
+							<div class="tab-pane fade show active" id="modal-operations" role="tabpanel" aria-labelledby="modal-operations-tab">
+								<table class="table table-bordered table-hover table-sm" id="modal-about-block-operations-table">
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+							<div class="tab-pane fade" id="modal-transactions" role="tabpanel" aria-labelledby="modal-transactions-tab">
+								<table class="table table-bordered table-hover table-sm" id="modal-about-block-transactions-table">
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+							<div class="tab-pane fade" id="modal-json" role="tabpanel" aria-labelledby="modal-json-tab">
+								<pre><code class="json" id="modal-about-block-code"></code></pre>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="lding">
 			<div class="lds-css ng-scope">
 				<div class="lds-cube">
