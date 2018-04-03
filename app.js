@@ -41,6 +41,8 @@ let $modalAboutBlockModalTitle = document.getElementById('modal-about-block').qu
 let $modalAboutBlockOperationsTableTbody = document.getElementById('modal-about-block-operations-table').getElementsByTagName('tbody')[0];
 let $modalAboutBlockTransactionsTableTbody = document.getElementById('modal-about-block-transactions-table').getElementsByTagName('tbody')[0];
 let $modalAboutBlockCode = document.getElementById('modal-about-block-code');
+let $aboutAccountPagePrev = document.getElementById('about-account-page-prev');
+let $aboutAccountPageNext = document.getElementById('about-account-page-next');
 
 let workRealTime = true;
 document.getElementById('change-work-real-time').addEventListener('click', function() {
@@ -76,7 +78,7 @@ getChainProperties();
 golos.api.streamBlockNumber(function(err, lastBlock) {
 	if ( ! err) {
 		golos.api.getBlock(lastBlock, function(err, block) {
-			if ( ! err && workRealTime) {
+			if (block && workRealTime) {
 				let operations = {};
 				let operationsCount = 0;
 				block.transactions.forEach(function(transaction) {
@@ -116,6 +118,7 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 				}, 3000);
 				autoClearRealTime();
 			}
+			else if (err) console.error(err);
 		});
 	}
 	
@@ -290,17 +293,20 @@ let loadingHide = function() {
 	$loader.style.display = 'none';
 };
 
+let accountHistoryFrom = -1;
+let accountHistoryCount = 99;
 let getAccountTransactions = function() {
 	loadingShow();
 	let usernameVal = $searchAccount.querySelector('.form-control[name="account-username"]').value;
 	let operationsCount = 0;
 	$aboutAccountTableTbody.innerHTML = '';
-	golos.api.getAccountHistory(usernameVal, -1, 99, function(err, transactions) {
+	golos.api.getAccountHistory(usernameVal, accountHistoryFrom, accountHistoryCount, function(err, transactions) {
 		loadingHide();
 		if (transactions.length > 0) {
 			//transactions.reverse();
 			transactions.forEach(function(transaction) {
 				if ( ! $aboutAccountFilter.value || (transaction[1].op[0] == $aboutAccountFilter.value)) {
+					console.log(transaction);
 					operationsCount++;
 					let $newRow = $aboutAccountTableTbody.insertRow(0);
 					$newRow.innerHTML = `<tr>
@@ -333,7 +339,22 @@ let getAccountTransactions = function() {
 	});
 };
 
-$aboutAccountFilter.addEventListener('change', getAccountTransactions);
+$aboutAccountPagePrev.addEventListener('click', function() {
+	accountHistoryFrom -= 100;
+	accountHistoryCount -= 100;
+	getAccountTransactions();
+});
+$aboutAccountPageNext.addEventListener('click', function() {
+	accountHistoryFrom += 100;
+	accountHistoryCount += 100;
+	getAccountTransactions();
+});
+
+$aboutAccountFilter.addEventListener('change', function() {
+	let usernameVal = $searchAccount.querySelector('.form-control[name="account-username"]').value;
+	window.location.hash = `account/${usernameVal}/${$aboutAccountFilter.value}`;
+	getAccountTransactions();
+});
 
 $searchAccount.addEventListener('submit', function(e) {
 	e.preventDefault();
@@ -456,6 +477,7 @@ window.addEventListener('hashchange', function() {
 				}; break;
 				case 'account': {
 					$searchAccount.querySelector('.form-control[name="account-username"]').value = params[1];
+					if (params[2]) $aboutAccountFilter.value = params[2];
 					$searchAccount.dispatchEvent(new CustomEvent('submit'));
 				}; break;
 				case 'tx': {
