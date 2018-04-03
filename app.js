@@ -43,6 +43,48 @@ let $modalAboutBlockTransactionsTableTbody = document.getElementById('modal-abou
 let $modalAboutBlockCode = document.getElementById('modal-about-block-code');
 let $aboutAccountPagePrev = document.getElementById('about-account-page-prev');
 let $aboutAccountPageNext = document.getElementById('about-account-page-next');
+let $nodeAddress = document.getElementById('node-address');
+let $nodeAddressInput = $nodeAddress.querySelector('.form-control[name="node-address"]');
+
+let getBlockchainVersion = function() {
+	golos.api.getConfig(function(err, result) {
+		if ( ! err) document.getElementById('blockchain-version').innerHTML = result.STEEMIT_BLOCKCHAIN_VERSION;
+	});
+};
+
+let getChainProperties = function() {
+	golos.api.getChainProperties(function(err, properties) {
+		if ( ! err) {
+			for (let key in properties) {
+				let prop = $chainPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
+				if (prop) prop.innerHTML = properties[key];
+			}
+		}
+	});
+};
+
+$nodeAddress.addEventListener('submit', function(e) {
+	e.preventDefault();
+	localStorage.nodeAddress = $nodeAddressInput.value;
+	window.location.reload();
+});
+
+let defaultWebsocket = 'wss://ws.golos.io';
+if (localStorage && localStorage.nodeAddress) $nodeAddressInput.value = localStorage.nodeAddress;
+document.getElementById('blockchain-version').innerHTML = '...';
+let nodeAddress = $nodeAddressInput.value;
+if (nodeAddress != defaultWebsocket) {
+	golos.api.setWebSocket(nodeAddress);
+	$resetNodeAddress.style.display = 'block';
+}
+getBlockchainVersion();
+getChainProperties();
+
+$resetNodeAddress.addEventListener('click', function() {
+	document.getElementById('node-address').querySelector('.form-control[name="node-address"]').value = defaultWebsocket;
+	document.getElementById('node-address').dispatchEvent(new CustomEvent('submit'));
+	$resetNodeAddress.style.display = 'none';
+});
 
 let workRealTime = true;
 document.getElementById('change-work-real-time').addEventListener('click', function() {
@@ -62,18 +104,6 @@ document.getElementById('clear-real-time').addEventListener('click', function() 
 	$recentBlocksTableTbody.innerHTML = '';
 	swal({title: 'Table real-time blocks cleared!', type: 'success', showConfirmButton: false, position: 'top-right', toast: true, timer: 3000});
 });
-
-let getChainProperties = function() {
-	golos.api.getChainProperties(function(err, properties) {
-		if ( ! err) {
-			for (let key in properties) {
-				let prop = $chainPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
-				if (prop) prop.innerHTML = properties[key];
-			}
-		}
-	});
-}
-getChainProperties();
 
 golos.api.streamBlockNumber(function(err, lastBlock) {
 	if ( ! err) {
@@ -136,10 +166,13 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 	
 });
 
+if (localStorage && localStorage.clearAfterBlocksVal) $autoClearRealTimeAfter.value = localStorage.clearAfterBlocksVal;
+
 let autoClearRealTime = function() {
 	let clearAfterBlocksVal = parseInt($autoClearRealTimeAfter.value),
 		$trs = $recentBlocksTableTbody.getElementsByTagName('tr'),
 		trsCount = $trs.length;
+	localStorage.clearAfterBlocksVal = clearAfterBlocksVal;
 	if (trsCount >= clearAfterBlocksVal * 2) {
 		let removeCount = trsCount / 2 - clearAfterBlocksVal;
 		for (let i = 0; i < removeCount; i++) {
@@ -380,31 +413,6 @@ $resetAccountBtn.addEventListener('click', function() {
 	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'block';
 	window.location.hash = '';
-});
-
-document.getElementById('node-address').addEventListener('submit', function(e) {
-	e.preventDefault();
-	document.getElementById('blockchain-version').innerHTML = '...';
-	$resetNodeAddress.style.display = 'block';
-	let nodeAddress = this.querySelector('.form-control[name="node-address"]').value;
-	golos.api.setWebSocket(nodeAddress);
-	getBlockchainVersion();
-	getChainProperties();
-	return false;
-});
-
-let getBlockchainVersion = function() {
-	golos.api.getConfig(function(err, result) {
-		if ( ! err) document.getElementById('blockchain-version').innerHTML = result.STEEMIT_BLOCKCHAIN_VERSION;
-	});
-};
-
-getBlockchainVersion();
-
-$resetNodeAddress.addEventListener('click', function() {
-	document.getElementById('node-address').querySelector('.form-control[name="node-address"]').value = 'wss://ws.golos.io';
-	document.getElementById('node-address').dispatchEvent(new CustomEvent('submit'));
-	$resetNodeAddress.style.display = 'none';
 });
 
 let getBlockInfo = function(blockNumberVal, operationName, callback) {
