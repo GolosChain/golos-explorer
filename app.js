@@ -45,9 +45,11 @@ let $aboutAccountPagePrev = document.getElementById('about-account-page-prev');
 let $aboutAccountPageNext = document.getElementById('about-account-page-next');
 let $nodeAddress = document.getElementById('node-address');
 let $nodeAddressInput = $nodeAddress.querySelector('.form-control[name="node-address"]');
+let defaultWebsocket = 'wss://ws17.golos.io';
 
 let getBlockchainVersion = function() {
 	golos.api.getConfig(function(err, result) {
+		console.log(result.STEEMIT_BLOCKCHAIN_VERSION);
 		if ( ! err) document.getElementById('blockchain-version').innerHTML = result.STEEMIT_BLOCKCHAIN_VERSION;
 	});
 };
@@ -69,12 +71,11 @@ $nodeAddress.addEventListener('submit', function(e) {
 	window.location.reload();
 });
 
-let defaultWebsocket = 'wss://ws.golos.io';
 if (localStorage && localStorage.nodeAddress) $nodeAddressInput.value = localStorage.nodeAddress;
 document.getElementById('blockchain-version').innerHTML = '...';
 let nodeAddress = $nodeAddressInput.value;
+golos.config.set('websocket', nodeAddress);
 if (nodeAddress != defaultWebsocket) {
-	golos.api.setWebSocket(nodeAddress);
 	$resetNodeAddress.style.display = 'block';
 }
 getBlockchainVersion();
