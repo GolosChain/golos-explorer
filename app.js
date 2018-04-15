@@ -45,7 +45,7 @@ let $aboutAccountPagePrev = document.getElementById('about-account-page-prev');
 let $aboutAccountPageNext = document.getElementById('about-account-page-next');
 let $nodeAddress = document.getElementById('node-address');
 let $nodeAddressInput = $nodeAddress.querySelector('.form-control[name="node-address"]');
-let defaultWebsocket = 'wss://ws17.golos.io';
+let defaultWebsocket = 'wss://ws.golos.io';
 
 let getBlockchainVersion = function() {
 	golos.api.getConfig(function(err, result) {
