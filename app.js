@@ -226,6 +226,7 @@ let getBlockFullInfo = function(blockNumberVal) {
 											<td rowspan="${Object.keys(operation[1]).length + 1}"><b>${operation[0]}</b></td>
 										</tr>`;
 					for (let keyOp in operation[1]) {
+						operation[1][keyOp] = filterXSS(operation[1][keyOp]);
 						$newRow = $aboutBlockOperationsTableTbody.insertRow();
 						$newRow.innerHTML = `<tr>
 												<td>${keyOp}</td>
