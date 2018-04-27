@@ -6,6 +6,14 @@ html {
   min-height: 100%;
 }
 
+.navbar-brand {
+  color: #ffbe00 !important;
+  font-weight: bold;
+}
+.navbar-brand:hover {
+  color: #fff !important;
+}
+
 @font-face {
   font-family: 'icomoon';
   src:  url('graphics/icons/icomoon.eot?39uhkm');
@@ -176,10 +184,19 @@ footer {
 #auto-clear {
 	margin-top: 0.2rem;
 }
+#auto-clear label {
+	margin-top: 0.4rem;
+}
 
 #recent-blocks tbody tr.table-new {
 	visibility: hidden;
 	opacity: 0;
+}
+#recent-blocks tbody tr.table-success a {
+	color: #fff;
+}
+#recent-blocks tbody tr.table-success td {
+	border: 1px solid #8bbf9f;
 }
 #recent-blocks tbody tr {
 	visibility: visible;

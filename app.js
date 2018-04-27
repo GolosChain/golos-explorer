@@ -15,8 +15,7 @@ let $aboutBlockCode = document.getElementById('about-block-code');
 let $aboutBlockTableTbody = document.getElementById('about-block').getElementsByTagName('tbody')[0];
 let $aboutBlockOperationsTableTbody = document.getElementById('about-block-operations-table').getElementsByTagName('tbody')[0];
 let $aboutBlockTransactionsTableTbody = document.getElementById('about-block-transactions-table').getElementsByTagName('tbody')[0];
-let $resetBlockBtn = document.getElementById('reset-block');
-let $resetAccountBtn = document.getElementById('reset-account');
+let $resetSearchBtn = document.getElementById('reset-search');
 let $aboutAccountPage = document.getElementById('about-account-page');
 let $aboutAccountTableTbody = document.getElementById('about-account').getElementsByTagName('tbody')[0];
 let $aboutBlockHeight = document.getElementById('about-block-height');
@@ -26,7 +25,6 @@ let $aboutBlockTransactions = document.getElementById('about-block-transactions'
 let $aboutBlockOperations = document.getElementById('about-block-operations');
 let $loader = document.getElementsByClassName('lding')[0];
 let $recentBlocksInfo = document.getElementById('recent-blocks-info');
-let $resetHexBtn = document.getElementById('reset-hex');
 let $resetNodeAddress = document.getElementById('reset-node-address');
 let $globalPropertiesTableTbody = document.getElementById('global-properties').getElementsByTagName('tbody')[0];
 let $chainPropertiesTableTbody = document.getElementById('chain-properties').getElementsByTagName('tbody')[0];
@@ -35,7 +33,6 @@ let $aboutAccountCount = document.getElementById('about-account-count');
 let $aboutAccountFilteredCount = document.getElementById('about-account-filtered-count');
 let $autoClearRealTimeAfter = document.getElementById('auto-clear-real-time-after');
 let $aboutAccountFilter = document.getElementById('about-account-filter');
-let $searchAccount = document.getElementById('search-account');
 let $modalAboutBlock = new Modal(document.getElementById('modal-about-block'));
 let $modalAboutBlockModalTitle = document.getElementById('modal-about-block').querySelector('.modal-title');
 let $modalAboutBlockOperationsTableTbody = document.getElementById('modal-about-block-operations-table').getElementsByTagName('tbody')[0];
@@ -45,12 +42,14 @@ let $aboutAccountPagePrev = document.getElementById('about-account-page-prev');
 let $aboutAccountPageNext = document.getElementById('about-account-page-next');
 let $nodeAddress = document.getElementById('node-address');
 let $nodeAddressInput = $nodeAddress.querySelector('.form-control[name="node-address"]');
+let $search = document.getElementById('search');
+let $searchVal = $search.querySelector('.form-control[name="search"]');
+let $blockchainVersion = document.getElementById('blockchain-version');
 let defaultWebsocket = 'wss://ws.golos.io';
 
 let getBlockchainVersion = function() {
 	golos.api.getConfig(function(err, result) {
-		console.log(result.STEEMIT_BLOCKCHAIN_VERSION);
-		if ( ! err) document.getElementById('blockchain-version').innerHTML = result.STEEMIT_BLOCKCHAIN_VERSION;
+		if ( ! err) $blockchainVersion.innerHTML = result.STEEMIT_BLOCKCHAIN_VERSION;
 	});
 };
 
@@ -72,7 +71,7 @@ $nodeAddress.addEventListener('submit', function(e) {
 });
 
 if (localStorage && localStorage.nodeAddress) $nodeAddressInput.value = localStorage.nodeAddress;
-document.getElementById('blockchain-version').innerHTML = '...';
+$blockchainVersion.innerHTML = '...';
 let nodeAddress = $nodeAddressInput.value;
 golos.config.set('websocket', nodeAddress);
 if (nodeAddress != defaultWebsocket) {
@@ -82,8 +81,8 @@ getBlockchainVersion();
 getChainProperties();
 
 $resetNodeAddress.addEventListener('click', function() {
-	document.getElementById('node-address').querySelector('.form-control[name="node-address"]').value = defaultWebsocket;
-	document.getElementById('node-address').dispatchEvent(new CustomEvent('submit'));
+	$nodeAddressInput.value = defaultWebsocket;
+	$nodeAddressInput.dispatchEvent(new CustomEvent('submit'));
 	$resetNodeAddress.style.display = 'none';
 });
 
@@ -187,6 +186,7 @@ let autoClearRealTime = function() {
 $autoClearRealTimeAfter.addEventListener('change', autoClearRealTime);
 
 let getBlockFullInfo = function(blockNumberVal) {
+	$aboutBlockTableTbody.innerHTML = '';
 	$aboutBlockOperationsTableTbody.innerHTML = '';
 	$aboutBlockTransactionsTableTbody.innerHTML = '';
 	$aboutBlockCode.innerHTML = '';
@@ -260,63 +260,48 @@ let getBlockFullInfo = function(blockNumberVal) {
 	});
 }
 
-document.getElementById('search-block').addEventListener('submit', function(e) {
+$search.addEventListener('submit', function(e) {
 	e.preventDefault();
 	loadingShow();
+	$resetSearchBtn.style.display = 'block';
 	$mainPage.style.display = 'none';
-	$aboutBlockPage.style.display = 'block';
-	$resetBlockBtn.style.display = 'block';
-	let blockNumberVal = this.querySelector('.form-control[name="block-number"]').value;
-	//window.location.hash = 'block/' + blockNumberVal;
-	$searchAccount.querySelector('.form-control[name="account-username"]').value = '';
+	$aboutBlockPage.style.display = 'none';
 	$aboutAccountPage.style.display = 'none';
-	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'none';
-	getBlockFullInfo(blockNumberVal);
+	let searchVal = $searchVal.value;
+	// get HEX
+	if (searchVal.length == 40) {
+		//window.location.hash = 'tx/' + searchVal;
+		$aboutBlockPage.style.display = 'block';
+		golos.api.getTransaction(searchVal, function(err, result) {
+			loadingHide();
+			if ( ! err) {
+				getBlockFullInfo(result.block_num);
+			}
+			else swal({title: 'Error', type: 'error', text: err});
+		});
+	}
+	// get block
+	else if (/^-?[0-9]+$/.test(searchVal)) {
+		//window.location.hash = 'block/' + searchVal;
+		$aboutBlockPage.style.display = 'block';
+		getBlockFullInfo(searchVal);
+	}
+	// get account
+	else {
+		//window.location.hash = 'account/' + searchVal;
+		$aboutAccountPage.style.display = 'block';
+		getAccountTransactions();
+	}
 	return false;
 });
 
-$resetBlockBtn.addEventListener('click', function() {
-	document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = '';
-	$resetBlockBtn.style.display = 'none';
+$resetSearchBtn.addEventListener('click', function() {
+	$searchVal.value = '';
+	$resetSearchBtn.style.display = 'none';
 	$mainPage.style.display = 'flex';
 	$aboutBlockPage.style.display = 'none';
-	$searchAccount.querySelector('.form-control[name="account-username"]').value = '';
 	$aboutAccountPage.style.display = 'none';
-	$resetAccountBtn.style.display = 'none';
-	$recentBlocksInfo.style.display = 'block';
-	window.location.hash = '';
-});
-
-document.getElementById('search-hex').addEventListener('submit', function(e) {
-	e.preventDefault();
-	loadingShow();
-	$mainPage.style.display = 'none';
-	$aboutBlockPage.style.display = 'block';
-	$resetHexBtn.style.display = 'block';
-	let hexNumberVal = this.querySelector('.form-control[name="hex-number"]').value;
-	$searchAccount.querySelector('.form-control[name="account-username"]').value = '';
-	$aboutAccountPage.style.display = 'none';
-	$resetAccountBtn.style.display = 'none';
-	$recentBlocksInfo.style.display = 'none';
-	golos.api.getTransaction(hexNumberVal, function(err, result) {
-		loadingHide();
-		if ( ! err) {
-			getBlockFullInfo(result.block_num);
-		}
-		else swal({title: 'Error', type: 'error', text: err});
-	});
-	return false;
-});
-
-$resetHexBtn.addEventListener('click', function() {
-	document.getElementById('search-hex').querySelector('.form-control[name="hex-number"]').value = '';
-	$resetHexBtn.style.display = 'none';
-	$mainPage.style.display = 'flex';
-	$aboutBlockPage.style.display = 'none';
-	$searchAccount.querySelector('.form-control[name="account-username"]').value = '';
-	$aboutAccountPage.style.display = 'none';
-	$resetAccountBtn.style.display = 'none';
 	$recentBlocksInfo.style.display = 'block';
 	window.location.hash = '';
 });
@@ -332,7 +317,7 @@ let accountHistoryFrom = -1;
 let accountHistoryCount = 99;
 let getAccountTransactions = function() {
 	loadingShow();
-	let usernameVal = $searchAccount.querySelector('.form-control[name="account-username"]').value;
+	let usernameVal = $searchVal.value;
 	let operationsCount = 0;
 	$aboutAccountTableTbody.innerHTML = '';
 	golos.api.getAccountHistory(usernameVal, accountHistoryFrom, accountHistoryCount, function(err, transactions) {
@@ -386,35 +371,9 @@ $aboutAccountPageNext.addEventListener('click', function() {
 });
 
 $aboutAccountFilter.addEventListener('change', function() {
-	let usernameVal = $searchAccount.querySelector('.form-control[name="account-username"]').value;
+	let usernameVal = $searchVal.value;
 	window.location.hash = `account/${usernameVal}/${$aboutAccountFilter.value}`;
 	getAccountTransactions();
-});
-
-$searchAccount.addEventListener('submit', function(e) {
-	e.preventDefault();
-	$mainPage.style.display = 'none';
-	$aboutAccountPage.style.display = 'block';
-	$resetAccountBtn.style.display = 'block';
-	//window.location.hash = 'account/' + usernameVal;
-	document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = '';
-	$resetBlockBtn.style.display = 'none';
-	$aboutBlockPage.style.display = 'none';
-	$recentBlocksInfo.style.display = 'none';
-	getAccountTransactions();
-	return false;
-});
-
-$resetAccountBtn.addEventListener('click', function() {
-	document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = '';
-	$resetBlockBtn.style.display = 'none';
-	$mainPage.style.display = 'flex';
-	$aboutBlockPage.style.display = 'none';
-	$searchAccount.querySelector('.form-control[name="account-username"]').value = '';
-	$aboutAccountPage.style.display = 'none';
-	$resetAccountBtn.style.display = 'none';
-	$recentBlocksInfo.style.display = 'block';
-	window.location.hash = '';
 });
 
 let getBlockInfo = function(blockNumberVal, operationName, callback) {
@@ -481,18 +440,14 @@ window.addEventListener('hashchange', function() {
 		let params = hash.split('/');
 		if (params[1]) {
 			switch (params[0]) {
-				case 'block': {
-					document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = params[1];
-					document.getElementById('search-block').dispatchEvent(new CustomEvent('submit'));
+				case 'block': case 'tx': {
+					$searchVal.value = params[1];
+					$search.dispatchEvent(new CustomEvent('submit'));
 				}; break;
 				case 'account': {
-					$searchAccount.querySelector('.form-control[name="account-username"]').value = params[1];
+					$searchVal.value = params[1];
 					if (params[2]) $aboutAccountFilter.value = params[2];
-					$searchAccount.dispatchEvent(new CustomEvent('submit'));
-				}; break;
-				case 'tx': {
-					document.getElementById('search-hex').querySelector('.form-control[name="hex-number"]').value = params[1];
-					document.getElementById('search-hex').dispatchEvent(new CustomEvent('submit'));
+					$search.dispatchEvent(new CustomEvent('submit'));
 				}; break;
 				case 'operations': {
 					getBlockInfo(params[1], params[2], function() {
@@ -503,15 +458,11 @@ window.addEventListener('hashchange', function() {
 		}
 	}
 	else {
-		document.getElementById('search-block').querySelector('.form-control[name="block-number"]').value = '';
-		document.getElementById('search-hex').querySelector('.form-control[name="hex-number"]').value = '';
-		$resetBlockBtn.style.display = 'none';
-		$resetHexBtn.style.display = 'none';
+		$searchVal.value = '';
+		$resetSearchBtn.style.display = 'none';
 		$mainPage.style.display = 'flex';
 		$aboutBlockPage.style.display = 'none';
-		$searchAccount.querySelector('.form-control[name="account-username"]').value = '';
 		$aboutAccountPage.style.display = 'none';
-		$resetAccountBtn.style.display = 'none';
 		$recentBlocksInfo.style.display = 'block';
 	}
 });
