@@ -207,3 +207,8 @@ footer {
 .modal-full {
 	max-width: 90%;
 }
+
+#global-properties .column-max {
+	max-width: 230px;
+	word-wrap: break-word;
+}
