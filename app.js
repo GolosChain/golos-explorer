@@ -45,7 +45,10 @@ let $nodeAddressInput = $nodeAddress.querySelector('.form-control[name="node-add
 let $search = document.getElementById('search');
 let $searchVal = $search.querySelector('.form-control[name="search"]');
 let $blockchainVersion = document.getElementById('blockchain-version');
+let $witnessesPage = document.getElementById('witnesses-page');
+let $witnessesTableTbody = document.getElementById('witnesses-table').getElementsByTagName('tbody')[0];
 let defaultWebsocket = 'wss://ws.golos.io';
+let total_vesting_shares;
 
 let getBlockchainVersion = function() {
 	golos.api.getConfig(function(err, result) {
@@ -152,8 +155,14 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 		});
 	}
 	
+	getDynamicGlobalPropertiesHandler();
+	
+});
+
+let getDynamicGlobalPropertiesHandler = function() {
 	golos.api.getDynamicGlobalProperties(function(err, properties) {
 		if ( ! err) {
+			total_vesting_shares = properties.total_vesting_shares;
 			for (let key in properties) {
 				let prop = $globalPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
 				if (prop) prop.innerHTML = properties[key];
@@ -163,8 +172,8 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 			$reverseBlocksCount.innerHTML = reverseBlockCount;
 		}
 	});
-	
-});
+}
+getDynamicGlobalPropertiesHandler();
 
 if (localStorage && localStorage.clearAfterBlocksVal) $autoClearRealTimeAfter.value = localStorage.clearAfterBlocksVal;
 
@@ -268,6 +277,7 @@ $search.addEventListener('submit', function(e) {
 	$aboutBlockPage.style.display = 'none';
 	$aboutAccountPage.style.display = 'none';
 	$recentBlocksInfo.style.display = 'none';
+	$witnessesPage.style.display = 'none';
 	let searchVal = $searchVal.value;
 	// get HEX
 	if (searchVal.length == 40) {
@@ -456,6 +466,77 @@ window.addEventListener('hashchange', function() {
 				}; break;
 			}
 		}
+		else {
+			switch (params[0]) {
+				case 'witnesses': {
+					$mainPage.style.display = 'none';
+					$witnessesPage.style.display = 'block';
+					$witnessesTableTbody.innerHTML = '';
+					golos.api.getWitnessesByVote('', 100, function(err, witnesses) {
+						if ( ! err) {
+							let witnessRank = 0;
+							let accountsArr = [];
+							witnesses.forEach(function(witness) {
+								witnessRank++;
+								accountsArr.push(witness.owner);
+								let $newRow = $witnessesTableTbody.insertRow();
+								const oneM = Math.pow(10, 6);
+								const approval = formatDecimal(((witness.votes / oneM) / oneM).toFixed(), 0)[0];
+								const percentage = (100 * (witness.votes / oneM / total_vesting_shares.split(' ')[0])).toFixed(2);
+								const isWitnessesDeactive = /GLS1111111111111111111111111111111114T1Anm/.test(witness.signing_key);
+								const noPriceFeed = /0.000 GOLOS/.test(witness.sbd_exchange_rate.base);
+								if (isWitnessesDeactive || noPriceFeed) $newRow.className = 'table-danger';
+								$newRow.innerHTML = `<tr>
+												<td class="witness-rank">${witnessRank}</td>
+												<td>
+													<a target="_blank" href="#account/${witness.owner}"><img class="rounded float-left" data-username="${witness.owner}" src="https://golos.io/assets/0ee064e31a180b13aca01418634567a1.png"></a>
+													<h3><a ${witnessRank < 20 ? ' style="font-weight: bold"' : ''} target="_blank" href="#account/${witness.owner}">${witness.owner}</a></h3>
+													<a target="_blank" href="${witness.url}">[witness url]</a>
+												</td>
+												<td><h5><span class="badge badge-light">${approval}M</span></h5></td>
+												<td><h5><span class="badge badge-primary">${percentage}%</span></h5></td>
+												<td><h5><span class="badge badge-light">${witness.total_missed}</span></h5></td>
+												<td><h5><a class="badge badge-success" target="_blank" href="#block/${witness.last_confirmed_block_num}">${witness.last_confirmed_block_num}</a></h5></td>
+												<td>
+													${witness.sbd_exchange_rate.quote}
+													<br>
+													${witness.sbd_exchange_rate.base}
+													<br>
+													${witness.last_sbd_exchange_update}
+												</td>
+												<td>
+													${witness.props.account_creation_fee}
+													<br>
+													${witness.props.sbd_interest_rate / 100}%
+													<br>
+													${witness.props.maximum_block_size}
+												</td>
+												<td><h5><span class="badge badge-info">${witness.running_version}</span></h5></td>
+											</tr>`;
+							});
+							golos.api.getAccounts(accountsArr, function(err, accounts) {
+								if ( ! err) {
+									accounts.forEach(function(account) {
+										try {
+											let jsonMetadata = JSON.parse(account.json_metadata);
+											if (jsonMetadata.profile && jsonMetadata.profile.profile_image) 
+											$witnessesTableTbody.querySelector('img[data-username="' + account.name + '"]').src = jsonMetadata.profile.profile_image;
+										}
+										catch (e) {
+											//console.error(e);
+										}
+									});
+								}
+							});
+						}
+						else {
+							console.error(err);
+							swal({title: 'Error', type: 'error', text: err});
+						}
+					});
+				}; break;
+			}
+		}
 	}
 	else {
 		$searchVal.value = '';
@@ -463,7 +544,44 @@ window.addEventListener('hashchange', function() {
 		$mainPage.style.display = 'flex';
 		$aboutBlockPage.style.display = 'none';
 		$aboutAccountPage.style.display = 'none';
+		$witnessesPage.style.display = 'none';
 		$recentBlocksInfo.style.display = 'block';
 	}
 });
 window.dispatchEvent(new CustomEvent('hashchange'));
+
+let fractional_part_len = function(value) {
+	const parts = (Number(value) + '').split('.');
+	return parts.length < 2 ? 0 : parts[1].length;
+}
+// https://github.com/steemit/condenser/blob/master/src/app/utils/ParsersAndFormatters.js#L8
+let formatDecimal = function(value, decPlaces = 2, truncate0s = true) {
+	let decSeparator, fl, i, j, sign, thouSeparator, abs_value;
+	if (value === null || value === void 0 || isNaN(value)) {
+		return 'NaN';
+	}
+	if (truncate0s) {
+		fl = fractional_part_len(value);
+		if (fl < 2) fl = 2;
+		if (fl < decPlaces) decPlaces = fl;
+	}
+	decSeparator = '.';
+	thouSeparator = ',';
+	sign = value < 0 ? '-' : '';
+	abs_value = Math.abs(value);
+	i = parseInt(abs_value.toFixed(decPlaces), 10) + '';
+	j = i.length;
+	j = i.length > 3 ? j % 3 : 0;
+	const decPart = decPlaces
+		? decSeparator +
+		Math.abs(abs_value - i)
+			.toFixed(decPlaces)
+			.slice(2)
+		: '';
+	return [
+		sign +
+			(j ? i.substr(0, j) + thouSeparator : '') +
+			i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + thouSeparator),
+		decPart,
+	];
+}

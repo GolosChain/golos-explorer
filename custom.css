@@ -52,11 +52,17 @@ html {
 .icon-user:before {
   content: "\e971";
 }
+.icon-user-tie:before {
+  content: "\e976";
+}
 .icon-spinner11:before {
   content: "\e984";
 }
 .icon-bin:before {
   content: "\e9ac";
+}
+.icon-point-right:before {
+  content: "\ea04";
 }
 .icon-cross:before {
   content: "\ea0f";
@@ -173,7 +179,7 @@ footer {
     }
 }
 
-#about-block-page, #reset-block, #about-account-page, #reset-account, #reset-hex, #reset-node-address, #abount-account-page-nav {
+#about-block-page, #reset-search, #about-account-page, #reset-node-address, #abount-account-page-nav, #witnesses-page {
 	display: none;
 }
 
@@ -211,4 +217,25 @@ footer {
 #global-properties .column-max {
 	max-width: 230px;
 	word-wrap: break-word;
+}
+
+#witnesses-table img {
+	height: 3.6rem;
+	margin-right: 0.3rem;
+}
+#witnesses-table td h5 {
+	line-height: 3.1rem;
+}
+#witnesses-table tr.table-danger td a {
+	color: #fff;
+}
+#witnesses-table tr .witness-rank {
+	font-size: 2.4rem;
+	text-align: right;
+	padding-right: 1rem;
+}
+
+.navbar-nav li a span {
+	font-size: 1.1rem;
+	line-height: 1.2rem;
 }
