@@ -491,7 +491,7 @@ window.addEventListener('hashchange', function() {
 												<td>
 													<a target="_blank" href="#account/${witness.owner}"><img class="rounded float-left" data-username="${witness.owner}" src="https://golos.io/assets/0ee064e31a180b13aca01418634567a1.png"></a>
 													<h3><a ${witnessRank < 20 ? ' style="font-weight: bold"' : ''} target="_blank" href="#account/${witness.owner}">${witness.owner}</a></h3>
-													<a target="_blank" href="${witness.url}">[witness url]</a>
+													<a target="_blank" href="${witness.url}">witness url</a>
 												</td>
 												<td><h5><span class="badge badge-light">${approval}M</span></h5></td>
 												<td><h5><span class="badge badge-primary">${percentage}%</span></h5></td>
