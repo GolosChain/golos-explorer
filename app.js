@@ -336,7 +336,6 @@ let getAccountTransactions = function() {
 			//transactions.reverse();
 			transactions.forEach(function(transaction) {
 				if ( ! $aboutAccountFilter.value || (transaction[1].op[0] == $aboutAccountFilter.value)) {
-					console.log(transaction);
 					operationsCount++;
 					let $newRow = $aboutAccountTableTbody.insertRow(0);
 					$newRow.innerHTML = `<tr>
@@ -469,7 +468,11 @@ window.addEventListener('hashchange', function() {
 		else {
 			switch (params[0]) {
 				case 'witnesses': {
+					$searchVal.value = '';
+					$resetSearchBtn.style.display = 'none';
 					$mainPage.style.display = 'none';
+					$aboutBlockPage.style.display = 'none';
+					$aboutAccountPage.style.display = 'none';
 					$witnessesPage.style.display = 'block';
 					$witnessesTableTbody.innerHTML = '';
 					golos.api.getWitnessesByVote('', 100, function(err, witnesses) {
@@ -491,7 +494,7 @@ window.addEventListener('hashchange', function() {
 												<td>
 													<a target="_blank" href="#account/${witness.owner}"><img class="rounded float-left" data-username="${witness.owner}" src="https://golos.io/assets/0ee064e31a180b13aca01418634567a1.png"></a>
 													<h3><a ${witnessRank < 20 ? ' style="font-weight: bold"' : ''} target="_blank" href="#account/${witness.owner}">${witness.owner}</a></h3>
-													<a target="_blank" href="${witness.url}">witness url</a>
+													<a class="font-weight-light text-dark" target="_blank" href="${witness.url}">witness url</a>
 												</td>
 												<td><h5><span class="badge badge-light">${approval}M</span></h5></td>
 												<td><h5><span class="badge badge-primary">${percentage}%</span></h5></td>
