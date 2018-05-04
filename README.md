@@ -1,4 +1,4 @@
-# Golos Explorer
+# Golos Explorer!
 
 ## [explorer.golos.io](https://explorer.golos.io/) - this service for viewing transactions blockchain Golos in real-time. This platform is a thin client, that works without a backend (only frontend and blockchain).
 
