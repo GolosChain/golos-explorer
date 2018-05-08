@@ -9,9 +9,18 @@ html {
 .navbar-brand {
   color: #ffbe00 !important;
   font-weight: bold;
+  padding: 0;
+  margin-bottom: -6px;
 }
 .navbar-brand:hover {
   color: #fff !important;
+}
+.navbar-brand img {
+  height: 44px;
+  position: relative;
+  top: -4px;
+  width: 108px;
+  /*left: -34px;*/
 }
 
 @font-face {
