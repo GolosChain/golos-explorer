@@ -340,12 +340,17 @@ let getAccountTransactions = function() {
 					let $newRow = $aboutAccountTableTbody.insertRow(0);
 					$newRow.innerHTML = `<tr>
 									<td>${transaction[1].timestamp}</td>
-									<td><a href="#tx/${transaction[1].trx_id}">${transaction[1].trx_id}</a></td>
-									<td>${transaction[1].op[1].from ? transaction[1].op[1].from : ''}</td>
-									<td>${transaction[1].op[1].to ? transaction[1].op[1].to : ''}</td>
-									<td>${transaction[1].op[1].amount ? transaction[1].op[1].amount : ''}</td>
-									<td>${transaction[1].op[1].memo ? transaction[1].op[1].memo : ''}</td>
-								</tr>`;
+									<td><a href="#account/${usernameVal}/${transaction[1].op[0]}">${transaction[1].op[0]}</a></td>
+									<td><a href="#block/${transaction[1].block}">${transaction[1].block}</a></td>
+									<td><a href="#tx/${transaction[1].trx_id}">${transaction[1].trx_id}</a></td>`;
+					/*switch (transaction[1].op[0]) {
+						case 'transfer': $newRow.innerHTML += operationFormatter({From: transaction[1].op[1].from, To: transaction[1].op[1].to, Amount: transaction[1].op[1].amount, Memo: transaction[1].op[1].memo}); break;
+					}*/
+					//$newRow.innerHTML += operationFormatter(transaction[1].op[1]);
+					$newRow.innerHTML += `</tr>`;
+					let $newSubRow = $aboutAccountTableTbody.insertRow(1);
+					$newRow.className = 'table-light';
+					$newSubRow.innerHTML = `<tr><td class="description" colspan="4">${operationFormatter(transaction[1].op[1])}</td></tr>`;
 				}
 			});
 			if (transactions) {
@@ -366,6 +371,18 @@ let getAccountTransactions = function() {
 			swal({title: 'Error', type: 'error', text: err});
 		}
 	});
+};
+
+let operationFormatter = function(object) {
+	let resultStr = '';
+	//let resultStr = `<td class="description">`;
+	Object.keys(object).map(function(objectKey, index) {
+		let value = object[objectKey];
+		objectKey = objectKey.charAt(0).toUpperCase() + objectKey.slice(1).replace(/_/g, ' ');
+		resultStr += `${objectKey}: <span class="badge badge-info">${value}</span> `;
+	});
+	resultStr += `</td>`;
+	return resultStr;
 };
 
 $aboutAccountPagePrev.addEventListener('click', function() {
