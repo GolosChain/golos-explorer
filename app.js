@@ -50,12 +50,18 @@ let $witnessesTableTbody = document.getElementById('witnesses-table').getElement
 let defaultWebsocket = 'wss://ws.golos.io';
 let totalVestingShares;
 let totalVestingFundSteem;
+let $modalGetConfig = new Modal(document.getElementById('modal-get-config'));
 
-let getBlockchainVersion = function() {
-	golos.api.getConfig(function(err, result) {
-		if ( ! err) $blockchainVersion.innerHTML = result.STEEMIT_BLOCKCHAIN_VERSION;
-	});
-};
+golos.api.getConfig(function(err, result) {
+	if ( ! err) {
+		$blockchainVersion.innerHTML = result.STEEMIT_BLOCKCHAIN_VERSION;
+		let $modalGetConfigTableTbody = document.getElementById('modal-get-config-table').querySelector('tbody');
+		for (let key in result) {
+			let $newRow = $modalGetConfigTableTbody.insertRow(0);
+			$newRow.innerHTML = `<tr><td>${key}</td><td><b>${result[key]}</b></td></tr>`;
+		}
+	}
+});
 
 let getChainProperties = function() {
 	golos.api.getChainProperties(function(err, properties) {
@@ -81,7 +87,6 @@ golos.config.set('websocket', nodeAddress);
 if (nodeAddress != defaultWebsocket) {
 	$resetNodeAddress.style.display = 'block';
 }
-getBlockchainVersion();
 getChainProperties();
 
 $resetNodeAddress.addEventListener('click', function() {
@@ -566,6 +571,10 @@ let getBlockInfo = function(blockNumberVal, operationName, callback) {
 	});
 }
 
+document.getElementById('get-config-btn').addEventListener('click', function() {
+	$modalGetConfig.show();
+});
+
 window.addEventListener('hashchange', function() {
 	let hash = window.location.hash.substring(1);
 	if (hash) {
@@ -617,7 +626,7 @@ window.addEventListener('hashchange', function() {
 												<td>
 													<a target="_blank" href="#account/${witness.owner}"><img class="rounded float-left" data-username="${witness.owner}" src="https://golos.io/assets/0ee064e31a180b13aca01418634567a1.png"></a>
 													<h3><a ${witnessRank < 20 ? ' style="font-weight: bold"' : ''} target="_blank" href="#account/${witness.owner}">${witness.owner}</a></h3>
-													<a class="font-weight-light text-dark" target="_blank" href="${witness.url}">witness url</a>
+													<a class="font-weight-light text-dark witness-url" target="_blank" href="${witness.url}">witness url</a>
 												</td>
 												<td><h5><span class="badge badge-light">${approval}M</span></h5></td>
 												<td><h5><span class="badge badge-primary">${percentage}%</span></h5></td>

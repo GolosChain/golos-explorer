@@ -238,6 +238,10 @@ footer {
 #witnesses-table tr.table-danger td a {
 	color: #fff;
 }
+#witnesses-table .witness-url {
+	font-size: 0.9rem;
+	font-family: Verdana;
+}
 #witnesses-table tr .witness-rank {
 	font-size: 2.4rem;
 	text-align: right;
@@ -274,4 +278,8 @@ footer {
 	overflow-y: auto;
 	width: 100%;
 	text-align: left;
+}
+
+#global-properties-head {
+	vertical-align: -webkit-baseline-middle;
 }
