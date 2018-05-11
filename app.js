@@ -351,8 +351,12 @@ let getAccountInfo = function() {
 					$profileFollowing.innerHTML = result.following_count;
 				}
 			});
-			let jsonMetadata = JSON.parse(account[0].json_metadata);
-			if (jsonMetadata.profile) {
+			let jsonMetadata;
+			try {
+				jsonMetadata = JSON.parse(account[0].json_metadata);
+			} catch (e) {
+			}
+			if (jsonMetadata && jsonMetadata.profile) {
 				if (jsonMetadata.profile.name) $profileName.innerHTML = jsonMetadata.profile.name;
 				else $profileName.innerHTML = '-';
 				if (jsonMetadata.profile.website) {
