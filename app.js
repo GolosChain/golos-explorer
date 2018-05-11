@@ -48,7 +48,8 @@ let $blockchainVersion = document.getElementById('blockchain-version');
 let $witnessesPage = document.getElementById('witnesses-page');
 let $witnessesTableTbody = document.getElementById('witnesses-table').getElementsByTagName('tbody')[0];
 let defaultWebsocket = 'wss://ws.golos.io';
-let total_vesting_shares;
+let totalVestingShares;
+let totalVestingFundSteem;
 
 let getBlockchainVersion = function() {
 	golos.api.getConfig(function(err, result) {
@@ -162,7 +163,8 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 let getDynamicGlobalPropertiesHandler = function() {
 	golos.api.getDynamicGlobalProperties(function(err, properties) {
 		if ( ! err) {
-			total_vesting_shares = properties.total_vesting_shares;
+			totalVestingShares = properties.total_vesting_shares;
+			totalVestingFundSteem = properties.total_vesting_fund_steem;
 			for (let key in properties) {
 				let prop = $globalPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
 				if (prop) prop.innerHTML = properties[key];
@@ -302,9 +304,105 @@ $search.addEventListener('submit', function(e) {
 		//window.location.hash = 'account/' + searchVal;
 		$aboutAccountPage.style.display = 'block';
 		getAccountTransactions();
+		getAccountInfo();
 	}
 	return false;
 });
+
+let $profileName = document.getElementById('profile-name');
+let $profileWebsite = document.getElementById('profile-website');
+let $profileAbout = document.getElementById('profile-about');
+let $profileProfileImage = document.getElementById('profile-image');
+let $profileCoverImage = document.getElementById('profile-cover-image');
+let $profileBalance = document.getElementById('profile-balance');
+let $profileMined = document.getElementById('profile-mined');
+let $profileLocation = document.getElementById('profile-location');
+let $profileSelectTags = document.getElementById('profile-select-tags');
+let $profileWitnessVotes = document.getElementById('profile-witness-votes');
+let $profileGender = document.getElementById('profile-gender');
+let $profileSbdBalance = document.getElementById('profile-sbd-balance');
+let $profileOwner = document.getElementById('profile-owner');
+let $profileActive = document.getElementById('profile-active');
+let $profilePosting = document.getElementById('profile-posting');
+let $profileMemo = document.getElementById('profile-memo');
+let $profileRecoveryAccount = document.getElementById('profile-recovery-account');
+let $profileLastAccountCreated = document.getElementById('profile-account-created');
+let $profileLastAccountUpdate = document.getElementById('profile-last-account-update');
+let $profileVotingPower = document.getElementById('profile-voting-power');
+let $profilePostCount = document.getElementById('profile-post-count');
+let $profileLastPost = document.getElementById('profile-last-post');
+let $profileReputation = document.getElementById('profile-reputation');
+let $profileFollower = document.getElementById('profile-follower');
+let $profileFollowing = document.getElementById('profile-following');
+let $profilePower = document.getElementById('profile-power');
+
+let getAccountInfo = function() {
+	let usernameVal = $searchVal.value;
+	golos.api.getAccounts([usernameVal], function(err, account) {
+		if ( ! err && account[0]) {
+			golos.api.getFollowCount(usernameVal, function(err, result) {
+				if ( ! err) {
+					$profileFollower.innerHTML = result.follower_count;
+					$profileFollowing.innerHTML = result.following_count;
+				}
+			});
+			let jsonMetadata = JSON.parse(account[0].json_metadata);
+			if (jsonMetadata.profile) {
+				if (jsonMetadata.profile.name) $profileName.innerHTML = jsonMetadata.profile.name;
+				else $profileName.innerHTML = '-';
+				if (jsonMetadata.profile.website) {
+					$profileWebsite.innerHTML = jsonMetadata.profile.website;
+					$profileWebsite.href = jsonMetadata.profile.website;
+				}
+				else $profileWebsite.innerHTML = '-';
+				if (jsonMetadata.profile.location) $profileLocation.innerHTML = jsonMetadata.profile.location;
+				else $profileLocation.innerHTML = '-';
+				if (jsonMetadata.profile.gender) $profileGender.innerHTML = jsonMetadata.profile.gender;
+				else $profileGender.innerHTML = '-';
+				if (jsonMetadata.profile.select_tags) $profileSelectTags.innerHTML = jsonMetadata.profile.select_tags;
+				else $profileSelectTags.innerHTML = '-';
+				if (jsonMetadata.profile.about) $profileAbout.innerHTML = jsonMetadata.profile.about;
+				else $profileAbout.innerHTML = '-';
+				if (jsonMetadata.profile.profile_image) $profileProfileImage.src = jsonMetadata.profile.profile_image;
+				else $profileProfileImage.src = 'graphics/noavatar.png';
+				if (jsonMetadata.profile.cover_image) {
+					$profileCoverImage.src = jsonMetadata.profile.cover_image;
+					$profileCoverImage.style.display = 'block';
+				}
+				else $profileCoverImage.style.display = 'none';
+			}
+			else {
+				$profileName.innerHTML = '-';
+				$profileWebsite.innerHTML = '-';
+				$profileLocation.innerHTML = '-';
+				$profileGender.innerHTML = '-';
+				$profileSelectTags.innerHTML = '-';
+				$profileAbout.innerHTML = '-';
+				$profileProfileImage.src = 'graphics/noavatar.png';
+				$profileCoverImage.style.display = 'none';
+			}
+			if (account[0].witness_votes.length > 0) $profileWitnessVotes.innerHTML = account[0].witness_votes;
+			else $profileWitnessVotes.innerHTML = '-';
+			$profileBalance.innerHTML = account[0].balance;
+			$profileMined.innerHTML = account[0].mined;
+			$profileSbdBalance.innerHTML = account[0].sbd_balance;
+			$profileOwner.innerHTML = account[0].owner.key_auths[0][0];
+			$profileActive.innerHTML = account[0].active.key_auths[0][0];
+			$profilePosting.innerHTML = account[0].posting.key_auths[0][0];
+			$profileMemo.innerHTML = account[0].memo_key;
+			$profileRecoveryAccount.innerHTML = account[0].recovery_account;
+			$profileLastAccountCreated.innerHTML = account[0].created;
+			$profileLastAccountUpdate.innerHTML = account[0].last_account_update;
+			$profilePostCount.innerHTML = account[0].post_count;
+			$profileLastPost.innerHTML = account[0].last_post;
+			$profileReputation.innerHTML = rep2(account[0].reputation);
+			$profilePower.innerHTML = golos.formatter.vestToGolos(account[0].vesting_shares, totalVestingShares, totalVestingFundSteem).toFixed(2);
+			let voteAge = (new Date - new Date(account[0].last_vote_time + 'Z')) / 1000;
+			let currentVotingPower = account[0].voting_power + (10000 * voteAge / 432000);
+			$profileVotingPower.innerHTML = Math.min(currentVotingPower / 100, 100).toFixed(2) + '%';
+		}
+	});
+}
 
 $resetSearchBtn.addEventListener('click', function() {
 	$searchVal.value = '';
@@ -338,24 +436,25 @@ let getAccountTransactions = function() {
 				if ( ! $aboutAccountFilter.value || (transaction[1].op[0] == $aboutAccountFilter.value)) {
 					operationsCount++;
 					let $newRow = $aboutAccountTableTbody.insertRow(0);
+					$newRow.className = 'table-light';
 					$newRow.innerHTML = `<tr>
 									<td>${transaction[1].timestamp}</td>
 									<td><a href="#account/${usernameVal}/${transaction[1].op[0]}">${transaction[1].op[0]}</a></td>
 									<td><a href="#block/${transaction[1].block}">${transaction[1].block}</a></td>
 									<td><a href="#tx/${transaction[1].trx_id}">${transaction[1].trx_id}</a></td>`;
-					/*switch (transaction[1].op[0]) {
-						case 'transfer': $newRow.innerHTML += operationFormatter({From: transaction[1].op[1].from, To: transaction[1].op[1].to, Amount: transaction[1].op[1].amount, Memo: transaction[1].op[1].memo}); break;
-					}*/
-					//$newRow.innerHTML += operationFormatter(transaction[1].op[1]);
 					$newRow.innerHTML += `</tr>`;
 					let $newSubRow = $aboutAccountTableTbody.insertRow(1);
-					$newRow.className = 'table-light';
 					$newSubRow.innerHTML = `<tr><td class="description" colspan="4">${operationFormatter(transaction[1].op[1])}</td></tr>`;
+					let humanDescription = operationHumanFormatter(transaction[1].op);
+					if (humanDescription) {
+						let $newSubSubRow = $aboutAccountTableTbody.insertRow(2);
+						$newSubSubRow.innerHTML = `<tr><td class="description" colspan="4">${humanDescription}</td></tr>`;
+					}
 				}
 			});
 			if (transactions) {
 				let transactionsCount = transactions.length;
-				let transactionsAllCount = transactions[transactionsCount - 1][0];
+				let transactionsAllCount = transactions[transactionsCount - 1][0] + 1;
 				$aboutAccountAllCount.innerHTML = transactionsAllCount;
 				$aboutAccountCount.innerHTML = transactionsCount;
 				$aboutAccountFilteredCount.innerHTML = operationsCount;
@@ -375,14 +474,22 @@ let getAccountTransactions = function() {
 
 let operationFormatter = function(object) {
 	let resultStr = '';
-	//let resultStr = `<td class="description">`;
-	Object.keys(object).map(function(objectKey, index) {
-		let value = object[objectKey];
-		objectKey = objectKey.charAt(0).toUpperCase() + objectKey.slice(1).replace(/_/g, ' ');
-		resultStr += `${objectKey}: <span class="badge badge-info">${value}</span> `;
-	});
-	resultStr += `</td>`;
+	for (var key in object) {
+		let keyBeauty = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+		if (typeof(object[key]) !== 'object') resultStr += `${keyBeauty}: <span class="badge badge-secondary">${object[key]}</span> `;
+		else {
+			for (var paramsKey in object[key]) {
+				resultStr += `${keyBeauty} ${paramsKey}: <span class="badge badge-secondary">${object[key][paramsKey]}</span> `;
+			}
+		}
+	}
 	return resultStr;
+};
+let operationHumanFormatter = function(transaction) {
+	switch (transaction[0]) {
+		//case 'transfer': return `Notification from @robot: ${transaction[1].memo}`; break;
+		default: return '';
+	}
 };
 
 $aboutAccountPagePrev.addEventListener('click', function() {
@@ -399,7 +506,6 @@ $aboutAccountPageNext.addEventListener('click', function() {
 $aboutAccountFilter.addEventListener('change', function() {
 	let usernameVal = $searchVal.value;
 	window.location.hash = `account/${usernameVal}/${$aboutAccountFilter.value}`;
-	getAccountTransactions();
 });
 
 let getBlockInfo = function(blockNumberVal, operationName, callback) {
@@ -502,7 +608,7 @@ window.addEventListener('hashchange', function() {
 								let $newRow = $witnessesTableTbody.insertRow();
 								const oneM = Math.pow(10, 6);
 								const approval = formatDecimal(((witness.votes / oneM) / oneM).toFixed(), 0)[0];
-								const percentage = (100 * (witness.votes / oneM / total_vesting_shares.split(' ')[0])).toFixed(2);
+								const percentage = (100 * (witness.votes / oneM / totalVestingShares.split(' ')[0])).toFixed(2);
 								const isWitnessesDeactive = /GLS1111111111111111111111111111111114T1Anm/.test(witness.signing_key);
 								const noPriceFeed = /0.000 GOLOS/.test(witness.sbd_exchange_rate.base);
 								if (isWitnessesDeactive || noPriceFeed) $newRow.className = 'table-danger';
@@ -604,4 +710,27 @@ let formatDecimal = function(value, decPlaces = 2, truncate0s = true) {
 			i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + thouSeparator),
 		decPart,
 	];
+}
+
+// https://github.com/steemit/condenser/blob/master/src/app/utils/ParsersAndFormatters.js#L47
+function log10(str) {
+	const leadingDigits = parseInt(str.substring(0, 4));
+	const log = Math.log(leadingDigits) / Math.LN10 + 0.00000001;
+	const n = str.length - 1;
+	return n + (log - parseInt(log));
+}
+let rep2 = function(rep2) {
+	if (rep2 == null) return rep2;
+	let rep = String(rep2);
+	const neg = rep.charAt(0) === '-';
+	rep = neg ? rep.substring(1) : rep;
+
+	let out = log10(rep);
+	if (isNaN(out)) out = 0;
+	out = Math.max(out - 9, 0); // @ -9, $0.50 earned is approx magnitude 1
+	out = (neg ? -1 : 1) * out;
+	out = out * 9 + 25; // 9 points per magnitude. center at 25
+	// base-line 0 to darken and < 0 to auto hide (grep rephide)
+	out = parseInt(out);
+	return out;
 }

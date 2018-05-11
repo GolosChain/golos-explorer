@@ -257,3 +257,21 @@ footer {
 	/*text-align: left;*/
 	margin-bottom: 0.2rem;
 }
+#about-account-page .card {
+	height: 460px;
+	overflow-y: hidden;
+}
+#about-account-page .card .card-img {
+	opacity: 0.3;
+	filter: grayscale(100%) blur(1px);
+	/*max-height: 380px;*/
+}
+#about-account-page #profile-image {
+	max-height: 12rem;
+}
+
+#profile-witness-votes {
+	overflow-y: auto;
+	width: 100%;
+	text-align: left;
+}
