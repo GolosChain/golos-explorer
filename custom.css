@@ -49,23 +49,20 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-barcode:before {
-  content: "\e937";
-}
-.icon-keyboard:before {
-  content: "\e955";
-}
 .icon-database:before {
   content: "\e964";
-}
-.icon-user:before {
-  content: "\e971";
 }
 .icon-user-tie:before {
   content: "\e976";
 }
 .icon-spinner11:before {
   content: "\e984";
+}
+.icon-search:before {
+  content: "\e986";
+}
+.icon-cog:before {
+  content: "\e994";
 }
 .icon-bin:before {
   content: "\e9ac";
