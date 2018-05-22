@@ -52,6 +52,14 @@ let totalVestingShares;
 let totalVestingFundSteem;
 let $modalGetConfig = new Modal(document.getElementById('modal-get-config'));
 
+if (localStorage && localStorage.nodeAddress) $nodeAddressInput.value = localStorage.nodeAddress;
+$blockchainVersion.innerHTML = '...';
+let nodeAddress = $nodeAddressInput.value;
+golos.config.set('websocket', nodeAddress);
+if (nodeAddress != defaultWebsocket) {
+	$resetNodeAddress.style.display = 'block';
+}
+
 golos.api.getConfig(function(err, result) {
 	if ( ! err) {
 		$blockchainVersion.innerHTML = result.STEEMIT_BLOCKCHAIN_VERSION;
@@ -73,21 +81,13 @@ let getChainProperties = function() {
 		}
 	});
 };
+getChainProperties();
 
 $nodeAddress.addEventListener('submit', function(e) {
 	e.preventDefault();
 	localStorage.nodeAddress = $nodeAddressInput.value;
 	window.location.reload();
 });
-
-if (localStorage && localStorage.nodeAddress) $nodeAddressInput.value = localStorage.nodeAddress;
-$blockchainVersion.innerHTML = '...';
-let nodeAddress = $nodeAddressInput.value;
-golos.config.set('websocket', nodeAddress);
-if (nodeAddress != defaultWebsocket) {
-	$resetNodeAddress.style.display = 'block';
-}
-getChainProperties();
 
 $resetNodeAddress.addEventListener('click', function() {
 	$nodeAddressInput.value = defaultWebsocket;
