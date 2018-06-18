@@ -280,3 +280,17 @@ footer {
 #global-properties-head {
 	vertical-align: -webkit-baseline-middle;
 }
+
+.pagination {
+	display: inline-block;
+}
+.pagination .page-item {
+	display: inline;
+}
+.pagination .page-item .page-link {
+	float: left;
+	border: 1px solid #dee2e6;
+	border-radius: 0;
+	margin-top: 0.1em;
+	margin-bottom: 0.1em;
+}

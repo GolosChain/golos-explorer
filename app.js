@@ -40,6 +40,7 @@ let $modalAboutBlockTransactionsTableTbody = document.getElementById('modal-abou
 let $modalAboutBlockCode = document.getElementById('modal-about-block-code');
 let $aboutAccountPagePrev = document.getElementById('about-account-page-prev');
 let $aboutAccountPageNext = document.getElementById('about-account-page-next');
+let $aboutAccountPagePages = document.getElementById('about-account-page-pages');
 let $nodeAddress = document.getElementById('node-address');
 let $nodeAddressInput = $nodeAddress.querySelector('.form-control[name="node-address"]');
 let $search = document.getElementById('search');
@@ -47,10 +48,12 @@ let $searchVal = $search.querySelector('.form-control[name="search"]');
 let $blockchainVersion = document.getElementById('blockchain-version');
 let $witnessesPage = document.getElementById('witnesses-page');
 let $witnessesTableTbody = document.getElementById('witnesses-table').getElementsByTagName('tbody')[0];
+let $aboutAccountPageNav = document.getElementById('about-account-page-nav');
 let defaultWebsocket = 'wss://ws.golos.io';
 let totalVestingShares;
 let totalVestingFundSteem;
 let $modalGetConfig = new Modal(document.getElementById('modal-get-config'));
+let currentPageNumber = 1;
 
 if (localStorage && localStorage.nodeAddress) $nodeAddressInput.value = localStorage.nodeAddress;
 $blockchainVersion.innerHTML = '...';
@@ -431,15 +434,14 @@ let loadingHide = function() {
 };
 
 let accountHistoryFrom = -1;
-let accountHistoryCount = 99;
 let getAccountTransactions = function() {
 	loadingShow();
 	let usernameVal = $searchVal.value;
 	let operationsCount = 0;
 	$aboutAccountTableTbody.innerHTML = '';
-	golos.api.getAccountHistory(usernameVal, accountHistoryFrom, accountHistoryCount, function(err, transactions) {
+	golos.api.getAccountHistory(usernameVal, accountHistoryFrom, 99, function(err, transactions) {
 		loadingHide();
-		if (transactions.length > 0) {
+		if (transactions && transactions.length > 0) {
 			//transactions.reverse();
 			transactions.forEach(function(transaction) {
 				if ( ! $aboutAccountFilter.value || (transaction[1].op[0] == $aboutAccountFilter.value)) {
@@ -448,7 +450,7 @@ let getAccountTransactions = function() {
 					$newRow.className = 'table-light';
 					$newRow.innerHTML = `<tr>
 									<td>${transaction[1].timestamp}</td>
-									<td><a href="#account/${usernameVal}/${transaction[1].op[0]}">${transaction[1].op[0]}</a></td>
+									<td><a href="#account/${usernameVal}/${currentPageNumber}/${transaction[1].op[0]}">${transaction[1].op[0]}</a></td>
 									<td><a href="#block/${transaction[1].block}">${transaction[1].block}</a></td>
 									<td><a href="#tx/${transaction[1].trx_id}">${transaction[1].trx_id}</a></td>`;
 					$newRow.innerHTML += `</tr>`;
@@ -467,9 +469,22 @@ let getAccountTransactions = function() {
 				$aboutAccountAllCount.innerHTML = transactionsAllCount;
 				$aboutAccountCount.innerHTML = transactionsCount;
 				$aboutAccountFilteredCount.innerHTML = operationsCount;
+				$aboutAccountPagePages.innerHTML = '';
 				if (transactionsAllCount > transactionsCount) {
 					// pagination
-					let $newPage = `<li class="page-item"><a class="page-link" href="#">2</a></li>`;
+					$aboutAccountPageNav.style.display = 'block';
+					pageNumber = 1;
+					let renderPageNumbers = 0;
+					while (pageNumber < transactionsAllCount / 100) {
+						//<li class="page-item active"><a class="page-link" href="#">1</a></li>
+						let $newPage = document.createElement('li');
+						$newPage.innerHTML = `<a class="page-link" href="#account/${usernameVal}/${pageNumber}/${$aboutAccountFilter.value}">${pageNumber}</a>`;
+						$newPage.className = 'page-item' + (pageNumber == currentPageNumber ? ' active' : '');
+						$aboutAccountPagePages.appendChild($newPage);
+						pageNumber++;
+						renderPageNumbers++;
+						if (renderPageNumbers >= 100) break;
+					}
 				}
 			}
 			if (operationsCount == 0) swal({title: 'Error', type: 'error', text: `Not have ${$aboutAccountFilter.value} operations!`});
@@ -480,6 +495,21 @@ let getAccountTransactions = function() {
 		}
 	});
 };
+
+$aboutAccountPagePrev.addEventListener('click', function(e) {
+	e.preventDefault();
+	//accountHistoryFrom -= 100;
+	//getAccountTransactions();
+	currentPageNumber--;
+	window.location.hash = `account/${$searchVal.value}/${currentPageNumber}/${$aboutAccountFilter.value}`;
+});
+$aboutAccountPageNext.addEventListener('click', function(e) {
+	e.preventDefault();
+	//accountHistoryFrom += 100;
+	//getAccountTransactions();
+	currentPageNumber++;
+	window.location.hash = `account/${$searchVal.value}/${currentPageNumber}/${$aboutAccountFilter.value}`;
+});
 
 let operationFormatter = function(object) {
 	let resultStr = '';
@@ -501,20 +531,9 @@ let operationHumanFormatter = function(transaction) {
 	}
 };
 
-$aboutAccountPagePrev.addEventListener('click', function() {
-	accountHistoryFrom -= 100;
-	accountHistoryCount -= 100;
-	getAccountTransactions();
-});
-$aboutAccountPageNext.addEventListener('click', function() {
-	accountHistoryFrom += 100;
-	accountHistoryCount += 100;
-	getAccountTransactions();
-});
-
 $aboutAccountFilter.addEventListener('change', function() {
 	let usernameVal = $searchVal.value;
-	window.location.hash = `account/${usernameVal}/${$aboutAccountFilter.value}`;
+	window.location.hash = `account/${usernameVal}/${currentPageNumber}/${$aboutAccountFilter.value}`;
 });
 
 let getBlockInfo = function(blockNumberVal, operationName, callback) {
@@ -591,7 +610,11 @@ window.addEventListener('hashchange', function() {
 				}; break;
 				case 'account': {
 					$searchVal.value = params[1];
-					if (params[2]) $aboutAccountFilter.value = params[2];
+					if (params[2]) {
+						currentPageNumber = params[2];
+						if (currentPageNumber > 1) accountHistoryFrom = (currentPageNumber - 1) * 100;
+					}
+					if (params[3]) $aboutAccountFilter.value = params[3];
 					$search.dispatchEvent(new CustomEvent('submit'));
 				}; break;
 				case 'operations': {
