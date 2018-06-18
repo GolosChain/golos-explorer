@@ -41,8 +41,6 @@ let $modalAboutBlockCode = document.getElementById('modal-about-block-code');
 let $aboutAccountPagePrev = document.getElementById('about-account-page-prev');
 let $aboutAccountPageNext = document.getElementById('about-account-page-next');
 let $aboutAccountPagePages = document.getElementById('about-account-page-pages');
-let $nodeAddress = document.getElementById('node-address');
-let $nodeAddressInput = $nodeAddress.querySelector('.form-control[name="node-address"]');
 let $search = document.getElementById('search');
 let $searchVal = $search.querySelector('.form-control[name="search"]');
 let $blockchainVersion = document.getElementById('blockchain-version');
@@ -55,15 +53,13 @@ let totalVestingFundSteem;
 let $modalGetConfig = new Modal(document.getElementById('modal-get-config'));
 let currentPageNumber = 1;
 
-if (localStorage && localStorage.nodeAddress) $nodeAddressInput.value = localStorage.nodeAddress;
-$blockchainVersion.innerHTML = '...';
-let nodeAddress = $nodeAddressInput.value;
 golos.config.set('websocket', nodeAddress);
 if (nodeAddress != defaultWebsocket) {
 	$resetNodeAddress.style.display = 'block';
 }
 
 golos.api.getConfig(function(err, result) {
+	$blockchainVersion.innerHTML = '...';
 	if ( ! err) {
 		$blockchainVersion.innerHTML = result.STEEMIT_BLOCKCHAIN_VERSION;
 		let $modalGetConfigTableTbody = document.getElementById('modal-get-config-table').querySelector('tbody');
