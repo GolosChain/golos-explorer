@@ -46,6 +46,8 @@ let $searchVal = $search.querySelector('.form-control[name="search"]');
 let $blockchainVersion = document.getElementById('blockchain-version');
 let $witnessesPage = document.getElementById('witnesses-page');
 let $witnessesTableTbody = document.getElementById('witnesses-table').getElementsByTagName('tbody')[0];
+let $accountsPage = document.getElementById('accounts-page');
+let $accountsTableTbody = document.getElementById('accounts-table').getElementsByTagName('tbody')[0];
 let $aboutAccountPageNav = document.getElementById('about-account-page-nav');
 let defaultWebsocket = 'wss://ws.golos.io';
 let totalVestingShares;
@@ -284,6 +286,7 @@ $search.addEventListener('submit', function(e) {
 	$aboutAccountPage.style.display = 'none';
 	$recentBlocksInfo.style.display = 'none';
 	$witnessesPage.style.display = 'none';
+	$accountsPage.style.display = 'none';
 	let searchVal = $searchVal.value;
 	// get HEX
 	if (searchVal.length == 40) {
@@ -511,7 +514,7 @@ let operationFormatter = function(object) {
 	let resultStr = '';
 	for (var key in object) {
 		let keyBeauty = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
-		if (typeof(object[key]) !== 'object') resultStr += `${keyBeauty}: <span class="badge badge-secondary">${object[key]}</span> `;
+		if (typeof(object[key]) !== 'object') resultStr += `${keyBeauty}: <span class="badge badge-secondary">${escapeHtml(object[key])}</span> `;
 		else {
 			for (var paramsKey in object[key]) {
 				resultStr += `${keyBeauty} ${paramsKey}: <span class="badge badge-secondary">${object[key][paramsKey]}</span> `;
@@ -526,6 +529,22 @@ let operationHumanFormatter = function(transaction) {
 		default: return '';
 	}
 };
+
+let entityMap = {
+	'&': '&amp;',
+	'<': '&lt;',
+	'>': '&gt;',
+	'"': '&quot;',
+	"'": '&#39;',
+	'/': '&#x2F;',
+	'`': '&#x60;',
+	'=': '&#x3D;'
+};
+let escapeHtml = function(string) {
+	return String(string).replace(/[&<>"'`=\/]/g, function(s) {
+		return entityMap[s];
+	});
+}
 
 $aboutAccountFilter.addEventListener('change', function() {
 	let usernameVal = $searchVal.value;
@@ -628,6 +647,7 @@ window.addEventListener('hashchange', function() {
 					$mainPage.style.display = 'none';
 					$aboutBlockPage.style.display = 'none';
 					$aboutAccountPage.style.display = 'none';
+					$accountsPage.style.display = 'none';
 					$witnessesPage.style.display = 'block';
 					$witnessesTableTbody.innerHTML = '';
 					golos.api.getWitnessesByVote('', 100, function(err, witnesses) {
@@ -693,6 +713,71 @@ window.addEventListener('hashchange', function() {
 						}
 					});
 				}; break;
+				case 'accounts': {
+					$searchVal.value = '';
+					$resetSearchBtn.style.display = 'none';
+					$mainPage.style.display = 'none';
+					$aboutBlockPage.style.display = 'none';
+					$aboutAccountPage.style.display = 'none';
+					$witnessesPage.style.display = 'none';
+					$accountsPage.style.display = 'block';
+					$accountsTableTbody.innerHTML = '';
+					golos.api.lookupAccounts('', 10, function(err, accounts) {
+						if ( ! err) {
+							let accountsArr = [];
+							accounts.forEach(function(account) {
+								accountsArr.push(account);
+								let $newRow = $accountsTableTbody.insertRow();
+								$newRow.setAttribute('data-username', account);
+								$newRow.innerHTML = `<tr>
+												<td>
+													<a target="_blank" href="#account/${account}"><img class="rounded float-left" src="https://golos.io/assets/0ee064e31a180b13aca01418634567a1.png"></a>
+													<h3><a target="_blank" href="#account/${account}">${account}</a></h3>
+												</td>
+												<td>
+												</td>
+												<td>
+													<span class="posts"></span>
+												</td>
+												<td>
+													<span class="vests"></span>
+												</td>
+												<td>
+												</td>
+												<td>
+													<span class="balance"></span>
+													<br>
+													<span class="sbd-balance"></span>
+												</td>
+											</tr>`;
+							});
+							golos.api.getAccounts(accountsArr, function(err, accounts) {
+								if ( ! err) {
+									accounts.forEach(function(account) {
+										console.log(account);
+										let $accountRow = $accountsTableTbody.querySelector('tr[data-username="' + account.name + '"]');
+										$accountRow.querySelector('.posts').innerHTML = account.post_count;
+										$accountRow.querySelector('.vests').innerHTML = account.vesting_shares;
+										$accountRow.querySelector('.balance').innerHTML = account.balance;
+										$accountRow.querySelector('.sbd-balance').innerHTML = account.sbd_balance;
+										try {
+											let jsonMetadata = JSON.parse(account.json_metadata);
+											if (jsonMetadata.profile && jsonMetadata.profile.profile_image) 
+											$accountRow.querySelector('img').src = jsonMetadata.profile.profile_image;
+										}
+										catch (e) {
+											//console.error(e);
+										}
+									});
+								}
+							});
+						}
+						else {
+							console.error(err);
+							swal({title: 'Error', type: 'error', text: err});
+						}
+					});
+				}; break;
 			}
 		}
 	}
@@ -703,6 +788,7 @@ window.addEventListener('hashchange', function() {
 		$aboutBlockPage.style.display = 'none';
 		$aboutAccountPage.style.display = 'none';
 		$witnessesPage.style.display = 'none';
+		$accountsPage.style.display = 'none';
 		$recentBlocksInfo.style.display = 'block';
 	}
 });

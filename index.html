@@ -18,7 +18,7 @@
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<form class="form-inline my-2 my-lg-0 col-sm-6" id="search">
+					<form class="form-inline my-2 my-lg-0 col-sm-5" id="search">
 						<div class="col-sm-12">
 							<div class="input-group">
 								<input class="form-control form-control-sm" name="search" type="search" placeholder="Search for a block, transaction or username on the Golos blockchain" aria-label="Search for a block, transaction or username on the Golos blockchain" required="">
@@ -33,6 +33,9 @@
 						<li class="nav-item">
 							<a class="nav-link" href="#witnesses" id="witnesses-page-btn"><span class="icon-user-tie"></span> Witnesses</a>
 						</li>
+						<!--<li class="nav-item">
+							<a class="nav-link" href="#accounts" id="accounts-page-btn"><span class="icon-user-tie"></span> Accounts</a>
+						</li>-->
 					</ul>
 					<form class="form-inline my-2 my-lg-0 ml-auto" id="node-address">
 						<div class="input-group input-group-sm">
@@ -368,6 +371,31 @@
 											Block Size
 										</th>
 										<th scope="col">Version</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div id="accounts-page">
+							<div class="row">
+								<div class="col">
+									<h5>Accounts</h5>
+								</div>
+								<div class="col">
+									<a class="btn btn-success float-right" target="_blank" href="https://golos.io/create_account"><span class="icon-point-right"></span> Create account</a>
+								</div>
+							</div>
+							<p>Accounts sorted by various metrics (richlist by default).</p>
+							<table class="table table-bordered table-hover table-sm" id="accounts-table">
+								<thead>
+									<tr class="table-primary">
+										<th scope="col">Account</th>
+										<th scope="col">Followers</th>
+										<th scope="col">Posts</th>
+										<th scope="col">Gests</th>
+										<th scope="col">Powerdown</th>
+										<th scope="col">Balances</th>
 									</tr>
 								</thead>
 								<tbody>
