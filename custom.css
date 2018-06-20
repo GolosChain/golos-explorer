@@ -250,8 +250,12 @@ footer {
 	line-height: 1.2rem;
 }
 
+#about-account {
+	table-layout: fixed;
+}
 #about-account td.description {
 	/*display: grid;*/
+	word-wrap: break-word;
 }
 #about-account span.badge {
 	font-size: 0.9375rem;
@@ -259,7 +263,9 @@ footer {
 	margin-bottom: 0.2rem;
 	white-space: normal;
 	text-align: left;
+	max-width: 100%;
 }
+
 #about-account-page .card {
 	height: 460px;
 	overflow-y: hidden;
