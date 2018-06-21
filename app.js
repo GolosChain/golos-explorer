@@ -486,7 +486,7 @@ let getAccountTransactions = function() {
 					}
 				}
 			}
-			if (operationsCount == 0) swal({title: 'Please change the filter operation or change page!', type: 'warning', html: `There are no have <b>${$aboutAccountFilter.value}</b> operations on <u>this page from filtered</u>.`});
+			if (operationsCount == 0) swal({title: 'Please change the filter of operation or change the number of page!', type: 'warning', html: `There are no <b>${$aboutAccountFilter.value}</b> operations on <u>this page</u>.`});
 		}
 		else {
 			if ( ! err) err = 'Account not found!';
