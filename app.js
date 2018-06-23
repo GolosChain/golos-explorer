@@ -6,49 +6,13 @@ swal.setDefaults({
 	cancelButtonColor: '#d9534f',
 });
 
-let $headBlockNumber = document.getElementById('head-block-number');
-let $reverseBlocksCount = document.getElementById('revers-blocks-count');
-let $mainPage = document.getElementById('main-page');
-let $recentBlocksTableTbody = document.getElementById('recent-blocks').getElementsByTagName('tbody')[0];
-let $aboutBlockPage = document.getElementById('about-block-page');
-let $aboutBlockCode = document.getElementById('about-block-code');
-let $aboutBlockTableTbody = document.getElementById('about-block').getElementsByTagName('tbody')[0];
-let $aboutBlockOperationsTableTbody = document.getElementById('about-block-operations-table').getElementsByTagName('tbody')[0];
-let $aboutBlockTransactionsTableTbody = document.getElementById('about-block-transactions-table').getElementsByTagName('tbody')[0];
-let $resetSearchBtn = document.getElementById('reset-search');
-let $aboutAccountPage = document.getElementById('about-account-page');
-let $aboutAccountTableTbody = document.getElementById('about-account').getElementsByTagName('tbody')[0];
-let $aboutBlockHeight = document.getElementById('about-block-height');
-let $aboutBlockTime = document.getElementById('about-block-time');
-let $aboutBlockWitness = document.getElementById('about-block-witness');
-let $aboutBlockTransactions = document.getElementById('about-block-transactions');
-let $aboutBlockOperations = document.getElementById('about-block-operations');
-let $loader = document.getElementsByClassName('lding')[0];
-let $recentBlocksInfo = document.getElementById('recent-blocks-info');
-let $resetNodeAddress = document.getElementById('reset-node-address');
-let $globalPropertiesTableTbody = document.getElementById('global-properties').getElementsByTagName('tbody')[0];
-let $chainPropertiesTableTbody = document.getElementById('chain-properties').getElementsByTagName('tbody')[0];
-let $aboutAccountAllCount = document.getElementById('about-account-all-count');
-let $aboutAccountCount = document.getElementById('about-account-count');
-let $aboutAccountFilteredCount = document.getElementById('about-account-filtered-count');
-let $autoClearRealTimeAfter = document.getElementById('auto-clear-real-time-after');
-let $aboutAccountFilter = document.getElementById('about-account-filter');
+const $htmlElements = [ '#head-block-number', '#revers-blocks-count', '#main-page', '#recent-blocks-table tbody', '#about-block-page', '#about-block-code', '#about-block-table tbody', '#about-block-operations-table tbody', '#about-block-transactions-table tbody', '#reset-search-btn', '#about-account-page', '#about-account-table tbody', '#about-block-height', '#about-block-time', '#about-block-witness', '#about-block-transactions', '#about-block-operations', '.loader', '#recent-blocks-info', '#reset-node-address', '#global-properties-table tbody', '#chain-properties-table tbody', '#about-account-all-count', '#about-account-count', '#about-account-filtered-count', '#auto-clear-real-time-after', '#about-account-filter', '#modal-about-block .modal-title', '#modal-about-block-operations-table tbody', '#modal-about-block-transactions-table tbody', '#modal-about-block-code', '#about-account-page-prev', '#about-account-page-next', '#about-account-page-pages', '#search', '#blockchain-version', '#witnesses-page', '#witnesses-table tbody', '#accounts-page', '#accounts-table tbody', '#about-account-page-nav' ];
+/*document.addEventListener('DOMContentLoaded', () => {
+});*/
+initHtmlElements();
+
 let $modalAboutBlock = new Modal(document.getElementById('modal-about-block'));
-let $modalAboutBlockModalTitle = document.getElementById('modal-about-block').querySelector('.modal-title');
-let $modalAboutBlockOperationsTableTbody = document.getElementById('modal-about-block-operations-table').getElementsByTagName('tbody')[0];
-let $modalAboutBlockTransactionsTableTbody = document.getElementById('modal-about-block-transactions-table').getElementsByTagName('tbody')[0];
-let $modalAboutBlockCode = document.getElementById('modal-about-block-code');
-let $aboutAccountPagePrev = document.getElementById('about-account-page-prev');
-let $aboutAccountPageNext = document.getElementById('about-account-page-next');
-let $aboutAccountPagePages = document.getElementById('about-account-page-pages');
-let $search = document.getElementById('search');
 let $searchVal = $search.querySelector('.form-control[name="search"]');
-let $blockchainVersion = document.getElementById('blockchain-version');
-let $witnessesPage = document.getElementById('witnesses-page');
-let $witnessesTableTbody = document.getElementById('witnesses-table').getElementsByTagName('tbody')[0];
-let $accountsPage = document.getElementById('accounts-page');
-let $accountsTableTbody = document.getElementById('accounts-table').getElementsByTagName('tbody')[0];
-let $aboutAccountPageNav = document.getElementById('about-account-page-nav');
 let defaultWebsocket = 'wss://ws.golos.io';
 let totalVestingShares;
 let totalVestingFundSteem;
@@ -60,7 +24,7 @@ if (nodeAddress != defaultWebsocket) {
 	$resetNodeAddress.style.display = 'block';
 }
 
-golos.api.getConfig(function(err, result) {
+golos.api.getConfig((err, result) => {
 	$blockchainVersion.innerHTML = '...';
 	if ( ! err) {
 		$blockchainVersion.innerHTML = result.STEEMIT_BLOCKCHAIN_VERSION;
@@ -72,8 +36,8 @@ golos.api.getConfig(function(err, result) {
 	}
 });
 
-let getChainProperties = function() {
-	golos.api.getChainProperties(function(err, properties) {
+let getChainProperties = () => {
+	golos.api.getChainProperties((err, properties) => {
 		if ( ! err) {
 			for (let key in properties) {
 				let prop = $chainPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
@@ -84,20 +48,20 @@ let getChainProperties = function() {
 };
 getChainProperties();
 
-$nodeAddress.addEventListener('submit', function(e) {
+$nodeAddress.addEventListener('submit', (e) => {
 	e.preventDefault();
 	localStorage.nodeAddress = $nodeAddressInput.value;
 	window.location.reload();
 });
 
-$resetNodeAddress.addEventListener('click', function() {
+$resetNodeAddress.addEventListener('click', () => {
 	$nodeAddressInput.value = defaultWebsocket;
 	$nodeAddressInput.dispatchEvent(new CustomEvent('submit'));
 	$resetNodeAddress.style.display = 'none';
 });
 
 let workRealTime = true;
-document.getElementById('change-work-real-time').addEventListener('click', function() {
+document.getElementById('change-work-real-time').addEventListener('click', () => {
 	if (workRealTime) {
 		workRealTime = false;
 		this.innerHTML = '<span class="icon-play3"></span> Start monitoring';
@@ -110,19 +74,19 @@ document.getElementById('change-work-real-time').addEventListener('click', funct
 	}
 });
 
-document.getElementById('clear-real-time').addEventListener('click', function() {
+document.getElementById('clear-real-time').addEventListener('click', () => {
 	$recentBlocksTableTbody.innerHTML = '';
 	swal({title: 'Table real-time blocks cleared!', type: 'success', showConfirmButton: false, position: 'top-right', toast: true, timer: 3000});
 });
 
-golos.api.streamBlockNumber(function(err, lastBlock) {
+golos.api.streamBlockNumber((err, lastBlock) => {
 	if ( ! err) {
-		golos.api.getBlock(lastBlock, function(err, block) {
+		golos.api.getBlock(lastBlock, (err, block) => {
 			if (block && workRealTime) {
 				let operations = {};
 				let operationsCount = 0;
-				block.transactions.forEach(function(transaction) {
-					transaction.operations.forEach(function(operation) {
+				block.transactions.forEach((transaction) => {
+					transaction.operations.forEach((operation) => {
 						if ( ! operations[operation[0]]) operations[operation[0]] = 0;
 						operations[operation[0]]++;
 						operationsCount++;
@@ -141,19 +105,19 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 										<td>${block.transactions.length}</td>
 										<td>${operationsCount}</td>
 									</tr>`;
-				setTimeout(function() {
+				setTimeout(() => {
 					$newRow.className = 'table-success';
 				}, 500);
-				setTimeout(function() {
+				setTimeout(() => {
 					$newRow.className = 'table-secondary';
 				}, 3000);
 				let $newSubRow = $recentBlocksTableTbody.insertRow(1);
 				$newSubRow.className = 'table-new';
 				$newSubRow.innerHTML = `<tr>${operationsStr ? `<td colspan="5">${operationsStr}</td>` : ``}</tr>`;
-				setTimeout(function() {
+				setTimeout(() => {
 					$newSubRow.className = 'table-success';
 				}, 500);
-				setTimeout(function() {
+				setTimeout(() => {
 					$newSubRow.className = '';
 				}, 3000);
 				autoClearRealTime();
@@ -166,8 +130,8 @@ golos.api.streamBlockNumber(function(err, lastBlock) {
 	
 });
 
-let getDynamicGlobalPropertiesHandler = function() {
-	golos.api.getDynamicGlobalProperties(function(err, properties) {
+let getDynamicGlobalPropertiesHandler = () => {
+	golos.api.getDynamicGlobalProperties((err, properties) => {
 		if ( ! err) {
 			totalVestingShares = properties.total_vesting_shares;
 			totalVestingFundSteem = properties.total_vesting_fund_steem;
@@ -175,9 +139,9 @@ let getDynamicGlobalPropertiesHandler = function() {
 				let prop = $globalPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
 				if (prop) prop.innerHTML = properties[key];
 			}
-			let reverseBlockCount = properties.head_block_number - properties.last_irreversible_block_num;
+			let reversBlockCount = properties.head_block_number - properties.last_irreversible_block_num;
 			$headBlockNumber.innerHTML = properties.head_block_number;
-			$reverseBlocksCount.innerHTML = reverseBlockCount;
+			$reversBlocksCount.innerHTML = reversBlockCount;
 		}
 	});
 }
@@ -185,7 +149,7 @@ getDynamicGlobalPropertiesHandler();
 
 if (localStorage && localStorage.clearAfterBlocksVal) $autoClearRealTimeAfter.value = localStorage.clearAfterBlocksVal;
 
-let autoClearRealTime = function() {
+let autoClearRealTime = () => {
 	let clearAfterBlocksVal = parseInt($autoClearRealTimeAfter.value),
 		$trs = $recentBlocksTableTbody.getElementsByTagName('tr'),
 		trsCount = $trs.length;
@@ -202,19 +166,19 @@ let autoClearRealTime = function() {
 
 $autoClearRealTimeAfter.addEventListener('change', autoClearRealTime);
 
-let getBlockFullInfo = function(blockNumberVal) {
+let getBlockFullInfo = (blockNumberVal) => {
 	$aboutBlockTableTbody.innerHTML = '';
 	$aboutBlockOperationsTableTbody.innerHTML = '';
 	$aboutBlockTransactionsTableTbody.innerHTML = '';
 	$aboutBlockCode.innerHTML = '';
-	golos.api.getBlock(blockNumberVal, function(err, block) {
+	golos.api.getBlock(blockNumberVal, (err, block) => {
 		loadingHide();
 		if (block) {
 			
 			let operations = {};
 			let operationsCount = 0;
-			block.transactions.forEach(function(transaction) {
-				transaction.operations.forEach(function(operation) {
+			block.transactions.forEach((transaction) => {
+				transaction.operations.forEach((operation) => {
 					if ( ! operations[operation[0]]) operations[operation[0]] = 0;
 					operations[operation[0]]++;
 					operationsCount++;
@@ -236,8 +200,8 @@ let getBlockFullInfo = function(blockNumberVal) {
 									<td colspan="5"><span class="badge badge-secondary"></span> ${operationsStr}</td>
 								</tr>`;
 
-			block.transactions.forEach(function(transaction) {
-				transaction.operations.forEach(function(operation) {
+			block.transactions.forEach((transaction) => {
+				transaction.operations.forEach((operation) => {
 					$newRow = $aboutBlockOperationsTableTbody.insertRow();
 					$newRow.innerHTML = `<tr>
 											<td rowspan="${Object.keys(operation[1]).length + 1}"><b>${operation[0]}</b></td>
@@ -277,7 +241,7 @@ let getBlockFullInfo = function(blockNumberVal) {
 	});
 }
 
-$search.addEventListener('submit', function(e) {
+$search.addEventListener('submit', (e) => {
 	e.preventDefault();
 	loadingShow();
 	$resetSearchBtn.style.display = 'block';
@@ -292,7 +256,7 @@ $search.addEventListener('submit', function(e) {
 	if (searchVal.length == 40) {
 		//window.location.hash = 'tx/' + searchVal;
 		$aboutBlockPage.style.display = 'block';
-		golos.api.getTransaction(searchVal, function(err, result) {
+		golos.api.getTransaction(searchVal, (err, result) => {
 			loadingHide();
 			if ( ! err) {
 				getBlockFullInfo(result.block_num);
@@ -343,11 +307,11 @@ let $profileFollower = document.getElementById('profile-follower');
 let $profileFollowing = document.getElementById('profile-following');
 let $profilePower = document.getElementById('profile-power');
 
-let getAccountInfo = function() {
+let getAccountInfo = () => {
 	let usernameVal = $searchVal.value;
-	golos.api.getAccounts([usernameVal], function(err, account) {
+	golos.api.getAccounts([usernameVal], (err, account) => {
 		if ( ! err && account[0]) {
-			golos.api.getFollowCount(usernameVal, function(err, result) {
+			golos.api.getFollowCount(usernameVal, (err, result) => {
 				if ( ! err) {
 					$profileFollower.innerHTML = result.follower_count;
 					$profileFollowing.innerHTML = result.following_count;
@@ -415,7 +379,7 @@ let getAccountInfo = function() {
 	});
 }
 
-$resetSearchBtn.addEventListener('click', function() {
+$resetSearchBtn.addEventListener('click', () => {
 	$searchVal.value = '';
 	$resetSearchBtn.style.display = 'none';
 	$mainPage.style.display = 'flex';
@@ -425,24 +389,24 @@ $resetSearchBtn.addEventListener('click', function() {
 	window.location.hash = '';
 });
 
-let loadingShow = function() {
+let loadingShow = () => {
 	$loader.style.display = 'block';
 };
-let loadingHide = function() {
+let loadingHide = () => {
 	$loader.style.display = 'none';
 };
 
 let accountHistoryFrom = -1;
-let getAccountTransactions = function() {
+let getAccountTransactions = () => {
 	loadingShow();
 	let usernameVal = $searchVal.value;
 	let operationsCount = 0;
 	$aboutAccountTableTbody.innerHTML = '';
-	golos.api.getAccountHistory(usernameVal, accountHistoryFrom, 99, function(err, transactions) {
+	golos.api.getAccountHistory(usernameVal, accountHistoryFrom, 99, (err, transactions) => {
 		loadingHide();
 		if (transactions && transactions.length > 0) {
 			//transactions.reverse();
-			transactions.forEach(function(transaction) {
+			transactions.forEach((transaction) => {
 				if ( ! $aboutAccountFilter.value || (transaction[1].op[0] == $aboutAccountFilter.value)) {
 					operationsCount++;
 					let $newRow = $aboutAccountTableTbody.insertRow(0);
@@ -495,14 +459,14 @@ let getAccountTransactions = function() {
 	});
 };
 
-$aboutAccountPagePrev.addEventListener('click', function(e) {
+$aboutAccountPagePrev.addEventListener('click', (e) => {
 	e.preventDefault();
 	//accountHistoryFrom -= 100;
 	//getAccountTransactions();
 	currentPageNumber--;
 	window.location.hash = `account/${$searchVal.value}/${currentPageNumber}/${$aboutAccountFilter.value}`;
 });
-$aboutAccountPageNext.addEventListener('click', function(e) {
+$aboutAccountPageNext.addEventListener('click', (e) => {
 	e.preventDefault();
 	//accountHistoryFrom += 100;
 	//getAccountTransactions();
@@ -510,60 +474,24 @@ $aboutAccountPageNext.addEventListener('click', function(e) {
 	window.location.hash = `account/${$searchVal.value}/${currentPageNumber}/${$aboutAccountFilter.value}`;
 });
 
-let operationFormatter = function(object) {
-	let resultStr = '';
-	for (var key in object) {
-		let keyBeauty = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
-		if (typeof(object[key]) !== 'object') resultStr += `${keyBeauty}: <span class="badge badge-secondary">${escapeHtml(object[key])}</span> `;
-		else {
-			for (var paramsKey in object[key]) {
-				resultStr += `${keyBeauty} ${paramsKey}: <span class="badge badge-secondary">${object[key][paramsKey]}</span> `;
-			}
-		}
-	}
-	return resultStr;
-};
-let operationHumanFormatter = function(transaction) {
-	switch (transaction[0]) {
-		//case 'transfer': return `Notification from @robot: ${transaction[1].memo}`; break;
-		default: return '';
-	}
-};
-
-let entityMap = {
-	'&': '&amp;',
-	'<': '&lt;',
-	'>': '&gt;',
-	'"': '&quot;',
-	"'": '&#39;',
-	'/': '&#x2F;',
-	'`': '&#x60;',
-	'=': '&#x3D;'
-};
-let escapeHtml = function(string) {
-	return String(string).replace(/[&<>"'`=\/]/g, function(s) {
-		return entityMap[s];
-	});
-}
-
-$aboutAccountFilter.addEventListener('change', function() {
+$aboutAccountFilter.addEventListener('change', () => {
 	let usernameVal = $searchVal.value;
 	window.location.hash = `account/${usernameVal}/${currentPageNumber}/${$aboutAccountFilter.value}`;
 });
 
-let getBlockInfo = function(blockNumberVal, operationName, callback) {
+let getBlockInfo = (blockNumberVal, operationName, callback) => {
 	loadingShow();
 	$modalAboutBlockOperationsTableTbody.innerHTML = '';
 	$modalAboutBlockTransactionsTableTbody.innerHTML = '';
 	$modalAboutBlockCode.innerHTML = '';
 	$modalAboutBlockModalTitle.innerHTML = `About block #${blockNumberVal}, filtered ${operationName}`;
-	golos.api.getBlock(blockNumberVal, function(err, block) {
+	golos.api.getBlock(blockNumberVal, (err, block) => {
 		loadingHide();
 		if (block) {
 			let blockTransactionsArr = [];
 
-			block.transactions.forEach(function(transaction) {
-				transaction.operations.forEach(function(operation) {
+			block.transactions.forEach((transaction) => {
+				transaction.operations.forEach((operation) => {
 					if (operation[0] == operationName) {
 						//console.log(transaction.operations);
 						blockTransactionsArr.push(transaction);
@@ -609,11 +537,11 @@ let getBlockInfo = function(blockNumberVal, operationName, callback) {
 	});
 }
 
-document.getElementById('get-config-btn').addEventListener('click', function() {
+document.getElementById('get-config-btn').addEventListener('click', () => {
 	$modalGetConfig.show();
 });
 
-window.addEventListener('hashchange', function() {
+window.addEventListener('hashchange', () => {
 	let hash = window.location.hash.substring(1);
 	if (hash) {
 		let params = hash.split('/');
@@ -633,7 +561,7 @@ window.addEventListener('hashchange', function() {
 					$search.dispatchEvent(new CustomEvent('submit'));
 				}; break;
 				case 'operations': {
-					getBlockInfo(params[1], params[2], function() {
+					getBlockInfo(params[1], params[2], () => {
 						$modalAboutBlock.show();
 					});
 				}; break;
@@ -650,11 +578,11 @@ window.addEventListener('hashchange', function() {
 					$accountsPage.style.display = 'none';
 					$witnessesPage.style.display = 'block';
 					$witnessesTableTbody.innerHTML = '';
-					golos.api.getWitnessesByVote('', 100, function(err, witnesses) {
+					golos.api.getWitnessesByVote('', 100, (err, witnesses) => {
 						if ( ! err) {
 							let witnessRank = 0;
 							let accountsArr = [];
-							witnesses.forEach(function(witness) {
+							witnesses.forEach((witness) => {
 								witnessRank++;
 								accountsArr.push(witness.owner);
 								let $newRow = $witnessesTableTbody.insertRow();
@@ -692,9 +620,9 @@ window.addEventListener('hashchange', function() {
 												<td><h5><span class="badge badge-info">${witness.running_version}</span></h5></td>
 											</tr>`;
 							});
-							golos.api.getAccounts(accountsArr, function(err, accounts) {
+							golos.api.getAccounts(accountsArr, (err, accounts) => {
 								if ( ! err) {
-									accounts.forEach(function(account) {
+									accounts.forEach((account) => {
 										try {
 											let jsonMetadata = JSON.parse(account.json_metadata);
 											if (jsonMetadata.profile && jsonMetadata.profile.profile_image) 
@@ -722,10 +650,10 @@ window.addEventListener('hashchange', function() {
 					$witnessesPage.style.display = 'none';
 					$accountsPage.style.display = 'block';
 					$accountsTableTbody.innerHTML = '';
-					golos.api.lookupAccounts('', 10, function(err, accounts) {
+					golos.api.lookupAccounts('', 10, (err, accounts) => {
 						if ( ! err) {
 							let accountsArr = [];
-							accounts.forEach(function(account) {
+							accounts.forEach((account) => {
 								accountsArr.push(account);
 								let $newRow = $accountsTableTbody.insertRow();
 								$newRow.setAttribute('data-username', account);
@@ -751,9 +679,9 @@ window.addEventListener('hashchange', function() {
 												</td>
 											</tr>`;
 							});
-							golos.api.getAccounts(accountsArr, function(err, accounts) {
+							golos.api.getAccounts(accountsArr, (err, accounts) => {
 								if ( ! err) {
-									accounts.forEach(function(account) {
+									accounts.forEach((account) => {
 										console.log(account);
 										let $accountRow = $accountsTableTbody.querySelector('tr[data-username="' + account.name + '"]');
 										$accountRow.querySelector('.posts').innerHTML = account.post_count;
@@ -793,62 +721,3 @@ window.addEventListener('hashchange', function() {
 	}
 });
 window.dispatchEvent(new CustomEvent('hashchange'));
-
-let fractional_part_len = function(value) {
-	const parts = (Number(value) + '').split('.');
-	return parts.length < 2 ? 0 : parts[1].length;
-}
-// https://github.com/steemit/condenser/blob/master/src/app/utils/ParsersAndFormatters.js#L8
-let formatDecimal = function(value, decPlaces = 2, truncate0s = true) {
-	let decSeparator, fl, i, j, sign, thouSeparator, abs_value;
-	if (value === null || value === void 0 || isNaN(value)) {
-		return 'NaN';
-	}
-	if (truncate0s) {
-		fl = fractional_part_len(value);
-		if (fl < 2) fl = 2;
-		if (fl < decPlaces) decPlaces = fl;
-	}
-	decSeparator = '.';
-	thouSeparator = ',';
-	sign = value < 0 ? '-' : '';
-	abs_value = Math.abs(value);
-	i = parseInt(abs_value.toFixed(decPlaces), 10) + '';
-	j = i.length;
-	j = i.length > 3 ? j % 3 : 0;
-	const decPart = decPlaces
-		? decSeparator +
-		Math.abs(abs_value - i)
-			.toFixed(decPlaces)
-			.slice(2)
-		: '';
-	return [
-		sign +
-			(j ? i.substr(0, j) + thouSeparator : '') +
-			i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + thouSeparator),
-		decPart,
-	];
-}
-
-// https://github.com/steemit/condenser/blob/master/src/app/utils/ParsersAndFormatters.js#L47
-function log10(str) {
-	const leadingDigits = parseInt(str.substring(0, 4));
-	const log = Math.log(leadingDigits) / Math.LN10 + 0.00000001;
-	const n = str.length - 1;
-	return n + (log - parseInt(log));
-}
-let rep2 = function(rep2) {
-	if (rep2 == null) return rep2;
-	let rep = String(rep2);
-	const neg = rep.charAt(0) === '-';
-	rep = neg ? rep.substring(1) : rep;
-
-	let out = log10(rep);
-	if (isNaN(out)) out = 0;
-	out = Math.max(out - 9, 0); // @ -9, $0.50 earned is approx magnitude 1
-	out = (neg ? -1 : 1) * out;
-	out = out * 9 + 25; // 9 points per magnitude. center at 25
-	// base-line 0 to darken and < 0 to auto hide (grep rephide)
-	out = parseInt(out);
-	return out;
-}

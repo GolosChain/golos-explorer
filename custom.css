@@ -94,7 +94,7 @@ footer {
   margin: 0 20px;
 }
 
-.lding {
+.loader {
     background: black;
     position: fixed;
     width: 100%;
@@ -200,17 +200,17 @@ footer {
 	margin-top: 0.4rem;
 }
 
-#recent-blocks tbody tr.table-new {
+#recent-blocks-table tbody tr.table-new {
 	visibility: hidden;
 	opacity: 0;
 }
-#recent-blocks tbody tr.table-success a {
+#recent-blocks-table tbody tr.table-success a {
 	color: #fff;
 }
-#recent-blocks tbody tr.table-success td {
+#recent-blocks-table tbody tr.table-success td {
 	border: 1px solid #8bbf9f;
 }
-#recent-blocks tbody tr {
+#recent-blocks-table tbody tr {
 	visibility: visible;
 	opacity: 1;
 	transition: visibility 0s, opacity 0.5s linear;
@@ -250,14 +250,14 @@ footer {
 	line-height: 1.2rem;
 }
 
-#about-account {
+#about-account-table {
 	table-layout: fixed;
 }
-#about-account td.description {
+#about-account-table td.description {
 	/*display: grid;*/
 	word-wrap: break-word;
 }
-#about-account span.badge {
+#about-account-table span.badge {
 	font-size: 0.9375rem;
 	/*text-align: left;*/
 	margin-bottom: 0.2rem;
