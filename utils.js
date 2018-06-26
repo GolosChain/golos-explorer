@@ -103,7 +103,9 @@ let camelCase = function(str) {
 	});
 }
 
-let initHtmlElements = () => {
+let initHtmlElements = ($htmlElements) => {
+	/*document.addEventListener('DOMContentLoaded', () => {
+	});*/
 	for (let name in $htmlElements) {
 		let nameConst = $htmlElements[name];
 		nameConst = camelCase(nameConst);

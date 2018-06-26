@@ -275,11 +275,11 @@ footer {
 	filter: grayscale(100%) blur(1px);
 	/*max-height: 380px;*/
 }
-#about-account-page #profile-image {
+#about-account-page img {
 	max-height: 12rem;
 }
 
-#profile-witness-votes {
+#about-account-page #witness_votes {
 	overflow-y: auto;
 	width: 100%;
 	text-align: left;

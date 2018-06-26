@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.1.0/yeti/bootstrap.min.css" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/default.min.css">
-		<link rel="stylesheet" href="custom.css?201806201000" />
+		<link rel="stylesheet" href="custom.css?201806261600" />
 	</head>
 	<body>
 		<header>
@@ -200,32 +200,32 @@
 						</div>
 						<div id="about-account-page">
 							<div class="card bg-dark text-white">
-								<img class="card-img" id="profile-cover-image">
+								<img class="card-img" data="cover_image">
 								<div class="card-img-overlay">
 									<div class="row">
 										<div class="col-7">
 											<div class="row">
 												<div class="col">
-													<h5 class="card-text">Balance <span class="badge badge-dark" id="profile-balance"></span></h5>
-													<h5 class="card-text">Golos Power <span class="badge badge-dark" id="profile-power"></span></h5>
-													<h5 class="card-text">Account create <span class="badge badge-dark" id="profile-account-created"></span></h5>
-													<h5 class="card-text">Post count <span class="badge badge-dark" id="profile-post-count"></span></h5>
-													<h5 class="card-text">Follower <span class="badge badge-dark" id="profile-follower"></span></h5>
-													<h5 class="card-text">Reputation <a target="_blank" class="badge badge-dark" id="profile-reputation"></a></h5>
-													<h5 class="card-text">Recovery account <span class="badge badge-dark" id="profile-recovery-account"></span></h5>
-													<h5 class="card-text">Location <a target="_blank" class="badge badge-dark" id="profile-location"></a></h5>
-													<h5 class="card-text">Website <a target="_blank" class="badge badge-dark" id="profile-website"></a></h5>
+													<h5 class="card-text">Balance <span class="badge badge-dark" data="balance"></span></h5>
+													<h5 class="card-text">Golos Power <span class="badge badge-dark" data="power"></span></h5>
+													<h5 class="card-text">Account create <span class="badge badge-dark" data="created"></span></h5>
+													<h5 class="card-text">Post count <span class="badge badge-dark" data="post_count"></span></h5>
+													<h5 class="card-text">Follower <span class="badge badge-dark" data="follower_count"></span></h5>
+													<h5 class="card-text">Reputation <a target="_blank" class="badge badge-dark" data="reputation"></a></h5>
+													<h5 class="card-text">Recovery account <span class="badge badge-dark" data="recovery_account"></span></h5>
+													<h5 class="card-text">Location <a target="_blank" class="badge badge-dark" data="location"></a></h5>
+													<h5 class="card-text">Website <a target="_blank" class="badge badge-dark" data="website"></a></h5>
 												</div>
 												<div class="col">
-													<h5 class="card-text">SBD Balance <span class="badge badge-dark" id="profile-sbd-balance"></span></h5>
-													<h5 class="card-text">Voting power <span class="badge badge-dark" id="profile-voting-power"></span></h5>
-													<h5 class="card-text">Last account update <span class="badge badge-dark" id="profile-last-account-update"></span></h5>
-													<h5 class="card-text">Last post <span class="badge badge-dark" id="profile-last-post"></span></h5>
-													<h5 class="card-text">Following <span class="badge badge-dark" id="profile-following"></span></h5>
-													<h5 class="card-text">Mined <a target="_blank" class="badge badge-dark" id="profile-mined"></a></h5>
-													<h5 class="card-title">Name <span class="badge badge-dark" id="profile-name"></span></h5>
-													<h5 class="card-text">Gender <a target="_blank" class="badge badge-dark" id="profile-gender"></a></h5>
-													<h5 class="card-text">About <span class="badge badge-dark" id="profile-about"></span></h5>
+													<h5 class="card-text">SBD Balance <span class="badge badge-dark" data="sbd_balance"></span></h5>
+													<h5 class="card-text">Voting power <span class="badge badge-dark" data="voting_power"></span></h5>
+													<h5 class="card-text">Last account update <span class="badge badge-dark" data="last_account_update"></span></h5>
+													<h5 class="card-text">Last post <span class="badge badge-dark" data="last_post"></span></h5>
+													<h5 class="card-text">Following <span class="badge badge-dark" data="following_count"></span></h5>
+													<h5 class="card-text">Mined <a target="_blank" class="badge badge-dark" data="mined"></a></h5>
+													<h5 class="card-title">Name <span class="badge badge-dark" data="name"></span></h5>
+													<h5 class="card-text">Gender <a target="_blank" class="badge badge-dark" data="gender"></a></h5>
+													<h5 class="card-text">About <span class="badge badge-dark" data="about"></span></h5>
 												</div>
 											</div>
 										</div>
@@ -235,19 +235,19 @@
 													<tr><th colspan="2">Public keys:</th></tr>
 												</thead>
 												<tbody>
-													<tr><td>Owner</td><td id="profile-owner"></td></tr>
-													<tr><td>Active</td><td id="profile-active"></td></tr>
-													<tr><td>Posting</td><td id="profile-posting"></td></tr>
-													<tr><td>Memo</td><td id="profile-memo"></td></tr>
+													<tr><td>Owner</td><td data="owner"></td></tr>
+													<tr><td>Active</td><td data="active"></td></tr>
+													<tr><td>Posting</td><td data="posting"></td></tr>
+													<tr><td>Memo</td><td data="memo_key"></td></tr>
 												</tbody>
 											</table>
-											<img class="img-thumbnail float-right" id="profile-image" src="graphics/noavatar.png">
+											<img class="img-thumbnail float-right" data="profile_image" src="graphics/noavatar.png">
 										</div>
 									</div>
 									<div class="row">
 										<div class="col">
-											<h5 class="card-text">Select tags <span class="badge badge-dark" id="profile-select-tags"></span></h5>
-											<h5 class="card-text">Witness votes <span class="badge badge-dark" id="profile-witness-votes"></span></h5>
+											<h5 class="card-text">Select tags <span class="badge badge-dark" data="select-tags"></span></h5>
+											<h5 class="card-text">Witness votes <span class="badge badge-dark" data="witness_votes" id="witness_votes"></span></h5>
 										</div>
 									</div>
 								</div>
@@ -495,7 +495,7 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.5/beautify.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/xss@0.3.8/dist/xss.min.js"></script>
 		<script src="utils.js"></script>
-		<script src="init.js?201806201000"></script>
+		<script src="init.js?201806261600"></script>
 		<!--<script src="app.js?201806181000"></script>-->
 	</body>
 </html>
