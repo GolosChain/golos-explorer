@@ -8,12 +8,12 @@ swal.setDefaults({
 
 initHtmlElements([ '#head-block-number', '#revers-blocks-count', '#main-page', '#recent-blocks-table tbody', '#about-block-page', '#about-block-code', '#about-block-table tbody', '#about-block-operations-table tbody', '#about-block-transactions-table tbody', '#reset-search-btn', '#about-account-page', '#about-account-table tbody', '#about-block-height', '#about-block-time', '#about-block-witness', '#about-block-transactions', '#about-block-operations', '.loader', '#recent-blocks-info', '#reset-node-address', '#global-properties-table tbody', '#chain-properties-table tbody', '#about-account-all-count', '#about-account-count', '#about-account-filtered-count', '#auto-clear-real-time-after', '#about-account-filter', '#modal-about-block .modal-title', '#modal-about-block-operations-table tbody', '#modal-about-block-transactions-table tbody', '#modal-about-block-code', '#about-account-page-prev', '#about-account-page-next', '#about-account-page-pages', '#search', '#blockchain-version', '#witnesses-page', '#witnesses-table tbody', '#accounts-page', '#accounts-table tbody', '#about-account-page-nav' ]);
 
+let $modalGetConfig = new Modal(document.getElementById('modal-get-config'));
 let $modalAboutBlock = new Modal(document.getElementById('modal-about-block'));
 let $searchVal = $search.querySelector('.form-control[name="search"]');
 let defaultWebsocket = 'wss://ws.golos.io';
 let totalVestingShares;
 let totalVestingFundSteem;
-let $modalGetConfig = new Modal(document.getElementById('modal-get-config'));
 let currentPageNumber = 1;
 let workRealTime = true;
 let accountHistoryFrom = -1;
@@ -78,22 +78,27 @@ document.getElementById('clear-real-time').addEventListener('click', () => {
 	swal({title: 'Table real-time blocks cleared!', type: 'success', showConfirmButton: false, position: 'top-right', toast: true, timer: 3000});
 });
 
+let operationsHandler = (transactions, templateString) => {
+	let operations = {};
+	let operationsCount = 0;
+	transactions.forEach((transaction) => {
+		transaction.operations.forEach((operation) => {
+			if ( ! operations[operation[0]]) operations[operation[0]] = 0;
+			operations[operation[0]]++;
+			operationsCount++;
+		});
+	});
+	return { count: operationsCount, operationsArr: operations };
+}
+
 golos.api.streamBlockNumber((err, lastBlock) => {
 	if ( ! err) {
 		golos.api.getBlock(lastBlock, (err, block) => {
 			if (block && workRealTime) {
-				let operations = {};
-				let operationsCount = 0;
-				block.transactions.forEach((transaction) => {
-					transaction.operations.forEach((operation) => {
-						if ( ! operations[operation[0]]) operations[operation[0]] = 0;
-						operations[operation[0]]++;
-						operationsCount++;
-					});
-				});
+				let operations = operationsHandler(block.transactions);
 				let operationsStr = '';
-				for (let key in operations) {
-					operationsStr += `<a class="btn btn-outline-info btn-sm" href="#operations/${lastBlock}/${key}">${key} <span class="badge badge-info">${operations[key]}</span></a> `;
+				for (let key in operations.operationsArr) {
+					operationsStr += `<a class="btn btn-outline-info btn-sm" href="#operations/${lastBlock}/${key}">${key} <span class="badge badge-info">${operations.operationsArr[key]}</span></a> `;
 				}
 				let $newRow = $recentBlocksTableTbody.insertRow(0);
 				$newRow.className = 'table-new';
@@ -102,7 +107,7 @@ golos.api.streamBlockNumber((err, lastBlock) => {
 										<td>${block.timestamp}</td>
 										<td><a href="#account/${block.witness}">${block.witness}</a></td>
 										<td>${block.transactions.length}</td>
-										<td>${operationsCount}</td>
+										<td>${operations.count}</td>
 									</tr>`;
 				setTimeout(() => {
 					$newRow.className = 'table-success';
@@ -173,26 +178,16 @@ let getBlockFullInfo = (blockNumberVal) => {
 	golos.api.getBlock(blockNumberVal, (err, block) => {
 		loadingHide();
 		if (block) {
-			
-			let operations = {};
-			let operationsCount = 0;
-			block.transactions.forEach((transaction) => {
-				transaction.operations.forEach((operation) => {
-					if ( ! operations[operation[0]]) operations[operation[0]] = 0;
-					operations[operation[0]]++;
-					operationsCount++;
-				});
-			});
+			let operations = operationsHandler(block.transactions);
 			let operationsStr = '';
-			for (let key in operations) {
-				operationsStr += `<a class="btn btn-outline-secondary btn-sm">${key} <span class="badge badge-secondary">${operations[key]}</span></a> `; 
+			for (let key in operations.operationsArr) {
+				operationsStr += `<a class="btn btn-outline-secondary btn-sm">${key} <span class="badge badge-secondary">${operations.operationsArr[key]}</span></a> `;
 			}
-
 			$aboutBlockHeight.innerText = blockNumberVal;
 			$aboutBlockTime.innerText = block.timestamp;
 			$aboutBlockWitness.innerHTML = `<a href="#account/${block.witness}">${block.witness}</a>`;
 			$aboutBlockTransactions.innerText = block.transactions.length;
-			$aboutBlockOperations.innerText = operationsCount;
+			$aboutBlockOperations.innerText = operations.count;
 
 			$newRow = $aboutBlockTableTbody.insertRow();
 			$newRow.innerHTML = `<tr>

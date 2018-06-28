@@ -93,12 +93,12 @@ let rep2 = (rep2) => {
 	return out;
 }
 
-let camelCase = function(str) {
+let camelCase = (str) => {
 	str = str.replace(/(#)/g, '').replace(/\./g, '');
-	str = str.replace(/-([a-z])/g, function(_m, l) {
+	str = str.replace(/-([a-z])/g, (_m, l) => {
 		return l.toUpperCase();
 	});
-	return str.replace(/ ([a-z])/g, function(_m, l) {
+	return str.replace(/ ([a-z])/g, (_m, l) => {
 		return l.toUpperCase();
 	});
 }
