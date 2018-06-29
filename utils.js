@@ -1,8 +1,19 @@
 let operationFormatter = (object) => {
-	let resultStr = '';
+	let resultStr = '',
+		operation = {};
 	for (var key in object) {
+		let operationValue = escapeHtml(object[key]);
+		switch (key) {
+			case 'title': case 'body': case 'memo': continue;
+			case 'parent_author': operation.parent_author = object[key]; break;
+			case 'author': case 'comment_author': operation.author = object[key]; break;
+			case 'parent_permlink': operationValue = `<a target="_blank" href="https://golos.io/@${operation.parent_author}/${operationValue}">${operationValue}</a>`; break;
+			case 'permlink': case 'comment_permlink': operationValue = `<a target="_blank" href="https://golos.io/@${operation.author}/${operationValue}">${operationValue}</a>`; break;
+		}
 		let keyBeauty = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
-		if (typeof(object[key]) !== 'object') resultStr += `${keyBeauty}: <span class="badge badge-secondary">${escapeHtml(object[key])}</span> `;
+		if (typeof(object[key]) !== 'object') {
+			resultStr += `${keyBeauty}: <span class="badge badge-secondary">${operationValue}</span> `;
+		}
 		else {
 			for (var paramsKey in object[key]) {
 				resultStr += `${keyBeauty} ${paramsKey}: <span class="badge badge-secondary">${object[key][paramsKey]}</span> `;
