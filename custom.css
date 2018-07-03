@@ -25,11 +25,11 @@ html {
 
 @font-face {
   font-family: 'icomoon';
-  src:  url('graphics/icons/icomoon.eot?39uhkm');
-  src:  url('graphics/icons/icomoon.eot?39uhkm#iefix') format('embedded-opentype'),
-    url('graphics/icons/icomoon.ttf?39uhkm') format('truetype'),
-    url('graphics/icons/icomoon.woff?39uhkm') format('woff'),
-    url('graphics/icons/icomoon.svg?39uhkm#icomoon') format('svg');
+  src:  url('graphics/icons/icomoon.eot?c802ii');
+  src:  url('graphics/icons/icomoon.eot?c802ii#iefix') format('embedded-opentype'),
+    url('graphics/icons/icomoon.ttf?c802ii') format('truetype'),
+    url('graphics/icons/icomoon.woff?c802ii') format('woff'),
+    url('graphics/icons/icomoon.svg?c802ii#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -51,6 +51,9 @@ html {
 
 .icon-database:before {
   content: "\e964";
+}
+.icon-users:before {
+  content: "\e972";
 }
 .icon-user-tie:before {
   content: "\e976";
@@ -302,3 +305,18 @@ footer {
 	margin-top: 0.1em;
 	margin-bottom: 0.1em;
 }
+
+/*.ag-grid-loading {
+	width: 22px;
+	height: 22px;
+}*/
+.ag-theme-blue .ag-stub-cell .ag-loading-text {
+	margin-top: 1.2rem !important;
+}
+
+#accounts-table {
+	height: 680px;
+}
+/*.ag-layout-normal .ag-root-wrapper-body, .ag-layout-normal .ag-body {
+	height: 100% !important;
+}*/

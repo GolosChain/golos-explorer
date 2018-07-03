@@ -123,3 +123,29 @@ let initHtmlElements = ($htmlElements) => {
 		eval('window.$' + nameConst + ' = document.querySelector("' + $htmlElements[name] + '");');
 	}
 };
+
+let paramsToGetQuery = (obj, prefix) => {
+	let str = [],
+		p;
+	for (p in obj) {
+		if (obj.hasOwnProperty(p)) {
+			let k = prefix ? prefix + '[' + p + ']' : p,
+				v = obj[p];
+			str.push((v !== null && typeof v === 'object') ?
+				paramsToGetQuery(v, k) :
+				encodeURIComponent(k) + '=' + encodeURIComponent(v));
+		}
+	}
+	return str.join('&');
+};
+
+/*let paramsToGetQuery = (params, prefix) => {
+	const query = Object.keys(params).map((key) => {
+		const value  = params[key];
+		if (params.constructor === Array) key = `${prefix}[]`;
+		else if (params.constructor === Object) key = (prefix ? `${prefix}[${key}]` : key);
+		if (typeof value === 'object') return paramsToGetQuery(value, key);
+		else return `${key}=${encodeURIComponent(value)}`;
+	});
+	return [].concat.apply([], query).join('&');
+}*/

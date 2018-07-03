@@ -6,7 +6,7 @@ swal.setDefaults({
 	cancelButtonColor: '#d9534f',
 });
 
-initHtmlElements([ '#head-block-number', '#revers-blocks-count', '#main-page', '#recent-blocks-table tbody', '#about-block-page', '#about-block-code', '#about-block-table tbody', '#about-block-operations-table tbody', '#about-block-transactions-table tbody', '#reset-search-btn', '#about-account-page', '#about-account-table tbody', '#about-block-height', '#about-block-time', '#about-block-witness', '#about-block-transactions', '#about-block-operations', '.loader', '#recent-blocks-info', '#reset-node-address', '#global-properties-table tbody', '#chain-properties-table tbody', '#about-account-all-count', '#about-account-count', '#about-account-filtered-count', '#auto-clear-real-time-after', '#about-account-filter', '#modal-about-block .modal-title', '#modal-about-block-operations-table tbody', '#modal-about-block-transactions-table tbody', '#modal-about-block-code', '#about-account-page-prev', '#about-account-page-next', '#about-account-page-pages', '#search', '#blockchain-version', '#witnesses-page', '#witnesses-table tbody', '#accounts-page', '#accounts-table tbody', '#about-account-page-nav' ]);
+initHtmlElements([ '#head-block-number', '#revers-blocks-count', '#main-page', '#recent-blocks-table tbody', '#about-block-page', '#about-block-code', '#about-block-table tbody', '#about-block-operations-table tbody', '#about-block-transactions-table tbody', '#reset-search-btn', '#about-account-page', '#about-account-table tbody', '#about-block-height', '#about-block-time', '#about-block-witness', '#about-block-transactions', '#about-block-operations', '.loader', '#recent-blocks-info', '#reset-node-address', '#global-properties-table tbody', '#chain-properties-table tbody', '#about-account-all-count', '#about-account-count', '#about-account-filtered-count', '#auto-clear-real-time-after', '#about-account-filter', '#modal-about-block .modal-title', '#modal-about-block-operations-table tbody', '#modal-about-block-transactions-table tbody', '#modal-about-block-code', '#about-account-page-prev', '#about-account-page-next', '#about-account-page-pages', '#search', '#blockchain-version', '#witnesses-page', '#witnesses-table tbody', '#accounts-page', '#accounts-table', '#about-account-page-nav', '#change-work-real-time' ]);
 
 let $modalGetConfig = new Modal(document.getElementById('modal-get-config'));
 let $modalAboutBlock = new Modal(document.getElementById('modal-about-block'));
@@ -18,6 +18,7 @@ let currentPageNumber = 1;
 let workRealTime = true;
 let accountHistoryFrom = -1;
 let notResultText = '-';
+let accountsTableOptions;
 
 golos.config.set('websocket', nodeAddress);
 if (nodeAddress != defaultWebsocket) {
@@ -60,16 +61,16 @@ $resetNodeAddress.addEventListener('click', () => {
 	$resetNodeAddress.style.display = 'none';
 });
 
-document.getElementById('change-work-real-time').addEventListener('click', () => {
+$changeWorkRealTime.addEventListener('click', () => {
 	if (workRealTime) {
 		workRealTime = false;
-		this.innerHTML = '<span class="icon-play3"></span> Start monitoring';
-		this.className = 'btn btn-success btn-sm float-right';
+		$changeWorkRealTime.innerHTML = '<span class="icon-play3"></span> Start monitoring';
+		$changeWorkRealTime.className = 'btn btn-success btn-sm float-right';
 	}
 	else {
 		workRealTime = true;
-		this.innerHTML = '<span class="icon-pause2"></span> Pause monitoring';
-		this.className = 'btn btn-secondary btn-sm float-right';
+		$changeWorkRealTime.innerHTML = '<span class="icon-pause2"></span> Pause monitoring';
+		$changeWorkRealTime.className = 'btn btn-secondary btn-sm float-right';
 	}
 });
 
@@ -608,62 +609,65 @@ window.addEventListener('hashchange', () => {
 					$aboutAccountPage.style.display = 'none';
 					$witnessesPage.style.display = 'none';
 					$accountsPage.style.display = 'block';
-					$accountsTableTbody.innerHTML = '';
-					golos.api.lookupAccounts('', 10, (err, accounts) => {
-						if ( ! err) {
-							let accountsArr = [];
-							accounts.forEach((account) => {
-								accountsArr.push(account);
-								let $newRow = $accountsTableTbody.insertRow();
-								$newRow.setAttribute('data-username', account);
-								$newRow.innerHTML = `<tr>
-												<td>
-													<a target="_blank" href="#account/${account}"><img class="rounded float-left" src="https://golos.io/assets/0ee064e31a180b13aca01418634567a1.png"></a>
-													<h3><a target="_blank" href="#account/${account}">${account}</a></h3>
-												</td>
-												<td>
-												</td>
-												<td>
-													<span class="posts"></span>
-												</td>
-												<td>
-													<span class="vests"></span>
-												</td>
-												<td>
-												</td>
-												<td>
-													<span class="balance"></span>
-													<br>
-													<span class="sbd-balance"></span>
-												</td>
-											</tr>`;
-							});
-							golos.api.getAccounts(accountsArr, (err, accounts) => {
-								if ( ! err) {
-									accounts.forEach((account) => {
-										console.log(account);
-										let $accountRow = $accountsTableTbody.querySelector('tr[data-username="' + account.name + '"]');
-										$accountRow.querySelector('.posts').innerText = account.post_count;
-										$accountRow.querySelector('.vests').innerText = account.vesting_shares;
-										$accountRow.querySelector('.balance').innerText = account.balance;
-										$accountRow.querySelector('.sbd-balance').innerText = account.sbd_balance;
-										try {
-											let jsonMetadata = JSON.parse(account.json_metadata);
-											if (jsonMetadata.profile && jsonMetadata.profile.profile_image) 
-											$accountRow.querySelector('img').src = jsonMetadata.profile.profile_image;
-										}
-										catch (e) {
-											//console.error(e);
-										}
-									});
-								}
-							});
-						}
-						else {
-							console.error(err);
-							swal({title: 'Error', type: 'error', text: err});
-						}
-					});
+					if ( ! accountsTableOptions) {
+						agGrid.LicenseManager.setLicenseKey('Evaluation_License_Valid_Until__9_September_2018__MTUzNjQ0NzYwMDAwMA==712c48d48d0a3ec85f3243b1295999ec');
+						accountsTableOptions = {
+							pagination: true,
+							enableSorting: true,
+							enableFilter: true,
+							animateRows: true,
+							rowModelType: 'serverSide',
+							enableColResize: true,
+							icons: {
+								groupLoading: '<img class="ag-grid-loading" src="graphics/spinner.gif">'
+							},
+							toolPanelSuppressRowGroups: true,
+							toolPanelSuppressValues: true,
+							toolPanelSuppressPivotMode: true,
+							toolPanelSuppressColumnFilter: true,
+							toolPanelSuppressColumnSelectAll: true,
+							toolPanelSuppressColumnExpandAll: true,
+							toolPanelSuppressSideButtons: true,
+							debug: false,
+							onGridReady: (params) => {
+								params.api.sizeColumnsToFit();
+							},
+							floatingFilter: true,
+							defaultColDef: {
+								filter: 'agNumberColumnFilter',
+								filterParams: {
+									newRowsAction: 'keep'
+								},
+							},
+							enableRangeSelection: true,
+							paginationAutoPageSize: true,
+							//viewportRowModelPageSize: 1,
+							//viewportRowModelBufferSize: 0,
+							//headerHeight: 32,
+							rowHeight: 60,
+						};
+						accountsTableOptions.columnDefs = [
+							{ headerName: 'Account', field: 'name', cellRenderer: (params) => { return params.data ? `<a target="_blank" href="#account/${params.value}"><img class="rounded float-left" src="${(params.data.profile_image ? params.data.profile_image : 'https://golos.io/assets/0ee064e31a180b13aca01418634567a1.png')}"></a><h3><a target="_blank" href="#account/${params.value}">${params.value}</a></h3>` : null; }, filter: 'agTextColumnFilter' },
+							{ headerName: 'Posts', field: 'post_count', cellClass: 'posts' },
+							{ headerName: 'GESTS', field: 'vesting_shares_value', cellClass: 'vests' },
+							{ headerName: 'Balance GOLOS', field: 'balance_value', cellClass: 'balance' },
+							{ headerName: 'Balance GBG', field: 'sbd_balance_value', cellClass: 'sbd_balance' },
+						];
+						new agGrid.Grid($accountsTable, accountsTableOptions);
+						let EnterpriseDatasource = function() {};
+						EnterpriseDatasource.prototype.getRows = (params) => {
+							//console.log(params.request);
+							fetch('https://api-explorer.golos.io/getAccounts?' + paramsToGetQuery(params.request))
+								.then((response) => {
+									return response.json();
+								}).then((data) => {
+									params.successCallback(data.rows, data.lastRow);
+									if (data.rows.length == 0) accountsTableOptions.api.showNoRowsOverlay();
+								});
+						};
+						let datasource = new EnterpriseDatasource();
+						accountsTableOptions.api.setServerSideDatasource(datasource);
+					}
 				}; break;
 			}
 		}

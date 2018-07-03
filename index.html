@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.1.0/dist/yeti/bootstrap.min.css">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/default.min.css">
-		<link rel="stylesheet" href="custom.css?201806281100" />
+		<link rel="stylesheet" href="custom.css?201807040140" />
 	</head>
 	<body>
 		<header>
@@ -33,9 +33,9 @@
 						<li class="nav-item">
 							<a class="nav-link" href="#witnesses" id="witnesses-page-btn"><span class="icon-user-tie"></span> Witnesses</a>
 						</li>
-						<!--<li class="nav-item">
-							<a class="nav-link" href="#accounts" id="accounts-page-btn"><span class="icon-user-tie"></span> Accounts</a>
-						</li>-->
+						<li class="nav-item">
+							<a class="nav-link" href="#accounts" id="accounts-page-btn"><span class="icon-users"></span> Accounts</a>
+						</li>
 					</ul>
 					<form class="form-inline my-2 my-lg-0 ml-auto" id="node-address">
 						<div class="input-group input-group-sm">
@@ -387,20 +387,7 @@
 								</div>
 							</div>
 							<p>Accounts sorted by various metrics (richlist by default).</p>
-							<table class="table table-bordered table-hover table-sm" id="accounts-table">
-								<thead>
-									<tr class="table-primary">
-										<th scope="col">Account</th>
-										<th scope="col">Followers</th>
-										<th scope="col">Posts</th>
-										<th scope="col">Gests</th>
-										<th scope="col">Powerdown</th>
-										<th scope="col">Balances</th>
-									</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
+							<div class="ag-theme-blue" id="accounts-table"></div>
 						</div>
 					</div>
 				</div>
@@ -494,8 +481,9 @@
 		<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/highlight.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/js-beautify@1.7.5/js/lib/beautify.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/xss@0.3.8/dist/xss.min.js"></script>
-		<script src="utils.js?201806291430"></script>
-		<script src="init.js?201806291430"></script>
+		<script src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise@18.0.1/dist/ag-grid-enterprise.min.js"></script>
+		<script src="utils.js?201807040140"></script>
+		<script src="init.js?201807040140"></script>
 		<!--<script src="app.js?201806181000"></script>-->
 	</body>
 </html>
