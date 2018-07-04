@@ -25,11 +25,11 @@ html {
 
 @font-face {
   font-family: 'icomoon';
-  src:  url('graphics/icons/icomoon.eot?c802ii');
-  src:  url('graphics/icons/icomoon.eot?c802ii#iefix') format('embedded-opentype'),
-    url('graphics/icons/icomoon.ttf?c802ii') format('truetype'),
-    url('graphics/icons/icomoon.woff?c802ii') format('woff'),
-    url('graphics/icons/icomoon.svg?c802ii#icomoon') format('svg');
+  src:  url('graphics/icons/icomoon.eot?y9whcb');
+  src:  url('graphics/icons/icomoon.eot?y9whcb#iefix') format('embedded-opentype'),
+    url('graphics/icons/icomoon.ttf?y9whcb') format('truetype'),
+    url('graphics/icons/icomoon.woff?y9whcb') format('woff'),
+    url('graphics/icons/icomoon.svg?y9whcb#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -49,6 +49,9 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-file-text2:before {
+  content: "\e926";
+}
 .icon-database:before {
   content: "\e964";
 }
@@ -314,7 +317,7 @@ footer {
 	margin-top: 1.2rem !important;
 }
 
-#accounts-table {
+#accounts-table, #posts-table {
 	height: 680px;
 }
 /*.ag-layout-normal .ag-root-wrapper-body, .ag-layout-normal .ag-body {

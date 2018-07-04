@@ -6,7 +6,7 @@ swal.setDefaults({
 	cancelButtonColor: '#d9534f',
 });
 
-initHtmlElements([ '#head-block-number', '#revers-blocks-count', '#main-page', '#recent-blocks-table tbody', '#about-block-page', '#about-block-code', '#about-block-table tbody', '#about-block-operations-table tbody', '#about-block-transactions-table tbody', '#reset-search-btn', '#about-account-page', '#about-account-table tbody', '#about-block-height', '#about-block-time', '#about-block-witness', '#about-block-transactions', '#about-block-operations', '.loader', '#recent-blocks-info', '#reset-node-address', '#global-properties-table tbody', '#chain-properties-table tbody', '#about-account-all-count', '#about-account-count', '#about-account-filtered-count', '#auto-clear-real-time-after', '#about-account-filter', '#modal-about-block .modal-title', '#modal-about-block-operations-table tbody', '#modal-about-block-transactions-table tbody', '#modal-about-block-code', '#about-account-page-prev', '#about-account-page-next', '#about-account-page-pages', '#search', '#blockchain-version', '#witnesses-page', '#witnesses-table tbody', '#accounts-page', '#accounts-table', '#about-account-page-nav', '#change-work-real-time' ]);
+initHtmlElements([ '#head-block-number', '#revers-blocks-count', '#main-page', '#recent-blocks-table tbody', '#about-block-page', '#about-block-code', '#about-block-table tbody', '#about-block-operations-table tbody', '#about-block-transactions-table tbody', '#reset-search-btn', '#about-account-page', '#about-account-table tbody', '#about-block-height', '#about-block-time', '#about-block-witness', '#about-block-transactions', '#about-block-operations', '.loader', '#recent-blocks-info', '#reset-node-address', '#global-properties-table tbody', '#chain-properties-table tbody', '#about-account-all-count', '#about-account-count', '#about-account-filtered-count', '#auto-clear-real-time-after', '#about-account-filter', '#modal-about-block .modal-title', '#modal-about-block-operations-table tbody', '#modal-about-block-transactions-table tbody', '#modal-about-block-code', '#about-account-page-prev', '#about-account-page-next', '#about-account-page-pages', '#search', '#blockchain-version', '#witnesses-page', '#witnesses-table tbody', '#accounts-page', '#accounts-table', '#about-account-page-nav', '#change-work-real-time', '#posts-page', '#posts-table' ]);
 
 let $modalGetConfig = new Modal(document.getElementById('modal-get-config'));
 let $modalAboutBlock = new Modal(document.getElementById('modal-about-block'));
@@ -19,6 +19,7 @@ let workRealTime = true;
 let accountHistoryFrom = -1;
 let notResultText = '-';
 let accountsTableOptions;
+let postsTableOptions;
 
 golos.config.set('websocket', nodeAddress);
 if (nodeAddress != defaultWebsocket) {
@@ -648,6 +649,7 @@ window.addEventListener('hashchange', () => {
 						};
 						accountsTableOptions.columnDefs = [
 							{ headerName: 'Account', field: 'name', cellRenderer: (params) => { return params.data ? `<a target="_blank" href="#account/${params.value}"><img class="rounded float-left" src="${(params.data.profile_image ? params.data.profile_image : 'https://golos.io/assets/0ee064e31a180b13aca01418634567a1.png')}"></a><h3><a target="_blank" href="#account/${params.value}">${params.value}</a></h3>` : null; }, filter: 'agTextColumnFilter' },
+							{ headerName: 'Created', field: 'created' },
 							{ headerName: 'Posts', field: 'post_count', cellClass: 'posts' },
 							{ headerName: 'GESTS', field: 'vesting_shares_value', cellClass: 'vests' },
 							{ headerName: 'Balance GOLOS', field: 'balance_value', cellClass: 'balance' },
@@ -667,6 +669,76 @@ window.addEventListener('hashchange', () => {
 						};
 						let datasource = new EnterpriseDatasource();
 						accountsTableOptions.api.setServerSideDatasource(datasource);
+					}
+				}; break;
+				case 'posts': {
+					$searchVal.value = '';
+					$resetSearchBtn.style.display = 'none';
+					$mainPage.style.display = 'none';
+					$aboutBlockPage.style.display = 'none';
+					$aboutAccountPage.style.display = 'none';
+					$witnessesPage.style.display = 'none';
+					$accountsPage.style.display = 'none';
+					$postsPage.style.display = 'block';
+					if ( ! postsTableOptions) {
+						agGrid.LicenseManager.setLicenseKey('Evaluation_License_Valid_Until__9_September_2018__MTUzNjQ0NzYwMDAwMA==712c48d48d0a3ec85f3243b1295999ec');
+						postsTableOptions = {
+							pagination: true,
+							enableSorting: true,
+							enableFilter: true,
+							animateRows: true,
+							rowModelType: 'serverSide',
+							enableColResize: true,
+							icons: {
+								groupLoading: '<img class="ag-grid-loading" src="graphics/spinner.gif">'
+							},
+							toolPanelSuppressRowGroups: true,
+							toolPanelSuppressValues: true,
+							toolPanelSuppressPivotMode: true,
+							toolPanelSuppressColumnFilter: true,
+							toolPanelSuppressColumnSelectAll: true,
+							toolPanelSuppressColumnExpandAll: true,
+							toolPanelSuppressSideButtons: true,
+							debug: false,
+							onGridReady: (params) => {
+								params.api.sizeColumnsToFit();
+							},
+							floatingFilter: true,
+							defaultColDef: {
+								filter: 'agTextColumnFilter',
+								filterParams: {
+									newRowsAction: 'keep'
+								},
+							},
+							enableRangeSelection: true,
+							paginationAutoPageSize: true,
+							//viewportRowModelPageSize: 1,
+							//viewportRowModelBufferSize: 0,
+							//headerHeight: 32,
+							rowHeight: 60,
+						};
+						postsTableOptions.columnDefs = [
+							{ headerName: 'Created', field: 'created' },
+							{ headerName: 'Author', field: 'author' },
+							{ headerName: 'Payout', field: 'total_payout_value', cellRenderer: (params) => { return params.value + ' ' + params.data.total_payout_symbol; }, filter: 'agNumberColumnFilter' },
+							{ headerName: 'Permlink', field: 'permlink' },
+							{ headerName: 'Main tag', field: 'parent_permlink' },
+							{ headerName: 'Title', field: 'title' },
+						];
+						new agGrid.Grid($postsTable, postsTableOptions);
+						let EnterpriseDatasource = function() {};
+						EnterpriseDatasource.prototype.getRows = (params) => {
+							//console.log(params.request);
+							fetch('https://api-explorer.golos.io/getComments?' + paramsToGetQuery(params.request))
+								.then((response) => {
+									return response.json();
+								}).then((data) => {
+									params.successCallback(data.rows, data.lastRow);
+									if (data.rows.length == 0) postsTableOptions.api.showNoRowsOverlay();
+								});
+						};
+						let datasource = new EnterpriseDatasource();
+						postsTableOptions.api.setServerSideDatasource(datasource);
 					}
 				}; break;
 			}
