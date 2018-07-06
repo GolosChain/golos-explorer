@@ -191,7 +191,7 @@ footer {
     }
 }
 
-#about-block-page, #reset-search, #about-account-page, #reset-node-address, #abount-account-page-nav, #witnesses-page, #accounts-page {
+#about-block-page, #reset-search, #about-account-page, #reset-node-address, #abount-account-page-nav, #witnesses-page, #accounts-page, #posts-page {
 	display: none;
 }
 

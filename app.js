@@ -247,6 +247,7 @@ $search.addEventListener('submit', (e) => {
 	$recentBlocksInfo.style.display = 'none';
 	$witnessesPage.style.display = 'none';
 	$accountsPage.style.display = 'none';
+	$postsPage.style.display = 'none';
 	let searchVal = $searchVal.value;
 	// get HEX
 	if (searchVal.length == 40) {
@@ -537,6 +538,7 @@ window.addEventListener('hashchange', () => {
 					$aboutBlockPage.style.display = 'none';
 					$aboutAccountPage.style.display = 'none';
 					$accountsPage.style.display = 'none';
+					$postsPage.style.display = 'none';
 					$witnessesPage.style.display = 'block';
 					$witnessesTableTbody.innerHTML = '';
 					golos.api.getWitnessesByVote('', 100, (err, witnesses) => {
@@ -609,6 +611,7 @@ window.addEventListener('hashchange', () => {
 					$aboutBlockPage.style.display = 'none';
 					$aboutAccountPage.style.display = 'none';
 					$witnessesPage.style.display = 'none';
+					$postsPage.style.display = 'none';
 					$accountsPage.style.display = 'block';
 					if ( ! accountsTableOptions) {
 						agGrid.LicenseManager.setLicenseKey('Evaluation_License_Valid_Until__9_September_2018__MTUzNjQ0NzYwMDAwMA==712c48d48d0a3ec85f3243b1295999ec');
@@ -752,6 +755,7 @@ window.addEventListener('hashchange', () => {
 		$aboutAccountPage.style.display = 'none';
 		$witnessesPage.style.display = 'none';
 		$accountsPage.style.display = 'none';
+		$postsPage.style.display = 'none';
 		$recentBlocksInfo.style.display = 'block';
 	}
 });
