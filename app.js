@@ -238,38 +238,6 @@ let getBlockFullInfo = (blockNumberVal) => {
 	});
 }
 
-let getTransactionsAllCount = (callback) => {
-	golos.api.getAccountHistory($searchVal.value, -1, 0, (err, transactions) => {
-		if (transactions && transactions.length > 0) {
-			transactionsAllCount = transactions[0][0] + 1;
-		}
-		if (callback) callback();
-	});
-}
-
-let hash = window.location.hash.substring(1);
-if (hash) {
-	let params = hash.split('/');
-	if (params[1]) {
-		switch (params[0]) {
-			case 'account': {
-				$searchVal.value = params[1];
-				if (params[2]) {
-					currentPageNumber = params[2];
-					if (currentPageNumber > 1) {
-						getTransactionsAllCount(() => {
-							accountHistoryFrom = transactionsAllCount - (currentPageNumber * 100);
-							console.log(accountHistoryFrom);
-						});
-					}
-					else getTransactionsAllCount();
-				}
-				else getTransactionsAllCount();
-			}; break;
-		}
-	}
-}
-
 $search.addEventListener('submit', (e) => {
 	e.preventDefault();
 	loadingShow();
@@ -397,7 +365,6 @@ let getAccountTransactions = () => {
 	let usernameVal = $searchVal.value;
 	let operationsCount = 0;
 	$aboutAccountTableTbody.innerHTML = '';
-	console.log(accountHistoryFrom);
 	golos.api.getAccountHistory(usernameVal, accountHistoryFrom, 99, (err, transactions) => {
 		loadingHide();
 		if (transactions && transactions.length > 0) {
@@ -536,6 +503,15 @@ document.getElementById('get-config-btn').addEventListener('click', () => {
 	$modalGetConfig.show();
 });
 
+let getTransactionsAllCount = (callback) => {
+	golos.api.getAccountHistory($searchVal.value, -1, 0, (err, transactions) => {
+		if (transactions && transactions.length > 0) {
+			transactionsAllCount = transactions[0][0] + 1;
+		}
+		if (callback) callback();
+	});
+}
+
 window.addEventListener('hashchange', () => {
 	let hash = window.location.hash.substring(1);
 	if (hash) {
@@ -548,20 +524,18 @@ window.addEventListener('hashchange', () => {
 				}; break;
 				case 'account': {
 					$searchVal.value = params[1];
-					if (params[2]) {
-						currentPageNumber = params[2];
-						if (currentPageNumber > 1) {
-							getTransactionsAllCount(() => {
-								console.log(transactionsAllCount);
-								accountHistoryFrom = transactionsAllCount - (currentPageNumber * 100);
-							});
-						}
-						else getTransactionsAllCount();
-					}
-					else getTransactionsAllCount();
-					console.log(accountHistoryFrom);
 					if (params[3]) $aboutAccountFilter.value = params[3];
-					$search.dispatchEvent(new CustomEvent('submit'));
+					if (params[2] && params[2] > 1) {
+						currentPageNumber = params[2];
+						getTransactionsAllCount(() => {
+							accountHistoryFrom = transactionsAllCount - (currentPageNumber * 100);
+							$search.dispatchEvent(new CustomEvent('submit'));
+						});
+					}
+					else {
+						getTransactionsAllCount();
+						$search.dispatchEvent(new CustomEvent('submit'));
+					}
 				}; break;
 				case 'operations': {
 					getBlockInfo(params[1], params[2], () => {
