@@ -25,11 +25,11 @@ html {
 
 @font-face {
   font-family: 'icomoon';
-  src:  url('graphics/icons/icomoon.eot?y9whcb');
-  src:  url('graphics/icons/icomoon.eot?y9whcb#iefix') format('embedded-opentype'),
-    url('graphics/icons/icomoon.ttf?y9whcb') format('truetype'),
-    url('graphics/icons/icomoon.woff?y9whcb') format('woff'),
-    url('graphics/icons/icomoon.svg?y9whcb#icomoon') format('svg');
+  src:  url('graphics/icons/icomoon.eot?mu8bwl');
+  src:  url('graphics/icons/icomoon.eot?mu8bwl#iefix') format('embedded-opentype'),
+    url('graphics/icons/icomoon.ttf?mu8bwl') format('truetype'),
+    url('graphics/icons/icomoon.woff?mu8bwl') format('woff'),
+    url('graphics/icons/icomoon.svg?mu8bwl#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -49,6 +49,9 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-pencil2:before {
+  content: "\e906";
+}
 .icon-file-text2:before {
   content: "\e926";
 }

@@ -738,7 +738,7 @@ window.addEventListener('hashchange', () => {
 						postsTableOptions.columnDefs = [
 							{ headerName: 'Created', field: 'created' },
 							{ headerName: 'Author', field: 'author' },
-							{ headerName: 'Payout', field: 'total_payout_value', cellRenderer: (params) => { return params.value + ' ' + params.data.total_payout_symbol; }, filter: 'agNumberColumnFilter' },
+							{ headerName: 'Payout', field: 'total_payout_value', cellRenderer: (params) => { return params.data ? params.value + ' ' + params.data.total_payout_symbol : null; }, filter: 'agNumberColumnFilter' },
 							{ headerName: 'Permlink', field: 'permlink' },
 							{ headerName: 'Main tag', field: 'parent_permlink' },
 							{ headerName: 'Title', field: 'title' },
