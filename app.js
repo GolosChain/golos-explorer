@@ -512,6 +512,43 @@ let getTransactionsAllCount = (callback) => {
 	});
 }
 
+agGrid.LicenseManager.setLicenseKey('Evaluation_License_Valid_Until__9_September_2018__MTUzNjQ0NzYwMDAwMA==712c48d48d0a3ec85f3243b1295999ec');
+let tableOptions = {
+	pagination: true,
+	enableSorting: true,
+	enableFilter: true,
+	animateRows: true,
+	rowModelType: 'serverSide',
+	enableColResize: true,
+	icons: {
+		groupLoading: '<img class="ag-grid-loading" src="graphics/spinner.gif">'
+	},
+	toolPanelSuppressRowGroups: true,
+	toolPanelSuppressValues: true,
+	toolPanelSuppressPivotMode: true,
+	toolPanelSuppressColumnFilter: true,
+	toolPanelSuppressColumnSelectAll: true,
+	toolPanelSuppressColumnExpandAll: true,
+	toolPanelSuppressSideButtons: true,
+	debug: false,
+	onGridReady: (params) => {
+		params.api.sizeColumnsToFit();
+	},
+	floatingFilter: true,
+	defaultColDef: {
+		filter: 'agNumberColumnFilter',
+		filterParams: {
+			newRowsAction: 'keep'
+		},
+	},
+	enableRangeSelection: true,
+	paginationAutoPageSize: true,
+	//viewportRowModelPageSize: 1,
+	//viewportRowModelBufferSize: 0,
+	//headerHeight: 32,
+	rowHeight: 60,
+};
+
 window.addEventListener('hashchange', () => {
 	let hash = window.location.hash.substring(1);
 	if (hash) {
@@ -629,42 +666,7 @@ window.addEventListener('hashchange', () => {
 					$postsPage.style.display = 'none';
 					$accountsPage.style.display = 'block';
 					if ( ! accountsTableOptions) {
-						agGrid.LicenseManager.setLicenseKey('Evaluation_License_Valid_Until__9_September_2018__MTUzNjQ0NzYwMDAwMA==712c48d48d0a3ec85f3243b1295999ec');
-						accountsTableOptions = {
-							pagination: true,
-							enableSorting: true,
-							enableFilter: true,
-							animateRows: true,
-							rowModelType: 'serverSide',
-							enableColResize: true,
-							icons: {
-								groupLoading: '<img class="ag-grid-loading" src="graphics/spinner.gif">'
-							},
-							toolPanelSuppressRowGroups: true,
-							toolPanelSuppressValues: true,
-							toolPanelSuppressPivotMode: true,
-							toolPanelSuppressColumnFilter: true,
-							toolPanelSuppressColumnSelectAll: true,
-							toolPanelSuppressColumnExpandAll: true,
-							toolPanelSuppressSideButtons: true,
-							debug: false,
-							onGridReady: (params) => {
-								params.api.sizeColumnsToFit();
-							},
-							floatingFilter: true,
-							defaultColDef: {
-								filter: 'agNumberColumnFilter',
-								filterParams: {
-									newRowsAction: 'keep'
-								},
-							},
-							enableRangeSelection: true,
-							paginationAutoPageSize: true,
-							//viewportRowModelPageSize: 1,
-							//viewportRowModelBufferSize: 0,
-							//headerHeight: 32,
-							rowHeight: 60,
-						};
+						let accountsTableOptions = tableOptions;
 						accountsTableOptions.columnDefs = [
 							{ headerName: 'Account', field: 'name', cellRenderer: (params) => { return params.data ? `<a target="_blank" href="#account/${params.value}"><img class="rounded float-left" src="${(params.data.profile_image ? params.data.profile_image : 'https://golos.io/assets/0ee064e31a180b13aca01418634567a1.png')}"></a><h3><a target="_blank" href="#account/${params.value}">${params.value}</a></h3>` : null; }, filter: 'agTextColumnFilter' },
 							{ headerName: 'Created', field: 'created' },
@@ -699,41 +701,13 @@ window.addEventListener('hashchange', () => {
 					$accountsPage.style.display = 'none';
 					$postsPage.style.display = 'block';
 					if ( ! postsTableOptions) {
-						agGrid.LicenseManager.setLicenseKey('Evaluation_License_Valid_Until__9_September_2018__MTUzNjQ0NzYwMDAwMA==712c48d48d0a3ec85f3243b1295999ec');
-						postsTableOptions = {
-							pagination: true,
-							enableSorting: true,
-							enableFilter: true,
-							animateRows: true,
-							rowModelType: 'serverSide',
-							enableColResize: true,
-							icons: {
-								groupLoading: '<img class="ag-grid-loading" src="graphics/spinner.gif">'
+						let postsTableOptions = tableOptions;
+						postsTableOptions.rowHeight = null;
+						postsTableOptions.defaultColDef = {
+							filter: 'agTextColumnFilter',
+							filterParams: {
+								newRowsAction: 'keep'
 							},
-							toolPanelSuppressRowGroups: true,
-							toolPanelSuppressValues: true,
-							toolPanelSuppressPivotMode: true,
-							toolPanelSuppressColumnFilter: true,
-							toolPanelSuppressColumnSelectAll: true,
-							toolPanelSuppressColumnExpandAll: true,
-							toolPanelSuppressSideButtons: true,
-							debug: false,
-							onGridReady: (params) => {
-								params.api.sizeColumnsToFit();
-							},
-							floatingFilter: true,
-							defaultColDef: {
-								filter: 'agTextColumnFilter',
-								filterParams: {
-									newRowsAction: 'keep'
-								},
-							},
-							enableRangeSelection: true,
-							paginationAutoPageSize: true,
-							//viewportRowModelPageSize: 1,
-							//viewportRowModelBufferSize: 0,
-							//headerHeight: 32,
-							rowHeight: 60,
 						};
 						postsTableOptions.columnDefs = [
 							{ headerName: 'Created', field: 'created' },
