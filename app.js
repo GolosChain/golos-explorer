@@ -39,17 +39,18 @@ golos.api.getConfig((err, result) => {
 	}
 });
 
-let getChainProperties = () => {
-	golos.api.getChainProperties((err, properties) => {
-		if ( ! err) {
-			for (let key in properties) {
-				let prop = $chainPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
-				if (prop) prop.innerText = properties[key];
-			}
+let chainPropertiesTableHandler = (err, properties) => {
+	if ( ! err) {
+		for (let key in properties) {
+			let prop = $chainPropertiesTableTbody.querySelector('b[data-prop="' + key + '"]');
+			if (prop) prop.innerText = properties[key];
 		}
-	});
-};
-getChainProperties();
+	}
+}
+
+golos.api.getChainProperties(chainPropertiesTableHandler);
+
+golos.api.getCurrentMedianHistoryPrice(chainPropertiesTableHandler);
 
 $nodeAddress.addEventListener('submit', (e) => {
 	e.preventDefault();
