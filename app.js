@@ -667,7 +667,7 @@ window.addEventListener('hashchange', () => {
 					$postsPage.style.display = 'none';
 					$accountsPage.style.display = 'block';
 					if ( ! accountsTableOptions) {
-						let accountsTableOptions = tableOptions;
+						accountsTableOptions = Object.assign({}, tableOptions);
 						accountsTableOptions.columnDefs = [
 							{ headerName: 'Account', field: 'name', cellRenderer: (params) => { return params.data ? `<a target="_blank" href="#account/${params.value}"><img class="rounded float-left" src="${(params.data.profile_image ? params.data.profile_image : 'https://golos.io/assets/0ee064e31a180b13aca01418634567a1.png')}"></a><h3><a target="_blank" href="#account/${params.value}">${params.value}</a></h3>` : null; }, filter: 'agTextColumnFilter' },
 							{ headerName: 'Created', field: 'created' },
@@ -702,7 +702,7 @@ window.addEventListener('hashchange', () => {
 					$accountsPage.style.display = 'none';
 					$postsPage.style.display = 'block';
 					if ( ! postsTableOptions) {
-						let postsTableOptions = tableOptions;
+						postsTableOptions = Object.assign({}, tableOptions);
 						postsTableOptions.rowHeight = null;
 						postsTableOptions.defaultColDef = {
 							filter: 'agTextColumnFilter',
