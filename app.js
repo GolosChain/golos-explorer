@@ -6,7 +6,7 @@ swal.setDefaults({
 	cancelButtonColor: '#d9534f',
 });
 
-initHtmlElements([ '#head-block-number', '#revers-blocks-count', '#main-page', '#recent-blocks-table tbody', '#about-block-page', '#about-block-code', '#about-block-table tbody', '#about-block-operations-table tbody', '#about-block-transactions-table tbody', '#reset-search-btn', '#about-account-page', '#about-account-table tbody', '#about-block-height', '#about-block-time', '#about-block-witness', '#about-block-transactions', '#about-block-operations', '.loader', '#recent-blocks-info', '#reset-node-address', '#global-properties-table tbody', '#chain-properties-table tbody', '#about-account-all-count', '#about-account-count', '#about-account-filtered-count', '#auto-clear-real-time-after', '#about-account-filter', '#modal-about-block .modal-title', '#modal-about-block-operations-table tbody', '#modal-about-block-transactions-table tbody', '#modal-about-block-code', '#about-account-page-prev', '#about-account-page-next', '#about-account-page-pages', '#search', '#blockchain-version', '#witnesses-page', '#witnesses-table tbody', '#accounts-page', '#accounts-table', '#about-account-page-nav', '#change-work-real-time', '#posts-page', '#posts-table' ]);
+initHtmlElements([ '#head-block-number', '#revers-blocks-count', '#main-page', '#recent-blocks-table tbody', '#about-block-page', '#about-block-code', '#about-block-table tbody', '#about-block-operations-table tbody', '#about-block-transactions-table tbody', '#reset-search-btn', '#about-account-page', '#about-account-table tbody', '#about-block-height', '#about-block-time', '#about-block-witness', '#about-block-transactions', '#about-block-operations', '.loader', '#recent-blocks-info', '#reset-node-address', '#global-properties-table tbody', '#chain-properties-table tbody', '#about-account-all-count', '#about-account-count', '#about-account-filtered-count', '#auto-clear-real-time-after', '#about-account-filter', '#modal-about-block .modal-title', '#modal-about-block-operations-table tbody', '#modal-about-block-transactions-table tbody', '#modal-about-block-code', '#about-account-page-prev', '#about-account-page-next', '#about-account-page-pages', '#search', '#blockchain-version', '#witnesses-page', '#witnesses-table tbody', '#accounts-page', '#accounts-table', '#about-account-page-nav', '#change-work-real-time', '#posts-page', '#posts-table', '#htmlwidget_container' ]);
 
 let $modalGetConfig = new Modal(document.getElementById('modal-get-config'));
 let $modalAboutBlock = new Modal(document.getElementById('modal-about-block'));
@@ -250,6 +250,7 @@ $search.addEventListener('submit', (e) => {
 	$witnessesPage.style.display = 'none';
 	$accountsPage.style.display = 'none';
 	$postsPage.style.display = 'none';
+	$htmlwidget_container.style.display = 'none';
 	let searchVal = $searchVal.value;
 	// get HEX
 	if (searchVal.length == 40) {
@@ -350,6 +351,7 @@ $resetSearchBtn.addEventListener('click', () => {
 	$mainPage.style.display = 'flex';
 	$aboutBlockPage.style.display = 'none';
 	$aboutAccountPage.style.display = 'none';
+	$htmlwidget_container.style.display = 'none';
 	$recentBlocksInfo.style.display = 'block';
 	window.location.hash = '';
 });
@@ -363,10 +365,13 @@ let loadingHide = () => {
 
 let getAccountTransactions = () => {
 	loadingShow();
+	$aboutAccountTableTbody.innerHTML = '';
 	let usernameVal = $searchVal.value;
 	let operationsCount = 0;
-	$aboutAccountTableTbody.innerHTML = '';
-	golos.api.getAccountHistory(usernameVal, accountHistoryFrom, 99, (err, transactions) => {
+	let limit = 99;
+	console.log(accountHistoryFrom);
+	if (accountHistoryFrom != -1 && accountHistoryFrom < limit) limit = accountHistoryFrom;
+	golos.api.getAccountHistory(usernameVal, accountHistoryFrom, limit, (err, transactions) => {
 		loadingHide();
 		if (transactions && transactions.length > 0) {
 			//transactions.reverse();
@@ -401,15 +406,16 @@ let getAccountTransactions = () => {
 					$aboutAccountPageNav.style.display = 'block';
 					pageNumber = 1;
 					let renderPageNumbers = 0;
-					while (pageNumber < transactionsAllCount / 100) {
-						//<li class="page-item active"><a class="page-link" href="#">1</a></li>
+					let maxPagesCount = transactionsAllCount / 100 - 1;
+					if (currentPageNumber > 25) pageNumber = currentPageNumber - 25;
+					while (renderPageNumbers <= 50) {
 						let $newPage = document.createElement('li');
 						$newPage.innerHTML = `<a class="page-link" href="#account/${usernameVal}/${pageNumber}/${$aboutAccountFilter.value}">${pageNumber}</a>`;
 						$newPage.className = 'page-item' + (pageNumber == currentPageNumber ? ' active' : '');
 						$aboutAccountPagePages.appendChild($newPage);
 						pageNumber++;
 						renderPageNumbers++;
-						if (renderPageNumbers >= 100) break;
+						if (renderPageNumbers > maxPagesCount) break;
 					}
 				}
 			}
@@ -563,10 +569,12 @@ window.addEventListener('hashchange', () => {
 				case 'account': {
 					$searchVal.value = params[1];
 					if (params[3]) $aboutAccountFilter.value = params[3];
-					if (params[2] && params[2] > 1) {
+					if (params[2] && params[2] > 0) {
 						currentPageNumber = params[2];
 						getTransactionsAllCount(() => {
 							accountHistoryFrom = transactionsAllCount - (currentPageNumber * 100);
+							if (currentPageNumber == 1) accountHistoryFrom = -1;
+							console.log(currentPageNumber, transactionsAllCount, accountHistoryFrom);
 							$search.dispatchEvent(new CustomEvent('submit'));
 						});
 					}
@@ -580,6 +588,18 @@ window.addEventListener('hashchange', () => {
 						$modalAboutBlock.show();
 					});
 				}; break;
+				case 'analytics': {
+					$searchVal.value = '';
+					$resetSearchBtn.style.display = 'none';
+					$mainPage.style.display = 'none';
+					$aboutBlockPage.style.display = 'none';
+					$aboutAccountPage.style.display = 'none';
+					$accountsPage.style.display = 'none';
+					$postsPage.style.display = 'none';
+					$witnessesPage.style.display = 'none';
+					$htmlwidget_container.style.display = 'block';
+					window.HTMLWidgets.staticRender();
+				}; break;
 			}
 		}
 		else {
@@ -592,6 +612,7 @@ window.addEventListener('hashchange', () => {
 					$aboutAccountPage.style.display = 'none';
 					$accountsPage.style.display = 'none';
 					$postsPage.style.display = 'none';
+					$htmlwidget_container.style.display = 'none';
 					$witnessesPage.style.display = 'block';
 					$witnessesTableTbody.innerHTML = '';
 					golos.api.getWitnessesByVote('', 100, (err, witnesses) => {
@@ -665,6 +686,7 @@ window.addEventListener('hashchange', () => {
 					$aboutAccountPage.style.display = 'none';
 					$witnessesPage.style.display = 'none';
 					$postsPage.style.display = 'none';
+					$htmlwidget_container.style.display = 'none';
 					$accountsPage.style.display = 'block';
 					if ( ! accountsTableOptions) {
 						accountsTableOptions = Object.assign({}, tableOptions);
@@ -700,6 +722,7 @@ window.addEventListener('hashchange', () => {
 					$aboutAccountPage.style.display = 'none';
 					$witnessesPage.style.display = 'none';
 					$accountsPage.style.display = 'none';
+					$htmlwidget_container.style.display = 'none';
 					$postsPage.style.display = 'block';
 					if ( ! postsTableOptions) {
 						postsTableOptions = Object.assign({}, tableOptions);
@@ -746,6 +769,7 @@ window.addEventListener('hashchange', () => {
 		$witnessesPage.style.display = 'none';
 		$accountsPage.style.display = 'none';
 		$postsPage.style.display = 'none';
+		$htmlwidget_container.style.display = 'none';
 		$recentBlocksInfo.style.display = 'block';
 	}
 });
