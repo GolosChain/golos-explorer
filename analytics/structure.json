@@ -85,7 +85,7 @@
             "displaylogo":false,
             "cloud":false
          },
-         "data":"https://rawgit.com/epexa/f4b2214efe91e14ee8feea6409b2a363/raw/d3fceb50d0b22d2224a6592ea372ed88b05b7529/comments.js",
+         "data":"analytics/comments.js",
          "highlight":{
             "on":"plotly_click",
             "persistent":false,
