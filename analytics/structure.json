@@ -85,7 +85,7 @@
             "displaylogo":false,
             "cloud":false
          },
-         "data":"analytics/comments.json",
+         "data":"analytics/data/comments.json",
          "highlight":{
             "on":"plotly_click",
             "persistent":false,
