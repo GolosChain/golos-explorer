@@ -10,6 +10,7 @@ initHtmlElements([ '#head-block-number', '#revers-blocks-count', '#main-page', '
 
 let $modalGetConfig = new Modal(document.getElementById('modal-get-config'));
 let $modalAboutBlock = new Modal(document.getElementById('modal-about-block'));
+let $modalNodeAddress = new Modal(document.getElementById('modal-node-address'));
 let $searchVal = $search.querySelector('.form-control[name="search"]');
 let defaultWebsocket = 'wss://ws.golos.io';
 let totalVestingShares;
@@ -23,6 +24,10 @@ let postsTableOptions;
 let transactionsAllCount = 0;
 
 new Tooltip($searchVal);
+
+document.getElementById('node-address-modal-btn').addEventListener('click', () => {
+	$modalNodeAddress.show();
+});
 
 golos.config.set('websocket', nodeAddress);
 if (nodeAddress != defaultWebsocket) {

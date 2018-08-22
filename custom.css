@@ -380,3 +380,7 @@ slide:not(.current) .plotly.html-widget{
 nav .bs-tooltip-right, .bs-tooltip-auto[x-placement^="right"] {
 	margin-left: 5rem;
 }
+
+nav .nav-item img {
+	height: 1.2rem;
+}

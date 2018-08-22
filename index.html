@@ -10,7 +10,7 @@
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.1.0/dist/yeti/bootstrap.min.css">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.12.0/build/styles/default.min.css">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3.18.1/swagger-ui.css">
-		<link rel="stylesheet" href="custom.css?201808221730" />
+		<link rel="stylesheet" href="custom.css?201808222120" />
 		<meta name="description" content="Golos Blockchain Explorer">
 		<meta name="keywords" content="golos, golos blockchain, golos blockchain explorer, golos explorer, golos db, golosdb, golos stats">
 		<link rel="apple-touch-icon" sizes="180x180" href="/graphics/apple-touch-icon.png">
@@ -71,6 +71,9 @@
 						<li class="nav-item">
 							<a class="nav-link" href="#api"><span class="icon-power-cord"></span> API</a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link" target="_blank" href="https://chrome.google.com/webstore/detail/golos-explorer/adhkodbkcnodigcjmnemkifagfeogamd"><img src="graphics/chrome-logo.svg"> Chrome</a>
+						</li>
 						<!--<li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="icon-stats-dots"></span> Analytics</a>
 							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -78,15 +81,11 @@
 							</div>
 						</li>-->
 					</ul>
-					<form class="form-inline my-2 my-lg-0 ml-auto" id="node-address">
+					<form class="form-inline">
 						<div class="input-group input-group-sm">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="blockchain-version">...</span>
-							</div>
-							<input class="form-control form-control-sm" name="node-address" type="search" placeholder="wss://ws.golos.io" aria-label="wss://ws.golos.io" value="wss://ws.golos.io" required="">
-							<div class="input-group-append">
-								<button class="btn btn-danger btn-sm" id="reset-node-address" type="button"><span class="icon-spinner11"></span></button>
-								<button class="btn btn-warning btn-sm" type="submit"><span class="icon-database"></span> Change</button>
+								<button class="btn btn-warning btn-sm" id="node-address-modal-btn" type="submit"><span class="icon-database"></span> Change</button>
 							</div>
 						</div>
 					</form>
@@ -545,6 +544,30 @@
 				</div>
 			</div>
 		</div>
+		<div class="modal" id="modal-node-address" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-sm" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Node address</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form class="form-inline" id="node-address">
+							<div class="input-group">
+								<input class="form-control" name="node-address" type="search" placeholder="wss://ws.golos.io" aria-label="wss://ws.golos.io" value="wss://ws.golos.io" required="">
+								<button class="btn btn-danger" id="reset-node-address" type="button"><span class="icon-spinner11"></span></button>
+								<button class="btn btn-success" type="submit"><span class="icon-database"></span> Change</button>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="loader">
 			<div class="lds-css ng-scope">
 				<div class="lds-cube">
@@ -564,7 +587,7 @@
 		<script src="https://cdn.jsdelivr.net/npm/plotly.js@1.29.2/dist/plotly.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3.18.1/swagger-ui-bundle.js"></script>
 		<script src="utils.js?201807131930"></script>
-		<script src="init.js?201808221420"></script>
+		<script src="init.js?201808222120"></script>
 		<script src="analytics.js"></script>
 	</body>
 </html>
