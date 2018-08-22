@@ -22,6 +22,8 @@ let accountsTableOptions;
 let postsTableOptions;
 let transactionsAllCount = 0;
 
+new Tooltip($searchVal);
+
 golos.config.set('websocket', nodeAddress);
 if (nodeAddress != defaultWebsocket) {
 	$resetNodeAddress.style.display = 'block';

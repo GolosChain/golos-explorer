@@ -365,3 +365,7 @@ slide:not(.current) .plotly.html-widget{
 .swagger-ui .info {
 	margin-top: 0;
 }
+
+nav .bs-tooltip-right, .bs-tooltip-auto[x-placement^="right"] {
+	margin-left: 5rem;
+}
