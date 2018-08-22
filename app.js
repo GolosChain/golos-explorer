@@ -560,13 +560,7 @@ let tableOptions = {
 
 window.ui = SwaggerUIBundle({
 	url: 'https://explorer.golos.io/swagger.json',
-	dom_id: '#swagger-ui',
-	deepLinking: false,
-	presets: [
-		SwaggerUIBundle.presets.apis,
-		SwaggerUIStandalonePreset
-	],
-	layout: 'StandaloneLayout'
+	dom_id: '#swagger-ui'
 });
 
 window.addEventListener('hashchange', () => {

@@ -25,11 +25,11 @@ html {
 
 @font-face {
   font-family: 'icomoon';
-  src:  url('graphics/icons/icomoon.eot?acralk');
-  src:  url('graphics/icons/icomoon.eot?acralk#iefix') format('embedded-opentype'),
-    url('graphics/icons/icomoon.ttf?acralk') format('truetype'),
-    url('graphics/icons/icomoon.woff?acralk') format('woff'),
-    url('graphics/icons/icomoon.svg?acralk#icomoon') format('svg');
+  src:  url('graphics/icons/icomoon.eot?9dawu7');
+  src:  url('graphics/icons/icomoon.eot?9dawu7#iefix') format('embedded-opentype'),
+    url('graphics/icons/icomoon.ttf?9dawu7') format('truetype'),
+    url('graphics/icons/icomoon.woff?9dawu7') format('woff'),
+    url('graphics/icons/icomoon.svg?9dawu7#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -78,6 +78,9 @@ html {
 }
 .icon-bin:before {
   content: "\e9ac";
+}
+.icon-power-cord:before {
+  content: "\e9b7";
 }
 .icon-point-right:before {
   content: "\ea04";
@@ -353,4 +356,12 @@ body > .container-fluid.crosstalk-bscols {
 
 slide:not(.current) .plotly.html-widget{
 	display: none;
+}
+
+.swagger-ui .col {
+	flex-grow: initial;
+	width: initial;
+}
+.swagger-ui .info {
+	margin-top: 0;
 }
