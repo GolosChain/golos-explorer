@@ -1,0 +1,219 @@
+{
+  "openapi" : "3.0.0",
+  "servers" : [ {
+    "description" : "Golos Explorer Public API",
+    "url" : "https://api-explorer.golos.io"
+  } ],
+  "info" : {
+    "version" : "1.0.0",
+    "title" : "Golos Explorer API",
+    "contact" : {
+      "name" : "Developer",
+      "url" : "https://t.me/epexa",
+      "email" : "entusoft@gmail.com"
+    },
+    "license" : {
+      "name" : "MIT License",
+      "url" : "https://github.com/GolosChain/golos-explorer-api/blob/master/LICENSE"
+    }
+  },
+  "paths" : {
+    "/getAccounts" : {
+      "get" : {
+        "tags" : [ "Lists" ],
+        "summary" : "get the list of accounts",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "startRow",
+          "description" : "number of records to skip for pagination",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "minimum" : 0
+          }
+        }, {
+          "in" : "query",
+          "name" : "endRow",
+          "description" : "maximum number of records to return",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "minimum" : 1,
+            "maximum" : 1000
+          }
+        }, {
+          "in" : "query",
+          "name" : "sortModel",
+          "description" : "pass an optional sorting",
+          "schema" : {
+            "type" : "object"
+          },
+          "style" : "form",
+          "explode" : true
+        }, {
+          "in" : "query",
+          "name" : "filterModel",
+          "description" : "pass an optional filter string for looking up account",
+          "schema" : {
+            "type" : "object"
+          },
+          "style" : "form",
+          "explode" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "search results matching criteria",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/AccountItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getComments" : {
+      "get" : {
+        "tags" : [ "Lists" ],
+        "summary" : "get the list of comments",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "startRow",
+          "description" : "number of records to skip for pagination",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "minimum" : 0
+          }
+        }, {
+          "in" : "query",
+          "name" : "endRow",
+          "description" : "maximum number of records to return",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "minimum" : 1,
+            "maximum" : 1000
+          }
+        }, {
+          "in" : "query",
+          "name" : "sortModel",
+          "description" : "pass an optional sorting",
+          "schema" : {
+            "type" : "object"
+          },
+          "style" : "form",
+          "explode" : true
+        }, {
+          "in" : "query",
+          "name" : "filterModel",
+          "description" : "pass an optional filter string for looking up account",
+          "schema" : {
+            "type" : "object"
+          },
+          "style" : "form",
+          "explode" : true
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "search results matching criteria",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/CommentItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "AccountItem" : {
+        "type" : "object",
+        "required" : [ "created", "name", "post_count", "vesting_shares_value", "balance_value", "sbd_balance_value", "profile_image" ],
+        "properties" : {
+          "created" : {
+            "type" : "string",
+            "format" : "int32",
+            "example" : "2017-09-13T00:46:15.000Z"
+          },
+          "name" : {
+            "type" : "string",
+            "example" : "epexa"
+          },
+          "post_count" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : 7
+          },
+          "vesting_shares_value" : {
+            "type" : "string",
+            "example" : 18904.949929
+          },
+          "balance_value" : {
+            "type" : "string",
+            "example" : 416.214
+          },
+          "sbd_balance_value" : {
+            "type" : "string",
+            "example" : 0.025
+          },
+          "profile_image" : {
+            "type" : "string",
+            "format" : "url",
+            "example" : "https://images.golos.io/DQmfRxr6raouyrvtRdash61muPK5TmpWa2QkrKG9K3Z99MJ/new_avatar_square.jpg"
+          }
+        }
+      },
+      "CommentItem" : {
+        "type" : "object",
+        "required" : [ "created", "author", "permlink", "title", "total_payout_symbol", "total_payout_value", "parent_permlink" ],
+        "properties" : {
+          "created" : {
+            "type" : "string",
+            "format" : "int32",
+            "example" : "2016-10-18T11:49:36.000Z"
+          },
+          "author" : {
+            "type" : "string",
+            "example" : "primus"
+          },
+          "permlink" : {
+            "type" : "string",
+            "format" : "url",
+            "example" : "nastroika-nod-mainera-i-delegata-dlya-raboty-v-golose-rabochie-konfigi-i-poyasneniya-po-ustanovke"
+          },
+          "title" : {
+            "type" : "string",
+            "example" : "Настройка нод майнера и делегата для работы в Голосе: рабочие конфиги и пояснения по установке"
+          },
+          "total_payout_symbol" : {
+            "type" : "string",
+            "example" : "GBG"
+          },
+          "total_payout_value" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : 125.818
+          },
+          "parent_permlink" : {
+            "type" : "string",
+            "format" : "url",
+            "example" : "ru--golos"
+          }
+        }
+      }
+    }
+  }
+}

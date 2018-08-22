@@ -6,7 +6,7 @@ swal.setDefaults({
 	cancelButtonColor: '#d9534f',
 });
 
-initHtmlElements([ '#head-block-number', '#revers-blocks-count', '#main-page', '#recent-blocks-table tbody', '#about-block-page', '#about-block-code', '#about-block-table tbody', '#about-block-operations-table tbody', '#about-block-transactions-table tbody', '#reset-search-btn', '#about-account-page', '#about-account-table tbody', '#about-block-height', '#about-block-time', '#about-block-witness', '#about-block-transactions', '#about-block-operations', '.loader', '#recent-blocks-info', '#reset-node-address', '#global-properties-table tbody', '#chain-properties-table tbody', '#about-account-all-count', '#about-account-count', '#about-account-filtered-count', '#auto-clear-real-time-after', '#about-account-filter', '#modal-about-block .modal-title', '#modal-about-block-operations-table tbody', '#modal-about-block-transactions-table tbody', '#modal-about-block-code', '#about-account-page-prev', '#about-account-page-next', '#about-account-page-pages', '#search', '#blockchain-version', '#witnesses-page', '#witnesses-table tbody', '#accounts-page', '#accounts-table', '#about-account-page-nav', '#change-work-real-time', '#posts-page', '#posts-table', '#htmlwidget_container' ]);
+initHtmlElements([ '#head-block-number', '#revers-blocks-count', '#main-page', '#recent-blocks-table tbody', '#about-block-page', '#about-block-code', '#about-block-table tbody', '#about-block-operations-table tbody', '#about-block-transactions-table tbody', '#reset-search-btn', '#about-account-page', '#about-account-table tbody', '#about-block-height', '#about-block-time', '#about-block-witness', '#about-block-transactions', '#about-block-operations', '.loader', '#recent-blocks-info', '#reset-node-address', '#global-properties-table tbody', '#chain-properties-table tbody', '#about-account-all-count', '#about-account-count', '#about-account-filtered-count', '#auto-clear-real-time-after', '#about-account-filter', '#modal-about-block .modal-title', '#modal-about-block-operations-table tbody', '#modal-about-block-transactions-table tbody', '#modal-about-block-code', '#about-account-page-prev', '#about-account-page-next', '#about-account-page-pages', '#search', '#blockchain-version', '#witnesses-page', '#witnesses-table tbody', '#accounts-page', '#accounts-table', '#about-account-page-nav', '#change-work-real-time', '#posts-page', '#posts-table', '#api-page', '#htmlwidget_container' ]);
 
 let $modalGetConfig = new Modal(document.getElementById('modal-get-config'));
 let $modalAboutBlock = new Modal(document.getElementById('modal-about-block'));
@@ -250,6 +250,7 @@ $search.addEventListener('submit', (e) => {
 	$witnessesPage.style.display = 'none';
 	$accountsPage.style.display = 'none';
 	$postsPage.style.display = 'none';
+	$apiPage.style.display = 'none';
 	$htmlwidget_container.style.display = 'none';
 	let searchVal = $searchVal.value;
 	// get HEX
@@ -351,6 +352,7 @@ $resetSearchBtn.addEventListener('click', () => {
 	$mainPage.style.display = 'flex';
 	$aboutBlockPage.style.display = 'none';
 	$aboutAccountPage.style.display = 'none';
+	$apiPage.style.display = 'none';
 	$htmlwidget_container.style.display = 'none';
 	$recentBlocksInfo.style.display = 'block';
 	window.location.hash = '';
@@ -556,6 +558,17 @@ let tableOptions = {
 	rowHeight: 60,
 };
 
+window.ui = SwaggerUIBundle({
+	url: 'https://explorer.golos.io/swagger.json',
+	dom_id: '#swagger-ui',
+	deepLinking: false,
+	presets: [
+		SwaggerUIBundle.presets.apis,
+		SwaggerUIStandalonePreset
+	],
+	layout: 'StandaloneLayout'
+});
+
 window.addEventListener('hashchange', () => {
 	let hash = window.location.hash.substring(1);
 	if (hash) {
@@ -597,6 +610,7 @@ window.addEventListener('hashchange', () => {
 					$accountsPage.style.display = 'none';
 					$postsPage.style.display = 'none';
 					$witnessesPage.style.display = 'none';
+					$apiPage.style.display = 'none';
 					$htmlwidget_container.style.display = 'block';
 					window.HTMLWidgets.staticRender();
 				}; break;
@@ -612,6 +626,7 @@ window.addEventListener('hashchange', () => {
 					$aboutAccountPage.style.display = 'none';
 					$accountsPage.style.display = 'none';
 					$postsPage.style.display = 'none';
+					$apiPage.style.display = 'none';
 					$htmlwidget_container.style.display = 'none';
 					$witnessesPage.style.display = 'block';
 					$witnessesTableTbody.innerHTML = '';
@@ -686,6 +701,7 @@ window.addEventListener('hashchange', () => {
 					$aboutAccountPage.style.display = 'none';
 					$witnessesPage.style.display = 'none';
 					$postsPage.style.display = 'none';
+					$apiPage.style.display = 'none';
 					$htmlwidget_container.style.display = 'none';
 					$accountsPage.style.display = 'block';
 					if ( ! accountsTableOptions) {
@@ -722,6 +738,7 @@ window.addEventListener('hashchange', () => {
 					$aboutAccountPage.style.display = 'none';
 					$witnessesPage.style.display = 'none';
 					$accountsPage.style.display = 'none';
+					$apiPage.style.display = 'none';
 					$htmlwidget_container.style.display = 'none';
 					$postsPage.style.display = 'block';
 					if ( ! postsTableOptions) {
@@ -757,6 +774,18 @@ window.addEventListener('hashchange', () => {
 						postsTableOptions.api.setServerSideDatasource(datasource);
 					}
 				}; break;
+				case 'api': {
+					$searchVal.value = '';
+					$resetSearchBtn.style.display = 'none';
+					$mainPage.style.display = 'none';
+					$aboutBlockPage.style.display = 'none';
+					$aboutAccountPage.style.display = 'none';
+					$witnessesPage.style.display = 'none';
+					$accountsPage.style.display = 'none';
+					$postsPage.style.display = 'none';
+					$htmlwidget_container.style.display = 'none';
+					$apiPage.style.display = 'block';
+				}; break;
 			}
 		}
 	}
@@ -770,6 +799,7 @@ window.addEventListener('hashchange', () => {
 		$accountsPage.style.display = 'none';
 		$postsPage.style.display = 'none';
 		$htmlwidget_container.style.display = 'none';
+		$apiPage.style.display = 'none';
 		$recentBlocksInfo.style.display = 'block';
 	}
 });
