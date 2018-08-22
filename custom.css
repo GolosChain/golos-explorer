@@ -322,8 +322,19 @@ footer {
 	width: 22px;
 	height: 22px;
 }*/
-.ag-theme-blue .ag-stub-cell .ag-loading-text {
+#accounts-table .ag-stub-cell .ag-loading-text {
 	margin-top: 1.2rem !important;
+}
+
+#posts-table .ag-stub-cell .ag-loading-icon {
+	height: 100%
+}
+#posts-table .ag-stub-cell .ag-loading-icon img {
+	height: 2rem;
+	margin-top: -0.5rem;
+}
+#posts-table .ag-stub-cell .ag-loading-text {
+	margin-top: 0 !important;
 }
 
 #accounts-table, #posts-table {
