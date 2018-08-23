@@ -25,11 +25,11 @@ html {
 
 @font-face {
   font-family: 'icomoon';
-  src:  url('graphics/icons/icomoon.eot?9dawu7');
-  src:  url('graphics/icons/icomoon.eot?9dawu7#iefix') format('embedded-opentype'),
-    url('graphics/icons/icomoon.ttf?9dawu7') format('truetype'),
-    url('graphics/icons/icomoon.woff?9dawu7') format('woff'),
-    url('graphics/icons/icomoon.svg?9dawu7#icomoon') format('svg');
+  src:  url('graphics/icons/icomoon.eot?57lj0l');
+  src:  url('graphics/icons/icomoon.eot?57lj0l#iefix') format('embedded-opentype'),
+    url('graphics/icons/icomoon.ttf?57lj0l') format('truetype'),
+    url('graphics/icons/icomoon.woff?57lj0l') format('woff'),
+    url('graphics/icons/icomoon.svg?57lj0l#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -93,6 +93,9 @@ html {
 }
 .icon-pause2:before {
   content: "\ea1d";
+}
+.icon-circle-up:before {
+  content: "\ea41";
 }
 
 footer {
@@ -383,4 +386,20 @@ nav .bs-tooltip-right, .bs-tooltip-auto[x-placement^="right"] {
 
 nav .nav-item img {
 	height: 1.2rem;
+}
+
+#back-to-top {
+	position: fixed;
+	bottom: -50px;
+	left: -150px;
+	transition: .4s;
+	-webkit-transition: .4s;
+	-moz-transition: .4s;
+}
+#back-to-top.showing {
+	bottom: 2rem;
+	left: 2rem;
+	transition: .4s;
+	-webkit-transition: .4s;
+	-moz-transition: .4s;
 }

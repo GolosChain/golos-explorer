@@ -6,7 +6,7 @@ swal.setDefaults({
 	cancelButtonColor: '#d9534f',
 });
 
-initHtmlElements([ '#head-block-number', '#revers-blocks-count', '#main-page', '#recent-blocks-table tbody', '#about-block-page', '#about-block-code', '#about-block-table tbody', '#about-block-operations-table tbody', '#about-block-transactions-table tbody', '#reset-search-btn', '#about-account-page', '#about-account-table tbody', '#about-block-height', '#about-block-time', '#about-block-witness', '#about-block-transactions', '#about-block-operations', '.loader', '#recent-blocks-info', '#reset-node-address', '#global-properties-table tbody', '#chain-properties-table tbody', '#about-account-all-count', '#about-account-count', '#about-account-filtered-count', '#auto-clear-real-time-after', '#about-account-filter', '#modal-about-block .modal-title', '#modal-about-block-operations-table tbody', '#modal-about-block-transactions-table tbody', '#modal-about-block-code', '#about-account-page-prev', '#about-account-page-next', '#about-account-page-pages', '#search', '#blockchain-version', '#witnesses-page', '#witnesses-table tbody', '#accounts-page', '#accounts-table', '#about-account-page-nav', '#change-work-real-time', '#posts-page', '#posts-table', '#api-page', '#htmlwidget_container' ]);
+initHtmlElements([ '#head-block-number', '#revers-blocks-count', '#main-page', '#recent-blocks-table tbody', '#about-block-page', '#about-block-code', '#about-block-table tbody', '#about-block-operations-table tbody', '#about-block-transactions-table tbody', '#reset-search-btn', '#about-account-page', '#about-account-table tbody', '#about-block-height', '#about-block-time', '#about-block-witness', '#about-block-transactions', '#about-block-operations', '.loader', '#recent-blocks-info', '#reset-node-address', '#global-properties-table tbody', '#chain-properties-table tbody', '#about-account-all-count', '#about-account-count', '#about-account-filtered-count', '#auto-clear-real-time-after', '#about-account-filter', '#modal-about-block .modal-title', '#modal-about-block-operations-table tbody', '#modal-about-block-transactions-table tbody', '#modal-about-block-code', '#about-account-page-prev', '#about-account-page-next', '#about-account-page-pages', '#search', '#blockchain-version', '#witnesses-page', '#witnesses-table tbody', '#accounts-page', '#accounts-table', '#about-account-page-nav', '#change-work-real-time', '#posts-page', '#posts-table', '#api-page', '#back-to-top', '#htmlwidget_container' ]);
 
 let $modalGetConfig = new Modal(document.getElementById('modal-get-config'));
 let $modalAboutBlock = new Modal(document.getElementById('modal-about-block'));
@@ -805,3 +805,16 @@ window.addEventListener('hashchange', () => {
 	}
 });
 window.dispatchEvent(new CustomEvent('hashchange'));
+
+window.onscroll = function() {
+	let value = document.documentElement.scrollTop || document.body.parentNode.scrollTop;
+	if (value > 777) $backToTop.classList.add('showing');
+	else $backToTop.classList.remove('showing');
+}
+$backToTop.addEventListener('click', (e) => {
+	e.preventDefault();
+	window.scrollTo({
+		top: 0,
+		behavior: 'smooth'
+	});
+});
