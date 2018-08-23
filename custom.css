@@ -340,12 +340,12 @@ footer {
 	margin-top: 0 !important;
 }
 
-#accounts-table, #posts-table {
-	height: 680px;
-}
-/*.ag-layout-normal .ag-root-wrapper-body, .ag-layout-normal .ag-body {
+.ag-layout-normal .ag-root-wrapper-body, .ag-layout-normal .ag-body {
 	height: 100% !important;
-}*/
+}
+.ag-body-viewport {
+	width: 102%;
+}
 
 .container-fluid.crosstalk-bscols {
 	margin-left: -30px;
@@ -407,4 +407,36 @@ nav .nav-item img {
 #about-block-page table tbody tr td, #modal-about-block table tbody tr td {
 	word-wrap: break-word;
 	max-width: 777px;
+}
+
+
+.ag-paging-panel {
+	color: inherit !important;
+	padding: 0 !important;
+	height: 50px !important;
+}
+.ag-paging-button {
+	border: 1px solid #dee2e6;
+	border-radius: 0;
+	margin-top: 0.1em;
+	margin-bottom: 0.1em;
+	cursor: pointer;
+	margin-left: 0.1em;
+	margin-right: 0.1em;
+	position: relative;
+	padding: 0.5rem 0.75rem;
+	line-height: 1.25;
+	color: #fff;
+	background-color: #008cba;
+}
+.ag-paging-button:hover {
+	z-index: 2;
+	color: #00526e;
+	background-color: #eee;
+}
+.ag-paging-button:disabled {
+	color: #eee;
+	pointer-events: none;
+	cursor: auto;
+	background-color: #fff;
 }

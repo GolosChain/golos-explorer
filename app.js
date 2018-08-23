@@ -560,7 +560,6 @@ let tableOptions = {
 		},
 	},
 	enableRangeSelection: true,
-	paginationAutoPageSize: true,
 	//viewportRowModelPageSize: 1,
 	//viewportRowModelBufferSize: 0,
 	//headerHeight: 32,
