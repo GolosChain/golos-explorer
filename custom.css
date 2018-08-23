@@ -404,7 +404,7 @@ nav .nav-item img {
 	-moz-transition: .4s;
 }
 
-#modal-about-block table tbody tr td {
+#about-block-page table tbody tr td, #modal-about-block table tbody tr td {
 	word-wrap: break-word;
 	max-width: 777px;
 }

@@ -212,6 +212,7 @@ let getBlockFullInfo = (blockNumberVal) => {
 											<td rowspan="${Object.keys(operation[1]).length + 1}"><b>${operation[0]}</b></td>
 										</tr>`;
 					for (let keyOp in operation[1]) {
+						operation[1][keyOp] = JSON.stringify(operation[1][keyOp]);
 						operation[1][keyOp] = filterXSS(operation[1][keyOp]);
 						$newRow = $aboutBlockOperationsTableTbody.insertRow();
 						$newRow.innerHTML = `<tr>
@@ -222,11 +223,11 @@ let getBlockFullInfo = (blockNumberVal) => {
 				});
 				//
 				for (let keyTr in transaction) {
-					if (keyTr == 'operations') transaction[keyTr] = JSON.stringify(transaction[keyTr]);
+					//if (keyTr == 'operations') transaction[keyTr] = transaction[keyTr];
 					$newRow = $aboutBlockTransactionsTableTbody.insertRow();
 					$newRow.innerHTML = `<tr>
 											<td><b>${keyTr}</b></td>
-											<td>${transaction[keyTr]}</td>
+											<td>${JSON.stringify(transaction[keyTr])}</td>
 										</tr>`;
 				}
 				$newRow = $aboutBlockTransactionsTableTbody.insertRow();
@@ -487,11 +488,11 @@ let getBlockInfo = (blockNumberVal, operationName, callback) => {
 						}
 
 						for (let keyTr in transaction) {
-							if (keyTr == 'operations') transaction[keyTr] = JSON.stringify(transaction[keyTr]);
+							//if (keyTr == 'operations') transaction[keyTr] = JSON.stringify(transaction[keyTr]);
 							$newRow = $modalAboutBlockTransactionsTableTbody.insertRow();
 							$newRow.innerHTML = `<tr>
 													<td><b>${keyTr}</b></td>
-													<td>${transaction[keyTr]}</td>
+													<td>${JSON.stringify(transaction[keyTr])}</td>
 												</tr>`;
 						}
 						$newRow = $modalAboutBlockTransactionsTableTbody.insertRow();

@@ -36,7 +36,7 @@ let loadGolosJsLib = () => {
 	golosJsLib.src = `https://cdn.jsdelivr.net/npm/golos-js@${golosJsVersion}/dist/golos.min.js`;
 	golosJsLib.onload = () => {
 		let appLib = document.createElement('script');
-		appLib.src = 'app.js?201808231330';
+		appLib.src = 'app.js?201808231400';
 		(document.head || document.documentElement).appendChild(appLib);
 	};
 	(document.head || document.documentElement).appendChild(golosJsLib);
