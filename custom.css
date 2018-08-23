@@ -403,3 +403,8 @@ nav .nav-item img {
 	-webkit-transition: .4s;
 	-moz-transition: .4s;
 }
+
+#modal-about-block table tbody tr td {
+	word-wrap: break-word;
+	max-width: 777px;
+}

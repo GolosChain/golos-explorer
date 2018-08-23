@@ -378,7 +378,7 @@ let getAccountTransactions = () => {
 	let usernameVal = $searchVal.value;
 	let operationsCount = 0;
 	let limit = 99;
-	console.log(accountHistoryFrom);
+	//console.log(accountHistoryFrom);
 	if (accountHistoryFrom != -1 && accountHistoryFrom < limit) limit = accountHistoryFrom;
 	golos.api.getAccountHistory(usernameVal, accountHistoryFrom, limit, (err, transactions) => {
 		loadingHide();
@@ -479,9 +479,10 @@ let getBlockInfo = (blockNumberVal, operationName, callback) => {
 											</tr>`;
 						for (let keyOp in operation[1]) {
 							$newRow = $modalAboutBlockOperationsTableTbody.insertRow();
+							//console.log(operation[1][keyOp]);
 							$newRow.innerHTML = `<tr>
 													<td>${keyOp}</td>
-													<td>${operation[1][keyOp]}</td>
+													<td>${JSON.stringify(operation[1][keyOp])}</td>
 												</tr>`;
 						}
 
@@ -588,7 +589,7 @@ window.addEventListener('hashchange', () => {
 						getTransactionsAllCount(() => {
 							accountHistoryFrom = transactionsAllCount - (currentPageNumber * 100);
 							if (currentPageNumber == 1) accountHistoryFrom = -1;
-							console.log(currentPageNumber, transactionsAllCount, accountHistoryFrom);
+							//console.log(currentPageNumber, transactionsAllCount, accountHistoryFrom);
 							$search.dispatchEvent(new CustomEvent('submit'));
 						});
 					}
@@ -806,7 +807,7 @@ window.addEventListener('hashchange', () => {
 });
 window.dispatchEvent(new CustomEvent('hashchange'));
 
-window.onscroll = function() {
+window.onscroll = () => {
 	let value = document.documentElement.scrollTop || document.body.parentNode.scrollTop;
 	if (value > 777) $backToTop.classList.add('showing');
 	else $backToTop.classList.remove('showing');
