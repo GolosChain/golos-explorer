@@ -46,18 +46,52 @@
           "name" : "sortModel",
           "description" : "pass an optional sorting",
           "schema" : {
-            "type" : "object"
+            "type" : "object",
+            "properties" : {
+              "0" : {
+                "type" : "object",
+                "properties" : {
+                  "colId" : {
+                    "type" : "string",
+                    "example" : "post_count"
+                  },
+                  "sort" : {
+                    "type" : "string",
+                    "example" : "desc"
+                  }
+                }
+              }
+            }
           },
-          "style" : "form",
+          "style" : "deepObject",
           "explode" : true
         }, {
           "in" : "query",
           "name" : "filterModel",
           "description" : "pass an optional filter string for looking up account",
           "schema" : {
-            "type" : "object"
+            "type" : "object",
+            "properties" : {
+              "name" : {
+                "type" : "object",
+                "properties" : {
+                  "type" : {
+                    "type" : "string",
+                    "example" : "contains"
+                  },
+                  "filter" : {
+                    "type" : "string",
+                    "example" : "goloscore"
+                  },
+                  "filterType" : {
+                    "type" : "string",
+                    "example" : "text"
+                  }
+                }
+              }
+            }
           },
-          "style" : "form",
+          "style" : "deepObject",
           "explode" : true
         } ],
         "responses" : {
@@ -105,18 +139,52 @@
           "name" : "sortModel",
           "description" : "pass an optional sorting",
           "schema" : {
-            "type" : "object"
+            "type" : "object",
+            "properties" : {
+              "0" : {
+                "type" : "object",
+                "properties" : {
+                  "colId" : {
+                    "type" : "string",
+                    "example" : "total_payout_value"
+                  },
+                  "sort" : {
+                    "type" : "string",
+                    "example" : "desc"
+                  }
+                }
+              }
+            }
           },
-          "style" : "form",
+          "style" : "deepObject",
           "explode" : true
         }, {
           "in" : "query",
           "name" : "filterModel",
           "description" : "pass an optional filter string for looking up account",
           "schema" : {
-            "type" : "object"
+            "type" : "object",
+            "properties" : {
+              "author" : {
+                "type" : "object",
+                "properties" : {
+                  "type" : {
+                    "type" : "string",
+                    "example" : "contains"
+                  },
+                  "filter" : {
+                    "type" : "string",
+                    "example" : "goloscore"
+                  },
+                  "filterType" : {
+                    "type" : "string",
+                    "example" : "text"
+                  }
+                }
+              }
+            }
           },
-          "style" : "form",
+          "style" : "deepObject",
           "explode" : true
         } ],
         "responses" : {
