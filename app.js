@@ -373,69 +373,81 @@ let loadingHide = () => {
 	$loader.style.display = 'none';
 };
 
+let getAccountTransactionsCallback = (err, transactions) => {
+	let usernameVal = $searchVal.value;
+	let filterVal = $aboutAccountFilter.value;
+	let operationsCount = 0;
+	loadingHide();
+	if (transactions && transactions.length > 0) {
+		//transactions.reverse();
+		transactions.forEach((transaction) => {
+			if ( ! filterVal || blockchainVersion >= '0.18.4' || (transaction[1].op[0] == filterVal)) {
+				operationsCount++;
+				let $newRow = $aboutAccountTableTbody.insertRow(0);
+				$newRow.className = 'table-light';
+				$newRow.innerHTML = `<tr>
+								<td>${transaction[1].timestamp}</td>
+								<td><a href="#account/${usernameVal}/${currentPageNumber}/${transaction[1].op[0]}">${transaction[1].op[0]}</a></td>
+								<td><a href="#block/${transaction[1].block}">${transaction[1].block}</a></td>
+								<td><a href="#tx/${transaction[1].trx_id}">${transaction[1].trx_id}</a></td>`;
+				$newRow.innerHTML += `</tr>`;
+				let $newSubRow = $aboutAccountTableTbody.insertRow(1);
+				$newSubRow.innerHTML = `<tr><td class="description" colspan="4">${operationFormatter(transaction[1].op[1])}</td></tr>`;
+				let humanDescription = operationHumanFormatter(transaction[1].op);
+				if (humanDescription) {
+					let $newSubSubRow = $aboutAccountTableTbody.insertRow(2);
+					$newSubSubRow.innerHTML = `<tr><td class="description" colspan="4">${humanDescription}</td></tr>`;
+				}
+			}
+		});
+		if (transactions) {
+			let transactionsCount = transactions.length;
+			$aboutAccountAllCount.innerText = transactionsAllCount;
+			$aboutAccountCount.innerText = transactionsCount;
+			$aboutAccountFilteredCount.innerText = operationsCount;
+			$aboutAccountPagePages.innerHTML = '';
+			if (transactionsAllCount > transactionsCount) {
+				// pagination
+				$aboutAccountPageNav.style.display = 'block';
+				pageNumber = 1;
+				let renderPageNumbers = 0;
+				let maxPagesCount = Math.ceil(transactionsAllCount / 100 - 1);
+				if (currentPageNumber > 25) pageNumber = currentPageNumber - 25;
+				while (renderPageNumbers <= 50) {
+					let $newPage = document.createElement('li');
+					$newPage.innerHTML = `<a class="page-link" href="#account/${usernameVal}/${pageNumber}/${filterVal}">${pageNumber}</a>`;
+					$newPage.className = 'page-item' + (pageNumber == currentPageNumber ? ' active' : '');
+					$aboutAccountPagePages.appendChild($newPage);
+					pageNumber++;
+					renderPageNumbers++;
+					if (pageNumber > maxPagesCount) break;
+				}
+			}
+		}
+		if (operationsCount == 0) swal({title: 'Please change the filter of operation or change the number of page!', type: 'warning', html: `There are no <b>${filterVal}</b> operations on <u>this page</u>.`});
+	}
+	else {
+		if ( ! err) {
+			if (blockchainVersion >= '0.18.4') err = 'No Rows To Show!';
+			else err = 'Account not found!';
+		}
+		swal({title: 'Error', type: 'error', text: err});
+	}
+};
+
 let getAccountTransactions = () => {
 	loadingShow();
 	$aboutAccountTableTbody.innerHTML = '';
 	let usernameVal = $searchVal.value;
-	let operationsCount = 0;
+	let filterVal = $aboutAccountFilter.value;
 	let limit = 99;
 	//console.log(accountHistoryFrom);
 	if (accountHistoryFrom != -1 && accountHistoryFrom < limit) limit = accountHistoryFrom;
-	golos.api.getAccountHistory(usernameVal, accountHistoryFrom, limit, (err, transactions) => {
-		loadingHide();
-		if (transactions && transactions.length > 0) {
-			//transactions.reverse();
-			transactions.forEach((transaction) => {
-				if ( ! $aboutAccountFilter.value || (transaction[1].op[0] == $aboutAccountFilter.value)) {
-					operationsCount++;
-					let $newRow = $aboutAccountTableTbody.insertRow(0);
-					$newRow.className = 'table-light';
-					$newRow.innerHTML = `<tr>
-									<td>${transaction[1].timestamp}</td>
-									<td><a href="#account/${usernameVal}/${currentPageNumber}/${transaction[1].op[0]}">${transaction[1].op[0]}</a></td>
-									<td><a href="#block/${transaction[1].block}">${transaction[1].block}</a></td>
-									<td><a href="#tx/${transaction[1].trx_id}">${transaction[1].trx_id}</a></td>`;
-					$newRow.innerHTML += `</tr>`;
-					let $newSubRow = $aboutAccountTableTbody.insertRow(1);
-					$newSubRow.innerHTML = `<tr><td class="description" colspan="4">${operationFormatter(transaction[1].op[1])}</td></tr>`;
-					let humanDescription = operationHumanFormatter(transaction[1].op);
-					if (humanDescription) {
-						let $newSubSubRow = $aboutAccountTableTbody.insertRow(2);
-						$newSubSubRow.innerHTML = `<tr><td class="description" colspan="4">${humanDescription}</td></tr>`;
-					}
-				}
-			});
-			if (transactions) {
-				let transactionsCount = transactions.length;
-				$aboutAccountAllCount.innerText = transactionsAllCount;
-				$aboutAccountCount.innerText = transactionsCount;
-				$aboutAccountFilteredCount.innerText = operationsCount;
-				$aboutAccountPagePages.innerHTML = '';
-				if (transactionsAllCount > transactionsCount) {
-					// pagination
-					$aboutAccountPageNav.style.display = 'block';
-					pageNumber = 1;
-					let renderPageNumbers = 0;
-					let maxPagesCount = Math.ceil(transactionsAllCount / 100 - 1);
-					if (currentPageNumber > 25) pageNumber = currentPageNumber - 25;
-					while (renderPageNumbers <= 50) {
-						let $newPage = document.createElement('li');
-						$newPage.innerHTML = `<a class="page-link" href="#account/${usernameVal}/${pageNumber}/${$aboutAccountFilter.value}">${pageNumber}</a>`;
-						$newPage.className = 'page-item' + (pageNumber == currentPageNumber ? ' active' : '');
-						$aboutAccountPagePages.appendChild($newPage);
-						pageNumber++;
-						renderPageNumbers++;
-						if (pageNumber > maxPagesCount) break;
-					}
-				}
-			}
-			if (operationsCount == 0) swal({title: 'Please change the filter of operation or change the number of page!', type: 'warning', html: `There are no <b>${$aboutAccountFilter.value}</b> operations on <u>this page</u>.`});
-		}
-		else {
-			if ( ! err) err = 'Account not found!';
-			swal({title: 'Error', type: 'error', text: err});
-		}
-	});
+	if (blockchainVersion >= '0.18.4') {
+		if (filterVal) query = {select_ops: [filterVal]}; else query = {};
+		golos.api.getAccountHistory(usernameVal, accountHistoryFrom, limit, query, getAccountTransactionsCallback);
+	}
+	else golos.api.getAccountHistory(usernameVal, accountHistoryFrom, limit, getAccountTransactionsCallback);
 };
 
 $aboutAccountPagePrev.addEventListener('click', (e) => {
@@ -521,13 +533,21 @@ document.getElementById('get-config-btn').addEventListener('click', () => {
 	$modalGetConfig.show();
 });
 
+let getTransactionsAllCountCallback = (callback, err, transactions) => {
+	if (transactions && transactions.length > 0) {
+		transactionsAllCount = transactions[0][0] + 1;
+	}
+	if (callback) callback();
+};
+
 let getTransactionsAllCount = (callback) => {
-	golos.api.getAccountHistory($searchVal.value, -1, 0, (err, transactions) => {
-		if (transactions && transactions.length > 0) {
-			transactionsAllCount = transactions[0][0] + 1;
-		}
-		if (callback) callback();
-	});
+	let usernameVal = $searchVal.value;
+	if (blockchainVersion >= '0.18.4') {
+		let filterVal = $aboutAccountFilter.value;
+		if (filterVal) query = {select_ops: [filterVal]}; else query = null;
+		golos.api.getAccountHistory(usernameVal, -1, 0, query, (err, transactions) => getTransactionsAllCountCallback(callback, err, transactions));
+	}
+	else golos.api.getAccountHistory(usernameVal, -1, 0, (err, transactions) => getTransactionsAllCountCallback(callback, err, transactions));
 }
 
 agGrid.LicenseManager.setLicenseKey('Evaluation_License_Valid_Until__9_September_2018__MTUzNjQ0NzYwMDAwMA==712c48d48d0a3ec85f3243b1295999ec');

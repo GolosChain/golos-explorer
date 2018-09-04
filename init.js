@@ -1,4 +1,5 @@
 let golosJsVersion = '0.7.3';
+let blockchainVersion;
 let $nodeAddress = document.getElementById('node-address');
 let $nodeAddressInput = $nodeAddress.querySelector('.form-control[name="node-address"]');
 
@@ -10,7 +11,7 @@ let loadGolosJsLib = () => {
 	golosJsLib.src = `https://cdn.jsdelivr.net/npm/golos-js@${golosJsVersion}/dist/golos.min.js`;
 	golosJsLib.onload = () => {
 		let appLib = document.createElement('script');
-		appLib.src = 'app.js?201809041010';
+		appLib.src = 'app.js?201809041700';
 		(document.head || document.documentElement).appendChild(appLib);
 	};
 	(document.head || document.documentElement).appendChild(golosJsLib);
@@ -46,8 +47,9 @@ let getBlockchainVersion = (nodeAddress, callback) => {
 
 getBlockchainVersion(nodeAddress, (err, result) => {
 	if (result) {
-		if (result.STEEMIT_BLOCKCHAIN_VERSION < '0.18.0') golosJsVersion = '0.6.3';
-		else if (result.STEEMIT_BLOCKCHAIN_VERSION < '0.18.4') golosJsVersion = '0.7.0';
+		blockchainVersion = result.STEEMIT_BLOCKCHAIN_VERSION;
+		if (blockchainVersion < '0.18.0') golosJsVersion = '0.6.3';
+		else if (blockchainVersion < '0.18.4') golosJsVersion = '0.7.0';
 	}
 	loadGolosJsLib();
 });
