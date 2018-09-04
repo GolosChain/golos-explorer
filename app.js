@@ -416,7 +416,7 @@ let getAccountTransactions = () => {
 					$aboutAccountPageNav.style.display = 'block';
 					pageNumber = 1;
 					let renderPageNumbers = 0;
-					let maxPagesCount = transactionsAllCount / 100 - 1;
+					let maxPagesCount = Math.ceil(transactionsAllCount / 100 - 1);
 					if (currentPageNumber > 25) pageNumber = currentPageNumber - 25;
 					while (renderPageNumbers <= 50) {
 						let $newPage = document.createElement('li');
@@ -425,7 +425,7 @@ let getAccountTransactions = () => {
 						$aboutAccountPagePages.appendChild($newPage);
 						pageNumber++;
 						renderPageNumbers++;
-						if (renderPageNumbers > maxPagesCount) break;
+						if (pageNumber > maxPagesCount) break;
 					}
 				}
 			}
